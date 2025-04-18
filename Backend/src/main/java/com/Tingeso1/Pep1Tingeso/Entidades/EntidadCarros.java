@@ -14,11 +14,11 @@ import java.util.List;
 @Setter
 public class EntidadCarros {
     @Id
-    private String codigoKart; // Ejemplo: K001, K002...
+    private String codigoCarros; // Ejemplo: K001, K002...
 
     private String modelo;
     private String estado; // activo, mantenimiento
 
-    @ManyToMany(mappedBy = "karts")
+    @ManyToMany(mappedBy = "carros")
     private List<EntidadReservas> reservas;
 }

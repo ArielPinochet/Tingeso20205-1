@@ -1,6 +1,7 @@
 package com.Tingeso1.Pep1Tingeso.Entidades;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,8 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "reservas")
-@Getter
-@Setter
+@Data
 public class EntidadReservas {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,14 +40,31 @@ public class EntidadReservas {
     @OneToMany(mappedBy = "reserva")
     private List<EntidadDetalleReserva> detallesReserva;
 
-    @OneToMany(mappedBy = "reserva")
-    private List<EntidadCarros> Carro;
+    @ManyToMany
+    @JoinTable(
+            name = "reserva_carros",
+            joinColumns = @JoinColumn(name = "id_reserva"),
+            inverseJoinColumns = @JoinColumn(name = "id_carro")
+    )
+    private List<EntidadCarros> carros;
 
     @OneToOne(mappedBy = "reserva")
     private EntidadComprobanteDePago comprobantePago;
 
     @OneToMany(mappedBy = "reserva")
     private List<EntidadHorarioReserva> horarios;
+
+    @ManyToOne
+    @JoinColumn(name = "id_tarifa")
+    private EntidadTarifa tarifa;
+
+    public EntidadTarifa getTarifa() {
+        return tarifa;
+    }
+
+    public void setTarifa(EntidadTarifa tarifa) {
+        this.tarifa = tarifa;
+    }
 
     // Método para calcular la duración total basado en la cantidad de vueltas
     public void calcularDuracionTotal() {
@@ -59,5 +76,109 @@ public class EntidadReservas {
                 default -> 0; // Valor por defecto
             };
         }
+    }
+
+    public Long getIdReserva() {
+        return idReserva;
+    }
+
+    public void setIdReserva(Long idReserva) {
+        this.idReserva = idReserva;
+    }
+
+    public LocalDate getFechaReserva() {
+        return fechaReserva;
+    }
+
+    public void setFechaReserva(LocalDate fechaReserva) {
+        this.fechaReserva = fechaReserva;
+    }
+
+    public LocalTime getHoraInicio() {
+        return horaInicio;
+    }
+
+    public void setHoraInicio(LocalTime horaInicio) {
+        this.horaInicio = horaInicio;
+    }
+
+    public Integer getNumeroVueltas() {
+        return numeroVueltas;
+    }
+
+    public void setNumeroVueltas(Integer numeroVueltas) {
+        this.numeroVueltas = numeroVueltas;
+    }
+
+    public Integer getCantidadPersonas() {
+        return cantidadPersonas;
+    }
+
+    public void setCantidadPersonas(Integer cantidadPersonas) {
+        this.cantidadPersonas = cantidadPersonas;
+    }
+
+    public Boolean getDiaEspecial() {
+        return diaEspecial;
+    }
+
+    public void setDiaEspecial(Boolean diaEspecial) {
+        this.diaEspecial = diaEspecial;
+    }
+
+    public Integer getDuracionTotal() {
+        return duracionTotal;
+    }
+
+    public void setDuracionTotal(Integer duracionTotal) {
+        this.duracionTotal = duracionTotal;
+    }
+
+    public EntidadClientes getClienteResponsable() {
+        return clienteResponsable;
+    }
+
+    public void setClienteResponsable(EntidadClientes clienteResponsable) {
+        this.clienteResponsable = clienteResponsable;
+    }
+
+    public List<EntidadClientes> getClientes() {
+        return clientes;
+    }
+
+    public void setClientes(List<EntidadClientes> clientes) {
+        this.clientes = clientes;
+    }
+
+    public List<EntidadDetalleReserva> getDetallesReserva() {
+        return detallesReserva;
+    }
+
+    public void setDetallesReserva(List<EntidadDetalleReserva> detallesReserva) {
+        this.detallesReserva = detallesReserva;
+    }
+
+    public List<EntidadCarros> getCarros() {
+        return carros;
+    }
+
+    public void setCarros(List<EntidadCarros> carros) {
+        this.carros = carros;
+    }
+
+    public EntidadComprobanteDePago getComprobantePago() {
+        return comprobantePago;
+    }
+
+    public void setComprobantePago(EntidadComprobanteDePago comprobantePago) {
+        this.comprobantePago = comprobantePago;
+    }
+
+    public List<EntidadHorarioReserva> getHorarios() {
+        return horarios;
+    }
+
+    public void setHorarios(List<EntidadHorarioReserva> horarios) {
+        this.horarios = horarios;
     }
 }

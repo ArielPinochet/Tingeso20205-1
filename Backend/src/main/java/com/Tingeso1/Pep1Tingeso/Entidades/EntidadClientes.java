@@ -26,4 +26,64 @@ public class EntidadClientes {
 
     @ManyToMany(mappedBy = "clientes")
     private List<EntidadReservas> reservas;
+
+    public Long getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(Long idCliente) {
+        this.idCliente = idCliente;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public Integer getFrecuenciaMensual() {
+        return frecuenciaMensual;
+    }
+
+    public void setFrecuenciaMensual(Integer frecuenciaMensual) {
+        this.frecuenciaMensual = frecuenciaMensual;
+    }
+
+    public List<EntidadReservas> getReservas() {
+        return reservas;
+    }
+
+    public void setReservas(List<EntidadReservas> reservas) {
+        this.reservas = reservas;
+    }
+
+    public EntidadClientes(Long idCliente, String nombre, String email, LocalDate fechaNacimiento, Integer frecuenciaMensual, List<EntidadReservas> reservas) {
+        this.idCliente = idCliente;
+        this.nombre = nombre;
+        this.email = email;
+        this.fechaNacimiento = fechaNacimiento;
+        this.frecuenciaMensual = frecuenciaMensual;
+        this.reservas = reservas;
+    }
+
+    public EntidadClientes() {
+    }
 }

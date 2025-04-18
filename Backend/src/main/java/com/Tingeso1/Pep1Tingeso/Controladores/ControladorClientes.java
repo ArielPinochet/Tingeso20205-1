@@ -39,4 +39,17 @@ public class ControladorClientes {
         servicioClientes.eliminarPorId(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EntidadClientes> actualizarCliente(@PathVariable Long id, @RequestBody EntidadClientes clienteActualizado) {
+        return servicioClientes.buscarPorId(id)
+                .map(cliente -> {
+                    cliente.setNombre(clienteActualizado.getNombre());
+                    cliente.setEmail(clienteActualizado.getEmail());
+                    cliente.setFechaNacimiento(clienteActualizado.getFechaNacimiento());
+                    return ResponseEntity.ok(servicioClientes.guardarCliente(cliente));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }
