@@ -22,7 +22,9 @@ public class EntidadReservas {
     private Integer numeroVueltas;
     private Integer cantidadPersonas;
     private Boolean diaEspecial;
-
+    private String estadoReserva;
+    private Double precioTotal;
+    private String metodoPago;
     private Integer duracionTotal; // Ahora persistente en la BD
 
     @ManyToOne
@@ -180,5 +182,57 @@ public class EntidadReservas {
 
     public void setHorarios(List<EntidadHorarioReserva> horarios) {
         this.horarios = horarios;
+    }
+
+    public String getEstadoReserva() {
+        return estadoReserva;
+    }
+
+    public void setEstadoReserva(String estadoReserva) {
+        this.estadoReserva = estadoReserva;
+    }
+
+    public Double getPrecioTotal() {
+        return precioTotal;
+    }
+
+    public void setPrecioTotal(Double precioTotal) {
+        this.precioTotal = precioTotal;
+    }
+
+    public String getMetodoPago() {
+        return metodoPago;
+    }
+
+    public void setMetodoPago(String metodoPago) {
+        this.metodoPago = metodoPago;
+    }
+
+
+    public EntidadReservas(Long idReserva, LocalDate fechaReserva, LocalTime horaInicio, Integer numeroVueltas, Integer cantidadPersonas, Boolean diaEspecial, String estadoReserva, Double precioTotal, String metodoPago, Integer duracionTotal, EntidadClientes clienteResponsable, List<EntidadClientes> clientes, List<EntidadDetalleReserva> detallesReserva, List<EntidadCarros> carros, EntidadComprobanteDePago comprobantePago, List<EntidadHorarioReserva> horarios, EntidadTarifa tarifa) {
+        this.idReserva = idReserva;
+        this.fechaReserva = fechaReserva;
+        this.horaInicio = horaInicio;
+        this.numeroVueltas = numeroVueltas;
+        this.cantidadPersonas = cantidadPersonas;
+        this.diaEspecial = diaEspecial;
+        this.estadoReserva = estadoReserva;
+        this.precioTotal = precioTotal;
+        this.metodoPago = metodoPago;
+        this.duracionTotal = duracionTotal;
+        this.clienteResponsable = clienteResponsable;
+        this.clientes = clientes;
+        this.detallesReserva = detallesReserva;
+        this.carros = carros;
+        this.comprobantePago = comprobantePago;
+        this.horarios = horarios;
+        this.tarifa = tarifa;
+    }
+
+    public EntidadReservas() {
+    }
+
+    public EntidadReservas(Long idReserva) {
+        this.idReserva = idReserva;
     }
 }

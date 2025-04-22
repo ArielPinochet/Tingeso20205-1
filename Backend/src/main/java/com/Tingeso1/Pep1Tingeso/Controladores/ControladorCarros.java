@@ -39,4 +39,17 @@ public class ControladorCarros {
         servicioCarros.eliminarPorCodigo(codigo);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{codigo}")
+    public ResponseEntity<EntidadCarros> actualizarCarro(@PathVariable String codigo, @RequestBody EntidadCarros carroActualizado) {
+        System.out.println("Carro recibido para actualizar: " + carroActualizado);
+
+        return servicioCarros.buscarPorCodigo(codigo)
+                .map(carro -> {
+                    carro.setModelo(carroActualizado.getModelo()); // Confirmar que el modelo se actualiza
+                    carro.setEstado(carroActualizado.getEstado());
+                    return ResponseEntity.ok(servicioCarros.guardarCarros(carro));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
