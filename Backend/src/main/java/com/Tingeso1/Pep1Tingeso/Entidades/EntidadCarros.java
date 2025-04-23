@@ -1,6 +1,8 @@
 package com.Tingeso1.Pep1Tingeso.Entidades;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +22,8 @@ public class EntidadCarros {
     private String estado; // activo, mantenimiento
 
     @ManyToMany(mappedBy = "carros")
+    @JsonIgnoreProperties("carros")
+    @JsonBackReference
     private List<EntidadReservas> reservas;
 
     public String getCodigoCarros() {

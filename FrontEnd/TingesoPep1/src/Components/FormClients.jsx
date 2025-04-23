@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { crearCliente, obtenerClientePorId, actualizarCliente } from "../services/ClientService";
+import { crearCliente, obtenerClientePorId, actualizarCliente } from "../Services/ClientService";
 import { useNavigate, useParams } from "react-router-dom";
 
 const FormularioCliente = () => {

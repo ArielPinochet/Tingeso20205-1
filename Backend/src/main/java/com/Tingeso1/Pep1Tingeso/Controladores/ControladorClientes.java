@@ -1,6 +1,7 @@
 package com.Tingeso1.Pep1Tingeso.Controladores;
 
 import com.Tingeso1.Pep1Tingeso.Entidades.EntidadClientes;
+import com.Tingeso1.Pep1Tingeso.Servicios.EmailService;
 import com.Tingeso1.Pep1Tingeso.Servicios.ServicioClientes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +13,19 @@ import java.util.List;
 public class ControladorClientes {
 
     private final ServicioClientes servicioClientes;
+    private final EmailService emailService;
 
-    public ControladorClientes(ServicioClientes servicioClientes) {
+    public ControladorClientes(ServicioClientes servicioClientes, EmailService emailService) {
         this.servicioClientes = servicioClientes;
+        this.emailService = emailService;
     }
 
     @PostMapping
     public ResponseEntity<EntidadClientes> crearCliente(@RequestBody EntidadClientes cliente) {
-        return ResponseEntity.ok(servicioClientes.guardarCliente(cliente));
+        // Enviar correo de confirmación
+        EntidadClientes nuevoCliente = servicioClientes.guardarCliente(cliente);
+        emailService.sendClientCreationConfirmation(nuevoCliente);
+        return ResponseEntity.ok(nuevoCliente);
     }
 
     @GetMapping("/{id}")
@@ -47,6 +53,7 @@ public class ControladorClientes {
                     cliente.setNombre(clienteActualizado.getNombre());
                     cliente.setEmail(clienteActualizado.getEmail());
                     cliente.setFechaNacimiento(clienteActualizado.getFechaNacimiento());
+                    emailService.sendClientEditedConfirmation(clienteActualizado);
                     return ResponseEntity.ok(servicioClientes.guardarCliente(cliente));
                 })
                 .orElse(ResponseEntity.notFound().build());

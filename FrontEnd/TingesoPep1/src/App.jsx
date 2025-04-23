@@ -45,7 +45,8 @@ const App = () => {
                         <Route path="/clientes" element={<ListaClientes />} />
                         <Route path="/crear-cliente" element={<FormularioCliente />} />
                         <Route path="/editar-cliente/:id" element={<FormularioCliente />} />
-                        
+                        <Route path="/" element={<ListaClientes />} /> {/* Página principal con Clientes */}
+
                         <Route path="/carros" element={<ListaCarros />} />
                         <Route path="/crear-carro" element={<FormularioCarro />} />
                         <Route path="/editar-carro/:id" element={<FormularioCarro />} />
@@ -53,7 +54,7 @@ const App = () => {
                         <Route path="/comprobantes" element={<ListaComprobantes />} />
                         <Route path="/crear-comprobante" element={<FormularioComprobante />} />
                         <Route path="/ver-comprobante/:id" element={<VerComprobante />} />
-                        <Route path="/" element={<ListaClientes />} /> {/* Página principal con Clientes */}
+                        
                         <Route path="/reservas" element={<ListaReservas />} />
                         <Route path="/crear-reserva" element={<FormularioReserva />} />
                         <Route path="/editar-reserva/:id" element={<FormularioReserva />} />

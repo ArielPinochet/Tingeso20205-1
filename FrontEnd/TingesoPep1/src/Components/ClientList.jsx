@@ -18,7 +18,7 @@ const ListaClientes = () => {
     return (
         <div className="container mt-4">
             <h2>Lista de Clientes</h2>
-            <Link to="/crear" className="btn btn-primary mb-3">Agregar Cliente</Link>
+            <Link to="/crear-cliente" className="btn btn-primary mb-3">Agregar Cliente</Link>
             <table className="table table-bordered">
                 <thead>
                     <tr>
@@ -37,7 +37,7 @@ const ListaClientes = () => {
                             <td>{cliente.email}</td>
                             <td>{cliente.fechaNacimiento}</td>
                             <td>
-                                <Link to={`/editar/${cliente.idCliente}`} className="btn btn-warning">Editar</Link>
+                                <Link to={`/editar-cliente/${cliente.idCliente}`} className="btn btn-warning">Editar</Link>
                                 <button className="btn btn-danger ms-2" onClick={() => handleEliminar(cliente.idCliente)}>Eliminar</button>
                             </td>
                         </tr>
