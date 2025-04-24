@@ -2,9 +2,13 @@ package com.Tingeso1.Pep1Tingeso.Servicios;
 
 import com.Tingeso1.Pep1Tingeso.Entidades.EntidadClientes;
 import com.Tingeso1.Pep1Tingeso.Entidades.EntidadReservas;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -130,4 +134,22 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    public void sendPaymentDetails(String email, byte[] excelFile, byte[] pdfFile) {
+        MimeMessage message = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(email);
+            helper.setSubject("Resumen de Pago - Karting");
+            helper.setText("Adjunto encontrarás el resumen total en Excel y tu detalle personal en PDF.");
+
+            helper.addAttachment("Resumen_Pago.xlsx", new ByteArrayResource(excelFile));
+            helper.addAttachment("Detalle_Pago.pdf", new ByteArrayResource(pdfFile));
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

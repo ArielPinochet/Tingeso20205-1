@@ -65,7 +65,7 @@ const ListaReservas = () => {
                   {reserva.clienteResponsable?.nombre}
                 </p>
                 <p>
-                  <strong>Precio Total:</strong> ${reserva.precioTotal}
+                  <strong>Precio Total Antes de descuentos:</strong> ${reserva.precioTotal}
                 </p>
                 <button
                   className="btn btn-warning"
@@ -78,6 +78,12 @@ const ListaReservas = () => {
                   onClick={() => handleEliminar(reserva.idReserva)}
                 >
                   Eliminar
+                </button>
+                <button
+                className="btn btn-success"
+                onClick={() => navigate(`/pagar-reserva/${reserva.idReserva}`)}
+                >
+                Proceder al Pago
                 </button>
               </div>
             </div>

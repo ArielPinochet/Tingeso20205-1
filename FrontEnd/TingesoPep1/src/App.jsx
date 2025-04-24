@@ -9,6 +9,8 @@ import FormularioComprobante from "./Components/FormularioComprobante";
 import VerComprobante from "./Components/VerComprobante";
 import ListaReservas from "./Components/ListaReservas";
 import FormularioReserva from "./Components/FormularioReserva";
+import FormularioPago from "./Components/FormularioPago";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const App = () => {
@@ -58,6 +60,7 @@ const App = () => {
                         <Route path="/reservas" element={<ListaReservas />} />
                         <Route path="/crear-reserva" element={<FormularioReserva />} />
                         <Route path="/editar-reserva/:id" element={<FormularioReserva />} />
+                        <Route path="/pagar-reserva/:id" element={<FormularioPago />} />
                         <Route path="/" element={<ListaReservas />} />
                     </Routes>
                 </div>
