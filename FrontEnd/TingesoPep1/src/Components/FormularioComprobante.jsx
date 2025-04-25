@@ -11,6 +11,25 @@ const FormularioComprobante = () => {
         setComprobante({ ...comprobante, [e.target.name]: e.target.value });
     };
 
+    const handlePago = () => {
+        const datosPago = {
+            idReserva: reserva.idReserva,
+            correosClientes: correosClientes
+        };
+    
+        fetch("/api/enviar-pago", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datosPago)
+        })
+        .then(response => response.json())
+        .then(() => {
+            alert("Pago realizado y correos guardados correctamente.");
+            navigate("/reservas");
+        })
+        .catch(error => console.error("Error al enviar correos:", error));
+    };
+    
     const generarPDF = () => {
         const doc = new jsPDF();
     
@@ -68,6 +87,19 @@ const FormularioComprobante = () => {
                     <label className="form-label">Total con IVA</label>
                     <input type="number" className="form-control" name="totalConIva" value={comprobante.totalConIva} onChange={handleChange} required />
                 </div>
+                <h4>Ingrese los correos de los participantes:</h4>
+                {Array.from({ length: reserva.cantidadPersonas }, (_, index) => (
+                <div className="mb-3" key={index}>
+                    <label className="form-label">Correo del Cliente {index + 1}</label>
+                    <input 
+                        type="email" 
+                        className="form-control"
+                        value={correosClientes[index] || ""}
+                        onChange={(e) => handleCorreoChange(index, e.target.value)}
+                        required
+                    />
+                </div>
+                ))}
                 <button type="submit" className="btn btn-success">Generar y Guardar PDF</button>
                 <button type="button" className="btn btn-secondary ms-2" onClick={() => navigate("/comprobantes")}>Cancelar</button>
             </form>

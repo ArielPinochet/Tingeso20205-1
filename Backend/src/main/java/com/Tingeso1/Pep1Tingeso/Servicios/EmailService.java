@@ -1,6 +1,7 @@
 package com.Tingeso1.Pep1Tingeso.Servicios;
 
 import com.Tingeso1.Pep1Tingeso.Entidades.EntidadClientes;
+import com.Tingeso1.Pep1Tingeso.Entidades.EntidadComprobanteDePago;
 import com.Tingeso1.Pep1Tingeso.Entidades.EntidadReservas;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -18,6 +19,25 @@ public class EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    public void enviarComprobante(EntidadComprobanteDePago comprobante, byte[] pdfFile) {
+        for (String email : comprobante.getCorreosClientes()) {
+            try {
+                MimeMessage message = mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+                helper.setTo(email);
+                helper.setSubject("Comprobante de Pago - Karting");
+                helper.setText("Adjunto encontrarás tu comprobante de pago en PDF.");
+
+                helper.addAttachment("Comprobante_Pago.pdf", new ByteArrayResource(pdfFile));
+
+                mailSender.send(message);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public void sendReservationConfirmation(EntidadReservas reserva) {
         // Validar que la reserva y el cliente responsable no sean nulos
