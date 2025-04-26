@@ -5,6 +5,8 @@ import com.Tingeso1.Pep1Tingeso.Entidades.EntidadComprobanteDePago;
 import com.Tingeso1.Pep1Tingeso.Entidades.EntidadReservas;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
@@ -12,6 +14,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,22 +22,28 @@ public class EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+
+
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     public void enviarComprobante(EntidadComprobanteDePago comprobante, byte[] pdfFile) {
-        for (String email : comprobante.getCorreosClientes()) {
+        List<String> correos = comprobante.getCorreosClientes();
+        logger.info("Se enviarán correos a {} destinatarios", correos.size());
+        for (String email : correos) {
             try {
                 MimeMessage message = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
                 helper.setTo(email);
-                helper.setSubject("Comprobante de Pago - Karting");
-                helper.setText("Adjunto encontrarás tu comprobante de pago en PDF.");
-
+                helper.setSubject("Comprobante de Pago - Tu Empresa");
+                helper.setText("Adjunto encontrarás tu comprobante de pago.", true);
                 helper.addAttachment("Comprobante_Pago.pdf", new ByteArrayResource(pdfFile));
-
                 mailSender.send(message);
+                logger.info("Correo enviado a: {}", email);
             } catch (MessagingException e) {
-                e.printStackTrace();
+                logger.error("Error enviando correo a {}: ", email, e);
             }
         }
     }

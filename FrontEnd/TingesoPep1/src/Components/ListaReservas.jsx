@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { obtenerReservas, eliminarReserva } from "../services/ReservaService";
+import { obtenerReservas, eliminarReserva } from "../Services/ReservaService";
 import { useNavigate, Link } from "react-router-dom";
 
 const ListaReservas = () => {
@@ -81,7 +81,7 @@ const ListaReservas = () => {
                 </button>
                 <button
                 className="btn btn-success"
-                onClick={() => navigate(`/pagar-reserva/${reserva.idReserva}`)}
+                onClick={() => navigate(`/crear-comprobante/${reserva.idReserva}`)}
                 >
                 Proceder al Pago
                 </button>
