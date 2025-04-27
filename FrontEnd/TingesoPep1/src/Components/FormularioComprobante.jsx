@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
-import { obtenerReservaPorId, obtenerReservasPorCliente } from "../Services/ReservaService";
+// Importamos el endpoint general para reservar (ya que el de cliente no funciona)
+import { obtenerReservaPorId, obtenerReservas } from "../Services/ReservaService";
+import ReservasCliente from "../Components/ReservasCliente";
 import { crearComprobante } from "../Services/ComprobanteService";
 
 const FormularioComprobante = () => {
   const { id } = useParams(); // Se espera la ruta /crear-comprobante/:id
   const navigate = useNavigate();
 
-  // Estado para la reserva real obtenida del backend
+  // Estado para la reserva actual
   const [reserva, setReserva] = useState(null);
 
-  // Estado para almacenar los datos del comprobante (basados en la reserva y descuentos)
+  // Estado para los datos del comprobante
   const [comprobanteData, setComprobanteData] = useState({
     idReserva: "",
     fechaEmision: new Date().toISOString().split("T")[0],
@@ -21,25 +23,25 @@ const FormularioComprobante = () => {
     numeroVueltas: 0,
     duracionTotal: 0,
     clienteResponsable: "",
-    precioTotal: 0, // Precio final descontado (con IVA, que ya viene en la reserva)
-    totalConIva: 0, // Igual al precio final descontado, ya que se considera que el precio viene con IVA
+    precioTotal: 0, // Precio final con IVA ya descontado
+    totalConIva: 0,
   });
 
-  // Estados para los distintos montos de descuento en moneda
+  // Estados para los distintos montos de descuento
   const [descuentoPersonasAmount, setDescuentoPersonasAmount] = useState(0);
   const [descuentoFrecuenciaAmount, setDescuentoFrecuenciaAmount] = useState(0);
   const [descuentoCumpleAmount, setDescuentoCumpleAmount] = useState(0);
   const [totalDescuentoAmount, setTotalDescuentoAmount] = useState(0);
 
-  // Estado para los correos de participantes (editable)
+  // Estado para los correos (para participantes)
   const [correosClientes, setCorreosClientes] = useState([]);
 
   useEffect(() => {
+    // Primero, obtenemos la reserva por id
     obtenerReservaPorId(id)
       .then((response) => {
         const data = response.data;
-        // Suponemos que data.precioTotal es el precio final con IVA (como se muestra en la reserva)
-        const finalOriginal = data.precioTotal;
+        const finalOriginal = data.precioTotal; // Supuesto: precioFinal con IVA
 
         // -----------------------
         // Descuento por número de personas
@@ -52,56 +54,70 @@ const FormularioComprobante = () => {
           descuentoPercentPersonas = 0.30;
         }
         const discountAmountPersonas = finalOriginal * descuentoPercentPersonas;
+        setDescuentoPersonasAmount(discountAmountPersonas);
 
         // -----------------------
-        // Descuento por cliente frecuente
-        // Ahora, en lugar de usar data.clienteResponsable.cantidadReservas,
-        // se llama a obtenerReservasPorCliente para contar todas las reservas del cliente.
-        // Se asume que data.clienteResponsable.id está disponible.
-        // Llamada para obtener todas las reservas del cliente
-        obtenerReservasPorCliente(data.clienteResponsable.id)
-            .then((resp) => {
-                const reservasCliente = resp.data; // Array de reservas del cliente
-                const cantidadReservas = reservasCliente.length;
-                console.log("Cantidad de reservas del cliente:", cantidadReservas);
+        // Descuento por cumpleaños (día especial)
+        let discountAmountCumple = 0;
+        if (data.diaEspecial === true) {
+          if (data.cantidadPersonas >= 3 && data.cantidadPersonas <= 5) {
+            discountAmountCumple = (finalOriginal / data.cantidadPersonas) * 0.5;
+          } else if (data.cantidadPersonas >= 6 && data.cantidadPersonas <= 10) {
+            discountAmountCumple = (finalOriginal / data.cantidadPersonas) * 0.5 * 2;
+          }
+        }
+        setDescuentoCumpleAmount(discountAmountCumple);
 
-                // Forzamos: si el cliente tiene menos de 2 reservas, no se aplica descuento
-                let descuentoPercentFrecuencia = 0;
-                if (cantidadReservas < 2) {  
-                    descuentoPercentFrecuencia = 0;
-                } else if (cantidadReservas >= 2 && cantidadReservas < 5) {  
-                    descuentoPercentFrecuencia = 0.10;  
-                } else if (cantidadReservas >= 5 && cantidadReservas < 7) {  
-                    descuentoPercentFrecuencia = 0.20;  
-                } else if (cantidadReservas >= 7) {  
-                    descuentoPercentFrecuencia = 0.30;  
-                }
-            onsole.log("Factor de descuento por cliente frecuente:", descuentoPercentFrecuencia);
-            const discountAmountFrecuencia = finalOriginal * descuentoPercentFrecuencia;
+        // -----------------------
+        // Descuento por cliente frecuente:
+        // Dado que el endpoint GET /reservas/cliente/:id no funciona,
+        // usamos obtenerReservas() y filtramos manualmente.
+        obtenerReservas()
+          .then((resp) => {
+            const allReservas = Array.isArray(resp.data) ? resp.data : [];
+            // Filtramos las reservas cuyo clienteResponsable.idCliente coincida
+            const reservasDelCliente = allReservas.filter((r) => {
+              console.log(
+                "Comparando reserva cliente id:",
+                r.clienteResponsable?.idCliente,
+                "con prop clienteId:",
+                data.clienteResponsable.idCliente
+              );
+              return (
+                r.clienteResponsable &&
+                Number(r.clienteResponsable.idCliente) === Number(data.clienteResponsable.idCliente)
+              );
+            });
+            const cantidadReservas = reservasDelCliente.length;
+            console.log(
+              "Cantidad de reservas filtradas para clienteId",
+              data.clienteResponsable.idCliente,
+              ":",
+              cantidadReservas
+            );
 
-            // -----------------------
-            // Descuento por cumpleaños (día especial)
-            // Se asume que si data.diaEspecial es true, se aplica la promoción:
-            // - Para grupos de 3 a 5: 50% de descuento de 1 cuota individual.
-            // - Para grupos de 6 a 10: 50% de descuento de 2 cuotas individuales.
-            let discountAmountCumple = 0;
-            if (data.diaEspecial === true) {
-              if (data.cantidadPersonas >= 3 && data.cantidadPersonas <= 5) {
-                discountAmountCumple = (finalOriginal / data.cantidadPersonas) * 0.5;
-              } else if (data.cantidadPersonas >= 6 && data.cantidadPersonas <= 10) {
-                discountAmountCumple = (finalOriginal / data.cantidadPersonas) * 0.5 * 2;
-              }
+            // Calcula el porcentaje según la tabla:
+            let descuentoPercentFrecuencia = 0;
+            if (cantidadReservas < 2) {
+              descuentoPercentFrecuencia = 0;
+            } else if (cantidadReservas >= 2 && cantidadReservas < 5) {
+              descuentoPercentFrecuencia = 0.10;
+            } else if (cantidadReservas >= 5 && cantidadReservas < 7) {
+              descuentoPercentFrecuencia = 0.20;
+            } else if (cantidadReservas >= 7) {
+              descuentoPercentFrecuencia = 0.30;
             }
+            console.log("Factor de descuento por cliente frecuente:", descuentoPercentFrecuencia);
+            const discountAmountFrecuencia = finalOriginal * descuentoPercentFrecuencia;
+            console.log("Monto de descuento de frecuencia calculado:", discountAmountFrecuencia);
+            setDescuentoFrecuenciaAmount(discountAmountFrecuencia);
 
             // -----------------------
-            // Total descuento en valor monetario
+            // Sumar todos los descuentos y actualizar el precio final
             const totalDiscountAmount = discountAmountPersonas + discountAmountFrecuencia + discountAmountCumple;
-
-            // Precio final descontado (con IVA) = precio original (con IVA) − total descuentos
+            setTotalDescuentoAmount(totalDiscountAmount);
             const finalPriceDiscounted = finalOriginal - totalDiscountAmount;
-
-            // Actualizar el estado con los datos calculados
-            setReserva(data);
+            // Actualizamos los datos del comprobante
             setComprobanteData({
               idReserva: data.idReserva,
               fechaEmision: new Date().toISOString().split("T")[0],
@@ -111,19 +127,15 @@ const FormularioComprobante = () => {
               numeroVueltas: data.numeroVueltas,
               duracionTotal: data.duracionTotal,
               clienteResponsable: data.clienteResponsable.nombre,
-              precioTotal: finalPriceDiscounted,  // Este es el precio final (con IVA) ya descontado.
-              totalConIva: finalPriceDiscounted,   // Se muestra con IVA.
+              precioTotal: finalPriceDiscounted,
+              totalConIva: finalPriceDiscounted,
             });
-            setDescuentoPersonasAmount(discountAmountPersonas);
-            setDescuentoFrecuenciaAmount(discountAmountFrecuencia);
-            setDescuentoCumpleAmount(discountAmountCumple);
-            setTotalDescuentoAmount(totalDiscountAmount);
-
-            // Inicializar los campos de correo según la cantidad de participantes
+            // Se guarda la reserva y se inicializan los correos según la cantidad
+            setReserva(data);
             setCorreosClientes(Array.from({ length: data.cantidadPersonas }, () => ""));
           })
           .catch((error) => {
-            console.error("Error al obtener reservas del cliente:", error);
+            console.error("Error al obtener reservas (frecuencia):", error);
           });
       })
       .catch((error) => {
@@ -131,29 +143,27 @@ const FormularioComprobante = () => {
       });
   }, [id]);
 
-  // Para mostrar el precio sin IVA, se divide el precio final (con IVA) entre 1.19.
+  // Calcula el precio sin IVA usando useMemo
   const totalSinIva = useMemo(() => {
     return (comprobanteData.totalConIva / 1.19).toFixed(2);
   }, [comprobanteData.totalConIva]);
 
-  // Handler para actualizar un correo individual
+  // Handler para actualizar correos de participantes
   const handleCorreoChange = (index, value) => {
     const nuevosCorreos = [...correosClientes];
     nuevosCorreos[index] = value;
     setCorreosClientes(nuevosCorreos);
   };
 
-  // Función para generar el PDF, incluyendo el desglose de descuentos.
+  // Función para generar el PDF
   const generarPDFBlob = () => {
     console.log("Generando PDF Blob...");
     const doc = new jsPDF();
 
-    // Título
+    // Título y datos generales
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
     doc.text("Comprobante de Pago", 70, 20);
-
-    // Datos generales
     doc.setFont("helvetica", "normal");
     doc.setFontSize(12);
     doc.rect(10, 30, 190, 110);
@@ -174,27 +184,15 @@ const FormularioComprobante = () => {
     posY += 10;
     doc.text("Detalle de Descuentos:", 20, posY);
     posY += 10;
-    doc.text(
-      `Descuento por número de personas: -$${descuentoPersonasAmount.toFixed(2)}`,
-      20,
-      posY
-    );
+    doc.text(`Descuento por número de personas: -$${descuentoPersonasAmount.toFixed(2)}`, 20, posY);
     posY += 10;
-    doc.text(
-      `Descuento por cliente frecuente: -$${descuentoFrecuenciaAmount.toFixed(2)}`,
-      20,
-      posY
-    );
+    doc.text(`Descuento por cliente frecuente: -$${descuentoFrecuenciaAmount.toFixed(2)}`, 20, posY);
     posY += 10;
-    doc.text(
-      `Descuento por cumpleaños: -$${descuentoCumpleAmount.toFixed(2)}`,
-      20,
-      posY
-    );
+    doc.text(`Descuento por cumpleaños: -$${descuentoCumpleAmount.toFixed(2)}`, 20, posY);
     posY += 10;
     doc.text(`Total Descuento: -$${totalDescuentoAmount.toFixed(2)}`, 20, posY);
 
-    // Sección de correos de participantes
+    // Correos de participantes
     posY += 20;
     doc.rect(10, posY, 190, 40);
     doc.text("Correos de Participantes:", 20, posY + 10);
@@ -207,11 +205,10 @@ const FormularioComprobante = () => {
     return blob;
   };
 
-  // Handler para enviar el comprobante al backend
+  // Handler para enviar comprobante
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Iniciando envío del comprobante...");
-
     const pdfBlob = generarPDFBlob();
     console.log("PDF Blob obtenido:", pdfBlob);
 
@@ -239,6 +236,7 @@ const FormularioComprobante = () => {
     }
   };
 
+  // Mientras no se cargue la reserva, mostramos un loader
   if (!reserva) {
     return <div>Cargando datos de la reserva...</div>;
   }
@@ -247,7 +245,7 @@ const FormularioComprobante = () => {
     <div className="container mt-4">
       <h2>Crear Comprobante de Pago</h2>
       <form onSubmit={handleSubmit}>
-        {/* Mostrar datos de la reserva/comprobante */}
+        {/* Datos del Comprobante */}
         <div className="mb-3">
           <label>ID Reserva</label>
           <input type="text" className="form-control" value={comprobanteData.idReserva} readOnly />
@@ -289,26 +287,26 @@ const FormularioComprobante = () => {
         </div>
         <div className="mb-3">
           <label>Precio Final (con IVA)</label>
-          <input
-            type="number"
-            className="form-control"
-            value={comprobanteData.totalConIva.toFixed(2)}
-            readOnly
-          />
+          <input type="number" className="form-control" value={comprobanteData.totalConIva.toFixed(2)} readOnly />
         </div>
         <div className="mb-3">
           <label>Precio Final sin IVA</label>
           <input type="number" className="form-control" value={totalSinIva} readOnly />
         </div>
 
-        {/* Mostrar en pantalla el detalle de descuentos */}
         <h4>Descuentos Aplicados</h4>
-        <p>Descuento por número de personas: -$ {descuentoPersonasAmount.toFixed(2)}</p>
-        <p>Descuento por cliente frecuente: -$ {descuentoFrecuenciaAmount.toFixed(2)}</p>
-        <p>Descuento por cumpleaños: -$ {descuentoCumpleAmount.toFixed(2)}</p>
-        <p>Total Descuento: -$ {totalDescuentoAmount.toFixed(2)}</p>
+        <p>Descuento por número de personas: -${descuentoPersonasAmount.toFixed(2)}</p>
+        <p>Descuento por cliente frecuente: -${descuentoFrecuenciaAmount.toFixed(2)}</p>
+        <p>Descuento por cumpleaños: -${descuentoCumpleAmount.toFixed(2)}</p>
+        <p>Total Descuento: -${totalDescuentoAmount.toFixed(2)}</p>
 
-        {/* Campos editables para los correos de los participantes */}
+        {reserva.clienteResponsable && (
+          <div className="mb-3">
+            <h4>Reservas del Cliente</h4>
+            <ReservasCliente clienteId={reserva.clienteResponsable.idCliente} />
+          </div>
+        )}
+
         <h4>Correos de Participantes</h4>
         {correosClientes.map((correo, index) => (
           <div className="mb-3" key={index}>

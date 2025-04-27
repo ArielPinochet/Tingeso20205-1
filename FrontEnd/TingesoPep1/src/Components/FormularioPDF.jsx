@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { jsPDF } from "jspdf";
-import { obtenerReservas } from "../services/ReservaService"; // 🔹 Asegurar que tengas este servicio para obtener reservas
+import { obtenerReservas } from "../Services/ReservaService"; // 🔹 Asegurar que tengas este servicio para obtener reservas
 
 const FormularioPDF = () => {
     const [comprobante, setComprobante] = useState({ idReserva: "", texto: "" });

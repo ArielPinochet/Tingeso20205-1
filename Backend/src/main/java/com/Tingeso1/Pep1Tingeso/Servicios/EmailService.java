@@ -37,7 +37,7 @@ public class EmailService {
                 MimeMessage message = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message, true);
                 helper.setTo(email);
-                helper.setSubject("Comprobante de Pago - Tu Empresa");
+                helper.setSubject("Comprobante de Pago - RentKarts");
                 helper.setText("Adjunto encontrarás tu comprobante de pago.", true);
                 helper.addAttachment("Comprobante_Pago.pdf", new ByteArrayResource(pdfFile));
                 mailSender.send(message);

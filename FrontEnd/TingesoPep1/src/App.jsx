@@ -11,6 +11,7 @@ import ListaReservas from "./Components/ListaReservas";
 import FormularioReserva from "./Components/FormularioReserva";
 import FormularioPago from "./Components/FormularioPago";
 import Calendario from "./Components/Calendario";
+import VerReportes from "./Components/VerReportes";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -42,6 +43,9 @@ const App = () => {
                 <li className="nav-item">
                   <Link className="nav-link" to="/Calendario">Calendario</Link>
                 </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/VerReportes">Reportes</Link>
+                </li>
               </ul>
             </div>
           </div>
@@ -69,6 +73,7 @@ const App = () => {
 
             {/* Agregamos la ruta para el Calendario */}
             <Route path="/Calendario" element={<Calendario />} />
+            <Route path="/VerReportes" element={<VerReportes />} />
           </Routes>
         </div>
       </div>

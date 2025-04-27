@@ -3,9 +3,13 @@ package com.Tingeso1.Pep1Tingeso.Servicios;
 import com.Tingeso1.Pep1Tingeso.Entidades.EntidadHorarioReserva;
 import com.Tingeso1.Pep1Tingeso.Entidades.EntidadReservas;
 import com.Tingeso1.Pep1Tingeso.Entidades.EntidadDetalleReserva;
-import com.Tingeso1.Pep1Tingeso.Repositorios.RepositorioReserva;
-import com.Tingeso1.Pep1Tingeso.Repositorios.RepositorioHorarioReserva;
+import com.Tingeso1.Pep1Tingeso.Repositorios.ReporteTiempo;
+import com.Tingeso1.Pep1Tingeso.Repositorios.ReportePersonas;
+import com.Tingeso1.Pep1Tingeso.Repositorios.ReporteVueltas;
+import com.Tingeso1.Pep1Tingeso.Repositorios.*;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -57,4 +61,6 @@ public class ServicioReservas {
     public void eliminarPorId(Long id) {
         repositorioReserva.deleteById(id);
     }
+
+
 }

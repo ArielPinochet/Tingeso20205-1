@@ -10,7 +10,7 @@ const ListaReservas = () => {
     obtenerReservas()
       .then((response) => {
         const data = response.data;
-        // Convertir data a arreglo si no lo es
+        // Si data no es un arreglo, lo convertimos a arreglo.
         const reservasArray = Array.isArray(data) ? data : [data];
         setReservas(reservasArray);
       })
@@ -65,26 +65,41 @@ const ListaReservas = () => {
                   {reserva.clienteResponsable?.nombre}
                 </p>
                 <p>
-                  <strong>Precio Total Antes de descuentos:</strong> ${reserva.precioTotal}
+                  <strong>Precio Total Antes de descuentos:</strong> $
+                  {reserva.precioTotal}
                 </p>
-                <button
-                  className="btn btn-warning"
-                  onClick={() => navigate(`/editar-reserva/${reserva.idReserva}`)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="btn btn-danger ms-2"
-                  onClick={() => handleEliminar(reserva.idReserva)}
-                >
-                  Eliminar
-                </button>
-                <button
-                className="btn btn-success"
-                onClick={() => navigate(`/crear-comprobante/${reserva.idReserva}`)}
-                >
-                Proceder al Pago
-                </button>
+
+                {/* Si se detecta que la reserva ya fue pagada, no se muestran los botones */}
+                {reserva.comprobantePago ? (
+                  <div className="alert alert-secondary mt-2">
+                    Reserva Pagada
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      className="btn btn-warning"
+                      onClick={() =>
+                        navigate(`/editar-reserva/${reserva.idReserva}`)
+                      }
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn btn-danger ms-2"
+                      onClick={() => handleEliminar(reserva.idReserva)}
+                    >
+                      Eliminar
+                    </button>
+                    <button
+                      className="btn btn-success ms-2"
+                      onClick={() =>
+                        navigate(`/crear-comprobante/${reserva.idReserva}`)
+                      }
+                    >
+                      Proceder al Pago
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
