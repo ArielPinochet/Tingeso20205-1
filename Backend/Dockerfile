@@ -11,7 +11,7 @@ WORKDIR /app
 COPY target/Pep1Tingeso-0.0.1-SNAPSHOT.jar /app/Pep1Tingeso-0.0.1-SNAPSHOT.jar
 
 # Define el puerto de ejecución
-EXPOSE 8090
+EXPOSE 8080
 
 # Ejecuta la aplicación al iniciar el contenedor
 ENTRYPOINT ["java", "-jar", "/app/Pep1Tingeso-0.0.1-SNAPSHOT.jar"]
