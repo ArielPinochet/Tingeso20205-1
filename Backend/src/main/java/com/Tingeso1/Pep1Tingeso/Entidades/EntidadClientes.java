@@ -84,6 +84,13 @@ public class EntidadClientes {
         this.reservas = reservas;
     }
 
+    public EntidadClientes(Long idCliente, String nombre, String email, LocalDate fechaNacimiento) {
+        this.idCliente = idCliente;
+        this.nombre = nombre;
+        this.email = email;
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
     public EntidadClientes() {
     }
 }

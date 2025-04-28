@@ -256,7 +256,7 @@ const FormularioReserva = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Día Especial</label>
+          <label className="form-label">Día Especial (CUMPLEAÑOS DE ALGUNO?)</label>
           <select
             className="form-select"
             name="diaEspecial"

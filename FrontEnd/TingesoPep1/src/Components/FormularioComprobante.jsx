@@ -33,8 +33,12 @@ const FormularioComprobante = () => {
   const [descuentoCumpleAmount, setDescuentoCumpleAmount] = useState(0);
   const [totalDescuentoAmount, setTotalDescuentoAmount] = useState(0);
 
-  // Estado para los correos (para participantes)
+  // Estado para los correos (para participantes) y para sus errores
   const [correosClientes, setCorreosClientes] = useState([]);
+  const [emailErrors, setEmailErrors] = useState([]);
+
+  // Regex que valida que el correo tenga el formato básico sin espacios
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   useEffect(() => {
     // Primero, obtenemos la reserva por id
@@ -132,7 +136,9 @@ const FormularioComprobante = () => {
             });
             // Se guarda la reserva y se inicializan los correos según la cantidad
             setReserva(data);
-            setCorreosClientes(Array.from({ length: data.cantidadPersonas }, () => ""));
+            const initialCorreos = Array.from({ length: data.cantidadPersonas }, () => "");
+            setCorreosClientes(initialCorreos);
+            setEmailErrors(Array.from({ length: data.cantidadPersonas }, () => ""));
           })
           .catch((error) => {
             console.error("Error al obtener reservas (frecuencia):", error);
@@ -148,14 +154,26 @@ const FormularioComprobante = () => {
     return (comprobanteData.totalConIva / 1.19).toFixed(2);
   }, [comprobanteData.totalConIva]);
 
-  // Handler para actualizar correos de participantes
+  // Función para manejar el cambio de correo y validar el formato.
   const handleCorreoChange = (index, value) => {
-    const nuevosCorreos = [...correosClientes];
-    nuevosCorreos[index] = value;
-    setCorreosClientes(nuevosCorreos);
+    const trimmedValue = value.replace(/\s/g, "");
+    let errorMessage = "";
+    if (!emailRegex.test(trimmedValue)) {
+      errorMessage = "El correo es inválido. Ingrese un correo con el formato x@x.xx";
+    }
+    setEmailErrors((prevErrors) => {
+      const newErrors = [...prevErrors];
+      newErrors[index] = errorMessage;
+      return newErrors;
+    });
+    setCorreosClientes((prevCorreos) => {
+      const nuevosCorreos = [...prevCorreos];
+      nuevosCorreos[index] = trimmedValue;
+      return nuevosCorreos;
+    });
   };
 
-  // Función para generar el PDF
+  // Función para generar el PDF Blob
   const generarPDFBlob = () => {
     console.log("Generando PDF Blob...");
     const doc = new jsPDF();
@@ -313,11 +331,14 @@ const FormularioComprobante = () => {
             <label>Correo Participante {index + 1}</label>
             <input
               type="email"
-              className="form-control"
+              className={`form-control ${emailErrors[index] ? "is-invalid" : ""}`}
               value={correo}
               onChange={(e) => handleCorreoChange(index, e.target.value)}
               placeholder="Ingrese el correo"
             />
+            {emailErrors[index] && (
+              <div className="invalid-feedback">{emailErrors[index]}</div>
+            )}
           </div>
         ))}
 

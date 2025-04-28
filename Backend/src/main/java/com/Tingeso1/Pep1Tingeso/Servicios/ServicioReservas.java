@@ -1,18 +1,10 @@
 package com.Tingeso1.Pep1Tingeso.Servicios;
 
-import com.Tingeso1.Pep1Tingeso.Entidades.EntidadHorarioReserva;
 import com.Tingeso1.Pep1Tingeso.Entidades.EntidadReservas;
-import com.Tingeso1.Pep1Tingeso.Entidades.EntidadDetalleReserva;
-import com.Tingeso1.Pep1Tingeso.Repositorios.ReporteTiempo;
-import com.Tingeso1.Pep1Tingeso.Repositorios.ReportePersonas;
-import com.Tingeso1.Pep1Tingeso.Repositorios.ReporteVueltas;
 import com.Tingeso1.Pep1Tingeso.Repositorios.*;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,30 +12,12 @@ import java.util.Optional;
 public class ServicioReservas {
 
     private final RepositorioReserva repositorioReserva;
-    private final RepositorioHorarioReserva repositorioHorarioReserva;
 
 
 
-    public EntidadReservas guardarReservaConDetalles(EntidadReservas reserva, List<EntidadDetalleReserva> detalles) {
-        reserva.setDetallesReserva(detalles);
-        return repositorioReserva.save(reserva);
-    }
-
-    public boolean validarDisponibilidadHorario(LocalDate fecha, LocalTime horaInicio, int duracion) {
-        List<EntidadHorarioReserva> ocupados = repositorioHorarioReserva.findByFecha(fecha);
-
-        for (EntidadHorarioReserva bloque : ocupados) {
-            if (horaInicio.isBefore(bloque.getHoraFin()) && bloque.getEstado().equals("RESERVADO")) {
-                return false; // Horario ya está ocupado
-            }
-        }
-        return true;
-    }
-
-
-    public ServicioReservas(RepositorioReserva repositorioReserva, RepositorioHorarioReserva repositorioHorarioReserva) {
+    public ServicioReservas(RepositorioReserva repositorioReserva) {
         this.repositorioReserva = repositorioReserva;
-        this.repositorioHorarioReserva = repositorioHorarioReserva;
+
     }
 
     public EntidadReservas guardarReserva(EntidadReservas reserva) {

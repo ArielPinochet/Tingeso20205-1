@@ -1,0 +1,11 @@
+# Usa una imagen base de Nginx para servir el frontend
+FROM nginx:latest
+
+# Copia los archivos generados del frontend al contenedor
+COPY dist /usr/share/nginx/html
+
+# Expone el puerto 80 para servir la aplicación
+EXPOSE 80
+
+# Inicia Nginx al levantar el contenedor
+CMD ["nginx", "-g", "daemon off;"]

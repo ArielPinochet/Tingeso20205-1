@@ -64,6 +64,13 @@ public class EntidadCarros {
         this.estado = estado;
         this.reservas = reservas;
     }
+
+    public EntidadCarros(String codigoCarros, String modelo, String estado) {
+        this.codigoCarros = codigoCarros;
+        this.modelo = modelo;
+        this.estado = estado;
+    }
+
     public EntidadCarros() {}
 
     @Override

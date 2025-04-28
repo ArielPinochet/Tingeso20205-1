@@ -67,17 +67,7 @@ public class EmailService {
                 .append("Número de Vueltas: ").append(reserva.getNumeroVueltas()).append("\n")
                 .append("Cantidad de Personas: ").append(reserva.getCantidadPersonas()).append("\n");
 
-        // Si se han asignado karts, agregarlos al mensaje
-        if (reserva.getCarros() != null && !reserva.getCarros().isEmpty()) {
-            textBuilder.append("\nKarts arrendados:\n");
-            reserva.getCarros().forEach(carro -> {
-                textBuilder.append(" - ")
-                        .append(carro.getCodigoCarros())
-                        .append(" (")
-                        .append(carro.getModelo())
-                        .append(")\n");
-            });
-        }
+
 
         textBuilder.append("\nMuchas gracias por confiar en nuestro servicio.\nSaludos cordiales.");
 

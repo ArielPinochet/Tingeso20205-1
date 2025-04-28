@@ -40,27 +40,29 @@ public interface RepositorioReserva extends JpaRepository<EntidadReservas, Long>
             "ORDER BY categoria", nativeQuery = true)
     List<ReportePersonas> findIngresosPorPersonas();
 
-    // Reporte de Vueltas filtrado por mes
     @Query(value = "SELECT to_char(r.fecha_reserva, 'YYYY-MM') as mes, " +
-            "SUM(r.numero_vueltas) as numeroVueltas, " +
+            "r.numero_vueltas as numeroVueltas, " +
             "SUM(r.precio_total) as ingresos " +
             "FROM \"reservas\" r " +
             "WHERE r.fecha_reserva BETWEEN :startDate AND :endDate " +
-            "GROUP BY mes " +
-            "ORDER BY mes", nativeQuery = true)
+            "GROUP BY to_char(r.fecha_reserva, 'YYYY-MM'), r.numero_vueltas " +
+            "ORDER BY to_char(r.fecha_reserva, 'YYYY-MM'), r.numero_vueltas", nativeQuery = true)
     List<ReporteVueltas> findIngresosPorVueltasMes(@Param("startDate") LocalDate startDate,
                                                    @Param("endDate") LocalDate endDate);
 
-    // Reporte de Tiempo filtrado por mes
+
+
     @Query(value = "SELECT to_char(r.fecha_reserva, 'YYYY-MM') as mes, " +
-            "SUM(r.duracion_total) as duracionTotal, " +
+            "r.duracion_total as duracionTotal, " +
             "SUM(r.precio_total) as ingresos " +
             "FROM \"reservas\" r " +
             "WHERE r.fecha_reserva BETWEEN :startDate AND :endDate " +
-            "GROUP BY mes " +
-            "ORDER BY mes", nativeQuery = true)
+            "GROUP BY to_char(r.fecha_reserva, 'YYYY-MM'), r.duracion_total " +
+            "ORDER BY to_char(r.fecha_reserva, 'YYYY-MM'), r.duracion_total", nativeQuery = true)
     List<ReporteTiempo> findIngresosPorTiempoMes(@Param("startDate") LocalDate startDate,
                                                  @Param("endDate") LocalDate endDate);
+
+
 
     // Reporte de Personas filtrado por mes, con desagregación por categorías
     @Query(value = "SELECT to_char(r.fecha_reserva, 'YYYY-MM') as mes, " +

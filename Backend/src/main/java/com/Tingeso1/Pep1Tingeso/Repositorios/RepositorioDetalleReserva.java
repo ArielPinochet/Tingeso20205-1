@@ -1,9 +1,0 @@
-package com.Tingeso1.Pep1Tingeso.Repositorios;
-
-import com.Tingeso1.Pep1Tingeso.Entidades.EntidadDetalleReserva;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface RepositorioDetalleReserva extends JpaRepository<EntidadDetalleReserva, Long> {
-}
