@@ -1,7 +1,7 @@
 
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/clientes"; // URL de tu backend
+const API_URL = "http://localhost:8090/clientes"; // URL de tu backend
 
 const obtenerClientes = () => axios.get(API_URL);
 const obtenerClientePorId = (id) => axios.get(`${API_URL}/${id}`);

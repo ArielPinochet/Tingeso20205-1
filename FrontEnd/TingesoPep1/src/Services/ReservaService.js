@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/reservas";
+const API_URL = "http://localhost:8090/reservas";
 
 const obtenerReservas = () => axios.get(API_URL);
 const obtenerReservaPorId = (id) => axios.get(`${API_URL}/${id}`);

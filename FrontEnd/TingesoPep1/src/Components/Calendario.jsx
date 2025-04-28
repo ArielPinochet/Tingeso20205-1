@@ -11,7 +11,7 @@ const Calendario = () => {
   useEffect(() => {
     console.log("Iniciando solicitud al backend...");
     
-    axios.get("http://localhost:8080/reservas")
+    axios.get("http://localhost:8090/reservas")
       .then((response) => {
         console.log("Respuesta completa del backend:", response);
         console.log("Datos en response.data:", response.data);
