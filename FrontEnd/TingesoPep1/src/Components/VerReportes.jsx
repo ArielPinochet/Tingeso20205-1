@@ -35,7 +35,7 @@ const VerReportes = () => {
 
     axios
       .get(
-        `http://localhost:8080/reservas/${endpointMap[selectedReport]}?start=${startMonth}&end=${endMonth}`
+        `http://localhost:8090/reservas/${endpointMap[selectedReport]}?start=${startMonth}&end=${endMonth}`
       )
       .then((response) => {
         console.log(`Datos para ${selectedReport}:`, response.data);

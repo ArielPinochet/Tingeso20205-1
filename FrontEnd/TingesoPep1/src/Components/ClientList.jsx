@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { obtenerClientes, eliminarCliente } from "../services/ClientService";
+import { obtenerClientes, eliminarCliente } from "../Services/ClientService";
 import { Link } from "react-router-dom";
 
 const ListaClientes = () => {
