@@ -50,7 +50,6 @@ const FormularioCarro = () => {
         <div className="container mt-4">
             <h2>{id ? "Editar Carro" : "Agregar Carro"}</h2>
             <form onSubmit={handleSubmit}>
-                {/* 🔹 Código solo seleccionable si el carro no existe */}
                 {!id && (
                     <div className="mb-3">
                         <label className="form-label">Código del Carro</label>
@@ -62,12 +61,11 @@ const FormularioCarro = () => {
                         </select>
                     </div>
                 )}
-                {/* 🔹 Modelo siempre fijo */}
                 <div className="mb-3">
                     <label className="form-label">Modelo</label>
                     <input type="text" className="form-control" name="modelo" value={carro.modelo} readOnly />
                 </div>
-                {/* 🔹 Estado modificable */}
+
                 <div className="mb-3">
                     <label className="form-label">Estado</label>
                     <select className="form-select" name="estado" value={carro.estado} onChange={handleChange} required>

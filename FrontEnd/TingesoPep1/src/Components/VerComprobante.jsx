@@ -27,7 +27,7 @@ const VerComprobante = () => {
             <p><strong>Fecha de Emisión:</strong> {comprobante.fechaEmision}</p>
             <p><strong>Total con IVA:</strong> ${comprobante.totalConIva}</p>
 
-            {/* 🔹 Mostrar PDF si existe */}
+
             {comprobante.archivoPdf && (
                 <iframe src={comprobante.archivoPdf} width="100%" height="600px" />
             )}

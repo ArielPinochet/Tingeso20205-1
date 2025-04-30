@@ -30,13 +30,13 @@ const ListaComprobantes = () => {
                                 <p className="card-text"><strong>Fecha:</strong> {comprobante.fechaEmision}</p>
                                 <p className="card-text"><strong>Total con IVA:</strong> ${comprobante.totalConIva}</p>
                                 
-                                {/* 🔹 Botón para ver comprobante */}
+
                                 <Link to={`/ver-comprobante/${comprobante.idComprobante}`} className="btn btn-info">Ver</Link>
                                 
-                                {/* 🔹 Botón para editar comprobante */}
+
                                 <Link to={`/editar-comprobante/${comprobante.idComprobante}`} className="btn btn-warning ms-2">Editar</Link>
                                 
-                                {/* 🔹 Botón para eliminar comprobante */}
+
                                 <button className="btn btn-danger ms-2" onClick={() => handleEliminar(comprobante.idComprobante)}>Eliminar</button>
                             </div>
                         </div>

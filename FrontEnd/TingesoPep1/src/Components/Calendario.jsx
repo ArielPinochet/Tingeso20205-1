@@ -17,7 +17,9 @@ const Calendario = () => {
     console.log("Iniciando solicitud al backend...");
     
     axios.get(RESERVA_URL)
+    
       .then((response) => {
+        console.log("URL desde .env:", process.env.REACT_APP_API_URL);
         console.log("Respuesta completa del backend:", response);
         console.log("Datos en response.data:", response.data);
 
@@ -38,7 +40,7 @@ const Calendario = () => {
           
           const startDate = new Date(
             Number(startDateParts[0]),  // Año
-            Number(startDateParts[1]) - 1,  // Mes (JS usa 0-indexado)
+            Number(startDateParts[1]) - 1,  // Mes 
             Number(startDateParts[2]) - 1,  // Día
             Number(timeParts[0]),  // Hora
             Number(timeParts[1])   // Minutos
@@ -87,7 +89,7 @@ const Calendario = () => {
         allDaySlot={false}
         slotMinTime="05:00:00"
         slotMaxTime="23:00:00"
-        events={reservas} // 📌 Usa las reservas obtenidas del backend
+        events={reservas} 
         height="auto"
       />
     </div>
