@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*") // acepta todos los orígenes solo en este controlador
+
 public class ControladorPago {
     private final ServicioComprobantePago servicioComprobantePago;
 
