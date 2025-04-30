@@ -6,13 +6,11 @@ import com.Tingeso1.Pep1Tingeso.Servicios.EmailService;
 import com.Tingeso1.Pep1Tingeso.Servicios.ServicioComprobantePago;
 import com.Tingeso1.Pep1Tingeso.Servicios.ServicioReservas;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*") // acepta todos los orígenes solo en este controlador
 public class ControladorPago {
     private final ServicioComprobantePago servicioComprobantePago;
 

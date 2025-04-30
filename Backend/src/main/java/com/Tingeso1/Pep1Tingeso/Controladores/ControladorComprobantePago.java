@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/comprobante-pago")
+@CrossOrigin(origins = "*") // acepta todos los orígenes solo en este controlador
 public class ControladorComprobantePago {
 
     private final ServicioComprobantePago servicioComprobantePago;

@@ -20,6 +20,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/reservas")
+@CrossOrigin(origins = "*") // acepta todos los orígenes solo en este controlador
 public class ControladorReservas {
 
     private final ServicioReservas servicioReservas;

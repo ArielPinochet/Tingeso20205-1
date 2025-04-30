@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/Carros")
+@CrossOrigin(origins = "*") // acepta todos los orígenes solo en este controlador
 public class ControladorCarros {
 
     private final ServicioCarros servicioCarros;
