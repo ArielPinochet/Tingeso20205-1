@@ -9,10 +9,6 @@ services:
       - "8090:8090"
     volumes:
       - ./nginx/backend.conf:/etc/nginx/nginx.conf
-    depends_on:
-      - backend1
-      - backend2
-      - backend3
 
   frontend-load-balancer:
     image: nginx:latest
@@ -21,17 +17,11 @@ services:
       - "80:80"
     volumes:
       - ./nginx/frontend.conf:/etc/nginx/nginx.conf
-    depends_on:
-      - frontend1
-      - frontend2
-      - frontend3
 
   backend1:
     build:
       context: ./Backend
       dockerfile: Dockerfile
-    depends_on:
-      - database
     environment:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres-db:5432/Pep1Tingeso"
       SPRING_DATASOURCE_USERNAME: "postgres"
@@ -41,8 +31,6 @@ services:
     build:
       context: ./Backend
       dockerfile: Dockerfile
-    depends_on:
-      - database
     environment:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres-db:5432/Pep1Tingeso"
       SPRING_DATASOURCE_USERNAME: "postgres"
@@ -52,33 +40,25 @@ services:
     build:
       context: ./Backend
       dockerfile: Dockerfile
-    depends_on:
-      - database
     environment:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres-db:5432/Pep1Tingeso"
       SPRING_DATASOURCE_USERNAME: "postgres"
       SPRING_DATASOURCE_PASSWORD: "1253"
-      
+
   frontend1:
     build:
       context: ./FrontEnd/TingesoPep1
       dockerfile: Dockerfile
-    depends_on:
-      - backend-load-balancer
 
   frontend2:
     build:
       context: ./FrontEnd/TingesoPep1
       dockerfile: Dockerfile
-    depends_on:
-      - backend-load-balancer
 
   frontend3:
     build:
       context: ./FrontEnd/TingesoPep1
       dockerfile: Dockerfile
-    depends_on:
-      - backend-load-balancer
 
 volumes:
   postgres_data:
