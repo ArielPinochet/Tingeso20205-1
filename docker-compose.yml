@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  app_network:
+    driver: bridge
+
 services:
 
   backend-load-balancer:
@@ -9,6 +13,12 @@ services:
       - "8090:8090"
     volumes:
       - ./nginx/backend.conf:/etc/nginx/nginx.conf
+    networks:
+      - app_network
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
 
   frontend-load-balancer:
     image: nginx:latest
@@ -17,48 +27,90 @@ services:
       - "80:80"
     volumes:
       - ./nginx/frontend.conf:/etc/nginx/nginx.conf
+    networks:
+      - app_network
+    depends_on:
+      - frontend1
+      - frontend2
+      - frontend3
 
   backend1:
+    container_name: backend1
     build:
       context: ./Backend
       dockerfile: Dockerfile
+    ports:
+      - "8091:8090"
     environment:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres-db:5432/Pep1Tingeso"
       SPRING_DATASOURCE_USERNAME: "postgres"
       SPRING_DATASOURCE_PASSWORD: "1253"
+    networks:
+      - app_network
 
   backend2:
+    container_name: backend2
     build:
       context: ./Backend
       dockerfile: Dockerfile
+    ports:
+      - "8092:8090"
     environment:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres-db:5432/Pep1Tingeso"
       SPRING_DATASOURCE_USERNAME: "postgres"
       SPRING_DATASOURCE_PASSWORD: "1253"
+    networks:
+      - app_network
 
   backend3:
+    container_name: backend3
     build:
       context: ./Backend
       dockerfile: Dockerfile
+    ports:
+      - "8093:8090"
     environment:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres-db:5432/Pep1Tingeso"
       SPRING_DATASOURCE_USERNAME: "postgres"
       SPRING_DATASOURCE_PASSWORD: "1253"
+    networks:
+      - app_network
 
   frontend1:
+    container_name: frontend1
     build:
       context: ./FrontEnd/TingesoPep1
       dockerfile: Dockerfile
+    networks:
+      - app_network
 
   frontend2:
+    container_name: frontend2
     build:
       context: ./FrontEnd/TingesoPep1
       dockerfile: Dockerfile
+    networks:
+      - app_network
 
   frontend3:
+    container_name: frontend3
     build:
       context: ./FrontEnd/TingesoPep1
       dockerfile: Dockerfile
+    networks:
+      - app_network
+
+  postgres-db:
+    image: postgres:latest
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: Pep1Tingeso
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1253
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
 
 volumes:
   postgres_data:
