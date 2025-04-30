@@ -67,7 +67,6 @@ public class ControladorReservas {
             return ResponseEntity.badRequest().body(null); // 🔹 Si el cliente no existe, rechaza la solicitud
         }
 
-        // ✅ Ya no es necesario buscar los carros en la BD, pues llegan como objetos completos
         reserva.setClienteResponsable(cliente.get());
         reserva.setCarros(reserva.getCarros()); // 🔹 Guarda directamente los objetos recibidos
 

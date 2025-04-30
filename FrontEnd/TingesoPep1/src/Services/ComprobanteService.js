@@ -6,7 +6,7 @@ const API_URL = "http://localhost:8090/comprobante-pago";
 const obtenerComprobantes = () => axios.get(API_URL);
 const obtenerComprobantePorId = (id) => axios.get(`${API_URL}/${id}`);
 export const crearComprobante = async (formData) => {
-    const response = await fetch(COMPROBANTE_URL, {
+    const response = await fetch(API_URL, {
       method: "POST",
       body: formData,
     });
