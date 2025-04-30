@@ -1,7 +1,7 @@
 
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8090";
+const API_URL = "http://44.248.48.66:8090";
 
 
 const CLIENTES_URL = `${API_URL}/clientes`;

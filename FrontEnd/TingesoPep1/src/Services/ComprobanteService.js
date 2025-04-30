@@ -1,9 +1,6 @@
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8090";
-
-
-const COMPROBANTE_URL = `${API_URL}/comprobante-pago`;
+const API_URL = "http://44.248.48.66:8090";
 
 
 const obtenerComprobantes = () => axios.get(API_URL);
