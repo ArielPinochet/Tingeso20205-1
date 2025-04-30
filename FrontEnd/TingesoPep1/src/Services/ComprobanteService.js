@@ -1,11 +1,15 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8090/comprobante-pago";
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8090";
+
+
+const COMPROBANTE_URL = `${API_URL}/comprobante-pago`;
+
 
 const obtenerComprobantes = () => axios.get(API_URL);
 const obtenerComprobantePorId = (id) => axios.get(`${API_URL}/${id}`);
 export const crearComprobante = async (formData) => {
-    const response = await fetch("http://localhost:8090/comprobante-pago", {
+    const response = await fetch(COMPROBANTE_URL, {
       method: "POST",
       body: formData,
     });

@@ -33,9 +33,10 @@ const VerReportes = () => {
       personas: "personas/mes"
     };
 
+    const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8090";
     axios
       .get(
-        `http://localhost:8090/reservas/${endpointMap[selectedReport]}?start=${startMonth}&end=${endMonth}`
+        `${API_URL}/reservas/${endpointMap[selectedReport]}?start=${startMonth}&end=${endMonth}`
       )
       .then((response) => {
         console.log(`Datos para ${selectedReport}:`, response.data);

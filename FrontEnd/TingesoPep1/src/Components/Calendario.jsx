@@ -5,13 +5,18 @@ import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es'; 
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8090";
+
+const RESERVA_URL = `${API_URL}/reservas`;
+
+
 const Calendario = () => {
   const [reservas, setReservas] = useState([]);
 
   useEffect(() => {
     console.log("Iniciando solicitud al backend...");
     
-    axios.get("http://localhost:8090/reservas")
+    axios.get(RESERVA_URL)
       .then((response) => {
         console.log("Respuesta completa del backend:", response);
         console.log("Datos en response.data:", response.data);
