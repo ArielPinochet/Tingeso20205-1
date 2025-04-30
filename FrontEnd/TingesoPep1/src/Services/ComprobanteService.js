@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://backend-lb:8090/comprobante-pago";
+const API_URL = "http://localhost:8090/comprobante-pago";
 
 
 const obtenerComprobantes = () => axios.get(API_URL);
