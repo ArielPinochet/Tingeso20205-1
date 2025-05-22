@@ -18,7 +18,7 @@ public class EntidadClientes {
     private Long idCliente;
 
     private String nombre;
-    private String email;
+        private String email;
     private LocalDate fechaNacimiento;
 
     @Transient // Calculado en runtime
