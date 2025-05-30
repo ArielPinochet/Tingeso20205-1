@@ -10,9 +10,11 @@ public class TarifaEspecialEntity {
     private Long idTarifaEspecial;
 
     private boolean diaEspecial; // True si es feriado o día especial
-    private boolean finDeSemana; // True si es sábado o domingo
+    private boolean finDeSemanaFestivo; // True si es sábado o domingo
 
     private double porcentajeDescuento; // Descuento aplicado
+
+    private Long idReserva; // Referencia a la reserva asociada
 
     public Long getIdTarifaEspecial() {
         return idTarifaEspecial;
@@ -30,12 +32,12 @@ public class TarifaEspecialEntity {
         this.diaEspecial = diaEspecial;
     }
 
-    public boolean isFinDeSemana() {
-        return finDeSemana;
+    public boolean isFinDeSemanaFestivo() {
+        return finDeSemanaFestivo;
     }
 
-    public void setFinDeSemana(boolean finDeSemana) {
-        this.finDeSemana = finDeSemana;
+    public void setFinDeSemanaFestivo(boolean finDeSemanaFestivo) {
+        this.finDeSemanaFestivo = finDeSemanaFestivo;
     }
 
     public double getPorcentajeDescuento() {
@@ -44,6 +46,13 @@ public class TarifaEspecialEntity {
 
     public void setPorcentajeDescuento(double porcentajeDescuento) {
         this.porcentajeDescuento = porcentajeDescuento;
+    }
+
+    public Long getIdReserva() {
+        return idReserva;
+    }
+    public void setIdReserva(Long idReserva) {
+        this.idReserva = idReserva;
     }
 
 }

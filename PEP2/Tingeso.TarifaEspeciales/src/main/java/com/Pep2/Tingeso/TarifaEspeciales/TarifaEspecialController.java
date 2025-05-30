@@ -2,6 +2,7 @@ package com.Pep2.Tingeso.TarifaEspeciales;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -14,14 +15,22 @@ public class TarifaEspecialController {
         this.tarifaEspecialService = tarifaEspecialService;
     }
 
-    @GetMapping("/{diaEspecial}/{finDeSemana}")
-    public Optional<TarifaEspecialEntity> obtenerPorEstado(@PathVariable boolean diaEspecial, @PathVariable boolean finDeSemana) {
-        return tarifaEspecialService.obtenerTarifaEspecial(diaEspecial, finDeSemana);
+
+    @GetMapping("/{IdReserva}")
+    public TarifaEspecialEntity obtenerPorReserva(@PathVariable Long IdReserva) {
+        return tarifaEspecialService.obtenerTarifaEspecialPorIdReserva(IdReserva);
     }
 
+
+
     @PostMapping("/")
-    public TarifaEspecialEntity crearTarifaEspecial(@RequestBody TarifaEspecialEntity tarifaEspecial) {
-        return tarifaEspecialService.guardarTarifaEspecial(tarifaEspecial);
+    public TarifaEspecialEntity crearTarifaEspecial(@RequestParam LocalDate fecha, @RequestParam double porcentajeDescuento, @RequestParam Long IdReserva) {
+        return tarifaEspecialService.crearTarifaEspecial(fecha, porcentajeDescuento, IdReserva);
+    }
+
+    @GetMapping("/es-feriado/{fecha}")
+    public boolean verificarFeriado(@PathVariable LocalDate fecha) {
+        return tarifaEspecialService.esFeriado(fecha);
     }
 }
 

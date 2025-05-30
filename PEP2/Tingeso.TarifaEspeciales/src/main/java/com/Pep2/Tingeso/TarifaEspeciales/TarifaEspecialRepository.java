@@ -7,5 +7,5 @@ import java.util.Optional;
 
 @Repository
 public interface TarifaEspecialRepository extends JpaRepository<TarifaEspecialEntity, Long> {
-    Optional<TarifaEspecialEntity> findByDiaEspecialAndFinDeSemana(boolean diaEspecial, boolean finDeSemana);
+    Optional<TarifaEspecialEntity> findByIdReserva(Long idReserva);
 }
