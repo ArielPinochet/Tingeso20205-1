@@ -5,5 +5,7 @@ spring:
   cloud:
     config:
       server:
-        native:
-          search-locations: file://./config-data/
+        git:
+          uri: https://github.com/ArielPinochet/Tingeso20205-1
+          default-label: main
+          search-paths: PEP2/config-data
