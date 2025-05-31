@@ -21,4 +21,4 @@ spring:
         - id: tarifa-especial-service
           uri: lb://tarifa-especial-service
           predicates:
-            - Path=/api/tarifas-especiales/**
+            - Path=/tarifas-especiales/**
