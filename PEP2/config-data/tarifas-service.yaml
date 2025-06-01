@@ -1,18 +1,12 @@
 server:
-  port: ${PORT:${SERVER_PORT:8086}}
+  port: 8087
 
 spring:
   application:
-    name: tarifa-especial-service
-  cloud:
-    config:
-      uri: http://localhost:8081
-      enabled: true
-  config:
-    import: "optional:configserver:"
+    name: tarifas-service
 
   datasource:
-    url: jdbc:postgresql://${BD_HOST:localhost}:${BD_PORT:5432}/TingesoTarifaEspecial
+    url: jdbc:postgresql://${BD_HOST:localhost}:${BD_PORT:5432}/TingesoTarifas
     username: ${BD_USER}
     password: ${BD_PASS}
     driver-class-name: org.postgresql.Driver
@@ -32,6 +26,3 @@ eureka:
   instance:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}
-
-spring.main.web-application-type: reactive
-spring.cloud.compatibility-verifier.enabled: false

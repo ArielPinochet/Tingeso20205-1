@@ -14,6 +14,7 @@ public class TarifaEntity {
     private double precio;
     private int duracionMaxima; // Minutos permitidos en pista
     private int duracionTotal; // Minutos incluyendo preparación
+    private Long Idreserva; //Reserva asociada
 
     public Long getIdTarifa() {
         return idTarifa;
@@ -55,12 +56,21 @@ public class TarifaEntity {
         this.duracionTotal = duracionTotal;
     }
 
-    public TarifaEntity(Long idTarifa, int numeroVueltas, double precio, int duracionMaxima, int duracionTotal) {
+    public Long getIdreserva() {
+        return Idreserva;
+    }
+    public void setIdreserva(Long Idreserva) {
+        this.Idreserva = Idreserva;
+    }
+
+
+    public TarifaEntity(Long idTarifa, int numeroVueltas, double precio, int duracionMaxima, int duracionTotal, Long Idreserva) {
         this.idTarifa = idTarifa;
         this.numeroVueltas = numeroVueltas;
         this.precio = precio;
         this.duracionMaxima = duracionMaxima;
         this.duracionTotal = duracionTotal;
+        this.Idreserva = Idreserva;
     }
     public TarifaEntity() {}
 
