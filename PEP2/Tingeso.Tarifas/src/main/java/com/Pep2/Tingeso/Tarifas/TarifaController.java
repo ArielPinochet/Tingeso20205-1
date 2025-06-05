@@ -26,18 +26,33 @@ public class TarifaController {
         return tarifaService.obtenerTarifaPorVueltas(numeroVueltas);
     }
 
+
+    @GetMapping("/{idReserva}")
+    public TarifaEntity obtenerPorIdReserva(@PathVariable Long idReserva) {
+        return tarifaService.obtenerTarifaPorIdReserva(idReserva);
+    }
+
     @PostMapping("/")
-    public ResponseEntity<?> crearTarifa(@RequestParam int numeroVueltas, @RequestParam Long IdReserva) {
-        System.out.println("Se creara nueva reserva con id: " + IdReserva);
-        if (tarifaService.existeReserva(IdReserva)) {
-            System.out.println("Reserva ya existe");
+    public ResponseEntity<?> crearTarifa(@RequestParam int numeroVueltas, @RequestParam Long idReserva) {
+        System.out.println("Intentando crear nueva tarifa con ID de reserva: " + idReserva);
+
+        if (tarifaService.existeReserva(idReserva)) {
+            System.out.println(" Reserva ya existe: " + idReserva);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Error: La reserva con ID " + IdReserva + " ya existe.");
+                    .body("Error: La reserva con ID " + idReserva + " ya existe.");
         }
 
-        TarifaEntity nuevaTarifa = tarifaService.crearTarifa(
-                numeroVueltas, IdReserva
-        );
+        // Validar número de vueltas
+        if (numeroVueltas != 10 && numeroVueltas != 15 && numeroVueltas != 20) {
+            System.out.println(" Número de vueltas inválido: " + numeroVueltas);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Error: Número de vueltas inválido. Solo se permiten 10, 15 o 20.");
+        }
+
+        TarifaEntity nuevaTarifa = tarifaService.crearTarifa(numeroVueltas, idReserva);
+        System.out.println(" Tarifa creada exitosamente para reserva ID: " + idReserva);
+
         return ResponseEntity.ok(nuevaTarifa);
     }
+
 }

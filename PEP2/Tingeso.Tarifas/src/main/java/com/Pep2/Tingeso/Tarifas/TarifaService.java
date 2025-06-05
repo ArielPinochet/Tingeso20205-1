@@ -23,16 +23,16 @@ public class TarifaService {
     }
 
     public boolean existeReserva(Long idReserva) {
-        return tarifaRepository.existsByIdreserva(idReserva);
+        return tarifaRepository.existsByIdReserva(idReserva);
     }
 
     public TarifaEntity crearTarifa(int numeroVueltas, Long idReserva) {
-        if (tarifaRepository.existsByIdreserva(idReserva)) {
+        if (tarifaRepository.existsByIdReserva(idReserva)) {
             throw new IllegalStateException("Error: La reserva con ID " + idReserva + " ya existe.");
         }
 
         TarifaEntity tarifa = new TarifaEntity();
-        tarifa.setIdreserva(idReserva);
+        tarifa.setidReserva(idReserva);
         tarifa.setNumeroVueltas(numeroVueltas);
 
         // Asignar precio y duración según la cantidad de vueltas
@@ -55,4 +55,7 @@ public class TarifaService {
         return tarifaRepository.save(tarifa);
     }
 
+    public TarifaEntity obtenerTarifaPorIdReserva(Long IdReserva) {
+        return tarifaRepository.findByidReserva(IdReserva).orElse(null);
+    }
 }

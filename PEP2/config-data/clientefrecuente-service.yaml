@@ -1,0 +1,37 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: clientefrecuente-service
+  cloud:
+    config:
+      uri: http://localhost:8081
+      enabled: true
+  config:
+    import: "optional:configserver:"
+
+  datasource:
+    url: jdbc:postgresql://${BD_HOST:localhost}:${BD_PORT:5432}/TingesoClientes
+    username: ${BD_USER}
+    password: ${BD_PASS}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      default-zone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+spring.main.web-application-type: reactive
+spring.cloud.compatibility-verifier.enabled: false

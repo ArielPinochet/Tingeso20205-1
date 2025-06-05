@@ -14,14 +14,8 @@ public class EntidadCliente {
     private String email;
     private int cantidadReservas;
     private double descuentoFrecuente;
-    private LocalDate fechaUltimaReserva;
 
-    @Enumerated(EnumType.STRING)
-    private CategoriaFrecuencia categoriaFrecuencia;
 
-    public enum CategoriaFrecuencia {
-        MUY_FRECUENTE, FRECUENTE, REGULAR, NO_FRECUENTE
-    }
 
     public Long getIdCliente() {
         return idCliente;
@@ -63,30 +57,13 @@ public class EntidadCliente {
         this.descuentoFrecuente = descuentoFrecuente;
     }
 
-    public LocalDate getFechaUltimaReserva() {
-        return fechaUltimaReserva;
-    }
-
-    public void setFechaUltimaReserva(LocalDate fechaUltimaReserva) {
-        this.fechaUltimaReserva = fechaUltimaReserva;
-    }
-
-    public CategoriaFrecuencia getCategoriaFrecuencia() {
-        return categoriaFrecuencia;
-    }
-
-    public void setCategoriaFrecuencia(CategoriaFrecuencia categoriaFrecuencia) {
-        this.categoriaFrecuencia = categoriaFrecuencia;
-    }
-
-    public EntidadCliente(Long idCliente, String nombre, String email, int cantidadReservas, double descuentoFrecuente, LocalDate fechaUltimaReserva, CategoriaFrecuencia categoriaFrecuencia) {
+    public EntidadCliente(Long idCliente, String nombre, String email, int cantidadReservas, double descuentoFrecuente) {
         this.idCliente = idCliente;
         this.nombre = nombre;
         this.email = email;
         this.cantidadReservas = cantidadReservas;
         this.descuentoFrecuente = descuentoFrecuente;
-        this.fechaUltimaReserva = fechaUltimaReserva;
-        this.categoriaFrecuencia = categoriaFrecuencia;
+
     }
 
     public EntidadCliente() {}
