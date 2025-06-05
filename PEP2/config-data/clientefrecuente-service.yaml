@@ -4,12 +4,6 @@ server:
 spring:
   application:
     name: clientefrecuente-service
-  cloud:
-    config:
-      uri: http://localhost:8081
-      enabled: true
-  config:
-    import: "optional:configserver:"
 
   datasource:
     url: jdbc:postgresql://${BD_HOST:localhost}:${BD_PORT:5432}/TingesoClientes
@@ -32,6 +26,3 @@ eureka:
   instance:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}
-
-spring.main.web-application-type: reactive
-spring.cloud.compatibility-verifier.enabled: false
