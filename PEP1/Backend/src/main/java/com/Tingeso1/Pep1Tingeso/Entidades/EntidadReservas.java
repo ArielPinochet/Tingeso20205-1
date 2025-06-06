@@ -25,7 +25,7 @@ public class EntidadReservas {
     private String estadoReserva;
     private Double precioTotal;
     private String metodoPago;
-    private Integer duracionTotal; // Ahora persistente en la BD
+     // Ahora persistente en la BD
 
     @ManyToOne
     @JoinColumn(name = "id_cliente_responsable")

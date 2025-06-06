@@ -8,4 +8,5 @@ import java.util.Optional;
 @Repository
 public interface DescuentoRepository extends JpaRepository<DescuentoEntity, Long> {
     Optional<DescuentoEntity> findByIdReserva(Long idReserva);
+
 }

@@ -32,6 +32,15 @@ public class ControladorCliente {
     }
 
 
+    @GetMapping("/email/{nombreCliente}")
+    public ResponseEntity<String> obtenerEmailPorNombre(@PathVariable String nombreCliente) {
+        Optional<EntidadCliente> cliente = clienteFrecuenteService.buscarPorNombre(nombreCliente);
+
+        return cliente.map(c -> ResponseEntity.ok(c.getEmail()))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Error: No se encontró el cliente con nombre " + nombreCliente));
+    }
+
     @GetMapping("/buscar/nombre/{nombre}")
     public ResponseEntity<?> buscarClientePorNombre(@PathVariable String nombre) {
 

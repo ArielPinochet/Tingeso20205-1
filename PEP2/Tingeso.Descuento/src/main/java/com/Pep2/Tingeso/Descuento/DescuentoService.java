@@ -44,4 +44,9 @@ public class DescuentoService {
         String url = "http://localhost:8087/api/tarifas-especiales/obtener/" + idReserva;
         return restTemplate.getForObject(url, Double.class);
     }
+
+    public Optional<DescuentoEntity> obtenerDescuentoPorReserva(Long idReserva) {
+        return descuentoRepository.findByIdReserva(idReserva);
+    }
+
 }

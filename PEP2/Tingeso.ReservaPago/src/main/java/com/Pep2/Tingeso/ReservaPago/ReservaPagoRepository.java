@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ReservaPagoRepository extends JpaRepository<ReservaPagoEntity, Long> {
-    List<ReservaPagoEntity> findByIdCliente(Long idCliente);
+public interface ReservaPagoRepository extends JpaRepository<ReservaEntity, Long> {
+    List<ReservaEntity> findByIdCliente(Long idCliente);
 }

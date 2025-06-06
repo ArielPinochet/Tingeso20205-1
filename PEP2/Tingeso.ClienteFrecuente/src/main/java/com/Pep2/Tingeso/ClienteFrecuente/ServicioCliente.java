@@ -41,6 +41,10 @@ public class ServicioCliente {
         return clienteFrecuenteRepository.save(nuevoCliente);
     }
 
+    public Optional<EntidadCliente> buscarPorNombre(String nombreCliente) {
+        return clienteFrecuenteRepository.findByNombre(nombreCliente);
+    }
+
     public double obtenerDescuentoFrecuente(String nombre) {
         // Buscar el cliente en la base de datos
         EntidadCliente cliente = clienteFrecuenteRepository.findEntidadClienteByNombre(nombre)
