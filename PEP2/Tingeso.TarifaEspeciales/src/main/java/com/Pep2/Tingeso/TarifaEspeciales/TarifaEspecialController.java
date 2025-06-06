@@ -23,6 +23,11 @@ public class TarifaEspecialController {
         return tarifaEspecialService.obtenerTarifaEspecialPorIdReserva(IdReserva);
     }
 
+    @GetMapping("/obtener/{Idreserva}")
+    public ResponseEntity<Double> obtenerTarifaEspecial(@PathVariable Long Idreserva) {
+        double descuento = tarifaEspecialService.obtenerTarifaEspecial(Idreserva);
+        return ResponseEntity.ok(descuento);
+    }
 
 
     @PostMapping("/")

@@ -58,4 +58,9 @@ public class TarifaService {
     public TarifaEntity obtenerTarifaPorIdReserva(Long IdReserva) {
         return tarifaRepository.findByidReserva(IdReserva).orElse(null);
     }
+
+    public double obtenerPrecioTarifaPorIdReserva(Long IdReserva) {
+        TarifaEntity tarifa = obtenerTarifaPorIdReserva(IdReserva);
+        return tarifa.getPrecio();
+    }
 }

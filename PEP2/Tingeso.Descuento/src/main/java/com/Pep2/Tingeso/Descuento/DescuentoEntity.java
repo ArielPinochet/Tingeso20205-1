@@ -10,6 +10,9 @@ public class DescuentoEntity {
     private Long idDescuento;
 
     private Long idReserva;
+
+    private String nombrecliente;
+
     private double descuentoTotal;
 
     public Long getIdDescuento() {
@@ -36,10 +39,18 @@ public class DescuentoEntity {
         this.descuentoTotal = descuentoTotal;
     }
 
+    public String getNombrecliente() {
+        return nombrecliente;
+    }
 
-    public DescuentoEntity(Long idDescuento, Long idReserva, double descuentoTotal) {
+    public void setNombrecliente(String nombrecliente) {
+        this.nombrecliente = nombrecliente;
+    }
+
+    public DescuentoEntity(Long idDescuento, Long idReserva, double descuentoTotal,String nombrecliente) {
         this.idDescuento = idDescuento;
         this.idReserva = idReserva;
+        this.nombrecliente = nombrecliente;
         this.descuentoTotal = descuentoTotal;
     }
     public DescuentoEntity() {}

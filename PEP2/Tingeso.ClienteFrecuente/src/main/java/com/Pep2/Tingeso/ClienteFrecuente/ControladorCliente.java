@@ -35,7 +35,7 @@ public class ControladorCliente {
     @GetMapping("/buscar/nombre/{nombre}")
     public ResponseEntity<?> buscarClientePorNombre(@PathVariable String nombre) {
 
-        Optional<EntidadCliente> cliente = repositorioCliente.findbyNombre(nombre);
+        Optional<EntidadCliente> cliente = repositorioCliente.findEntidadClienteByNombre(nombre);
         if (cliente.isPresent()) {
             return ResponseEntity.ok(cliente.get()); // Retorna el cliente si existe
         } else {

@@ -111,6 +111,11 @@ public class TarifaEspecialService {
         return porcentajeDescuento;
     }
 
+    public double obtenerTarifaEspecial(Long IdReserva) {
+        TarifaEspecialEntity tarifaDefault = obtenerTarifaEspecialPorIdReserva(IdReserva);
+        return tarifaDefault.getPorcentajeDescuento();
+    }
+
     public boolean existeReserva(Long idReserva) {
         return tarifaEspecialRepository.existsByIdReserva(idReserva);
     }

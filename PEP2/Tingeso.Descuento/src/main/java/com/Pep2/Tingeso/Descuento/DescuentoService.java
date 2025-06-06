@@ -16,41 +16,32 @@ public class DescuentoService {
         this.restTemplate = restTemplate;
     }
 
-    public double calcularDescuento(Long idReserva, int cantidadPersonas, Long idCliente) {
-        double descuentoTotal = 0;
+    public double calcularDescuentoTotal(int numeroPersonas, Long idReserva, String nombreCliente) {
+        double descuentoPorPersonas = calcularDescuentoPorPersonas(numeroPersonas);
+        double descuentoClienteFrecuente = obtenerDescuentoClienteFrecuente(nombreCliente);
+        double descuentoTarifaEspecial = obtenerDescuentoTarifaEspecial(idReserva);
 
-        // 1️⃣ Descuento por número de personas
-        if (cantidadPersonas >= 3 && cantidadPersonas <= 5) descuentoTotal += 10;
-        else if (cantidadPersonas >= 6 && cantidadPersonas <= 10) descuentoTotal += 20;
-        else if (cantidadPersonas >= 11 && cantidadPersonas <= 15) descuentoTotal += 30;
+        // Cálculo final
+        double descuentoTotal = descuentoPorPersonas + descuentoClienteFrecuente + descuentoTarifaEspecial;
 
-        // 2️⃣ Descuento por cliente frecuente
-        Integer visitasMensuales = restTemplate.getForObject("http://clientes-service/api/clientes/" + idCliente + "/visitas", Integer.class);
-        if (visitasMensuales != null) {
-            if (visitasMensuales >= 7) descuentoTotal += 30;
-            else if (visitasMensuales >= 5) descuentoTotal += 20;
-            else if (visitasMensuales >= 2) descuentoTotal += 10;
-        }
+        return Math.min(descuentoTotal, 100.0); // No puede superar el 100%
+    }
 
-        // 3️⃣ Descuento por día especial y fines de semana
-        Boolean diaEspecial = restTemplate.getForObject("http://tarifas-especiales-service/api/tarifas-especiales/dia-especial", Boolean.class);
-        Boolean finDeSemana = restTemplate.getForObject("http://tarifas-especiales-service/api/tarifas-especiales/fin-de-semana", Boolean.class);
-        if (diaEspecial != null && diaEspecial) descuentoTotal += 15;
-        if (finDeSemana != null && finDeSemana) descuentoTotal += 10;
+    private double calcularDescuentoPorPersonas(int numeroPersonas) {
+        if (numeroPersonas >= 1 && numeroPersonas <= 2) return 0.0;
+        if (numeroPersonas >= 3 && numeroPersonas <= 5) return 10.0;
+        if (numeroPersonas >= 6 && numeroPersonas <= 10) return 20.0;
+        if (numeroPersonas >= 11 && numeroPersonas <= 15) return 30.0;
+        return 0.0;
+    }
 
-        // 4️⃣ Descuento por cumpleaños
-        Integer cumpleanosGrupo = restTemplate.getForObject("http://reservas-service/api/reservas/" + idReserva + "/cumpleanos", Integer.class);
-        if (cumpleanosGrupo != null) {
-            int descuentoCumpleanos = (cumpleanosGrupo == 1) ? 50 : (cumpleanosGrupo >= 2) ? 100 : 0;
-            descuentoTotal += descuentoCumpleanos;
-        }
+    private double obtenerDescuentoClienteFrecuente(String nombreCliente) {
+        String url = "http://localhost:8088/api/clientes/descuento/" + nombreCliente;
+        return restTemplate.getForObject(url, Double.class);
+    }
 
-        // Guardar en la base de datos
-        DescuentoEntity descuentoEntity = new DescuentoEntity();
-        descuentoEntity.setIdReserva(idReserva);
-        descuentoEntity.setDescuentoTotal(descuentoTotal);
-        descuentoRepository.save(descuentoEntity);
-
-        return descuentoTotal;
+    private double obtenerDescuentoTarifaEspecial(Long idReserva) {
+        String url = "http://localhost:8087/api/tarifas-especiales/obtener/" + idReserva;
+        return restTemplate.getForObject(url, Double.class);
     }
 }

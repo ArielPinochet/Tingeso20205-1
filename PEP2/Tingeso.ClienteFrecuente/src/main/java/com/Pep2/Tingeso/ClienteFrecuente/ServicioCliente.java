@@ -43,7 +43,7 @@ public class ServicioCliente {
 
     public double obtenerDescuentoFrecuente(String nombre) {
         // Buscar el cliente en la base de datos
-        EntidadCliente cliente = clienteFrecuenteRepository.findbyNombre(nombre)
+        EntidadCliente cliente = clienteFrecuenteRepository.findEntidadClienteByNombre(nombre)
                 .orElseThrow(() -> new NoSuchElementException("Error: Cliente con nombre " + nombre + " no encontrado."));
         // Obtener la cantidad de reservas
         int reservas = cliente.getCantidadReservas();
@@ -60,12 +60,15 @@ public class ServicioCliente {
             descuento = 0.0; // No frecuente (0 a 1 reserva)
         }
 
+        // Guardar Descuento
+        cliente.setDescuentoFrecuente(descuento);
+        clienteFrecuenteRepository.save(cliente);
         return descuento;
     }
 
     public EntidadCliente incrementarReservas(String nombre) {
         // Buscar el cliente
-        EntidadCliente cliente = clienteFrecuenteRepository.findbyNombre(nombre)
+        EntidadCliente cliente = clienteFrecuenteRepository.findEntidadClienteByNombre(nombre)
                 .orElseThrow(() -> new NoSuchElementException("Error: nombre con ID " + nombre + " no encontrado."));
 
         // Incrementar cantidad de reservas

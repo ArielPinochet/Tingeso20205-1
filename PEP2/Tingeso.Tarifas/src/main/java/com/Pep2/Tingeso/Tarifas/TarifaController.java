@@ -21,16 +21,17 @@ public class TarifaController {
         return tarifaService.obtenerTodasTarifas();
     }
 
-    @GetMapping("/{numeroVueltas}")
-    public TarifaEntity obtenerPorVueltas(@PathVariable int numeroVueltas) {
-        return tarifaService.obtenerTarifaPorVueltas(numeroVueltas);
-    }
-
 
     @GetMapping("/{idReserva}")
     public TarifaEntity obtenerPorIdReserva(@PathVariable Long idReserva) {
         return tarifaService.obtenerTarifaPorIdReserva(idReserva);
     }
+
+    @GetMapping("/obtener/{idReserva}")
+    public double obtenerTarifaPorIdReserva(@PathVariable Long idReserva) {
+        return tarifaService.obtenerPrecioTarifaPorIdReserva(idReserva);
+    }
+
 
     @PostMapping("/")
     public ResponseEntity<?> crearTarifa(@RequestParam int numeroVueltas, @RequestParam Long idReserva) {
