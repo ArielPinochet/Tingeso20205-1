@@ -1,5 +1,22 @@
 server:
-  port: 8086
+  port: 0
+
+spring:
+  application:
+    name: tarifas-service
+
+  datasource:
+    url: jdbc:postgresql://${BD_HOST:localhost}:${BD_PORT:5432}/TingesoTarifas
+    username: ${BD_USER}
+    password: ${BD_PASS}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
 eureka:
   client:
     fetch-registry: true

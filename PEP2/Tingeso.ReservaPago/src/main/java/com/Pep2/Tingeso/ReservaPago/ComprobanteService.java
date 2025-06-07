@@ -51,6 +51,7 @@ public class ComprobanteService {
     public ComprobanteEntity generarComprobante( List<String> correosClientes, Long idReserva) {
 
         ComprobanteEntity comprobante = new ComprobanteEntity();
+        comprobante.setIdReserva(idReserva);
         comprobante.setFechaEmision(LocalDate.now());
         comprobante.setTotalConIva(obtenerPrecioTotalReserva(idReserva));
         comprobante.setCorreosClientes(correosClientes);

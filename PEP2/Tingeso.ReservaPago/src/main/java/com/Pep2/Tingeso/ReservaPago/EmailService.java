@@ -31,7 +31,7 @@ public class EmailService {
         this.restTemplate = restTemplate;
     }
 
-    public void enviarComprobante(CarrosEntity comprobante, byte[] pdfFile) {
+    public void enviarComprobante(ComprobanteEntity comprobante, byte[] pdfFile) {
         List<String> correos = comprobante.getCorreosClientes();
         logger.info("Se enviarán correos a {} destinatarios", correos.size());
         for (String email : correos) {

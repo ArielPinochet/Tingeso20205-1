@@ -1,0 +1,46 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: reservapago-service
+  cloud:
+    config:
+      uri: http://localhost:8081
+      enabled: true
+  config:
+    import: "optional:configserver:"
+
+  datasource:
+    url: jdbc:postgresql://${BD_HOST:localhost}:${BD_PORT:5432}/TingesoReservas
+    username: ${BD_USER}
+    password: ${BD_PASS}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USER}
+    password: ${MAIL_PASS}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      default-zone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+spring.main.web-application-type: reactive
+spring.cloud.compatibility-verifier.enabled: false
