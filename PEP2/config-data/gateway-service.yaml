@@ -24,7 +24,7 @@ spring:
         - id: clientefrecuente-service
           uri: lb://Tingeso.ClienteFrecuente
           predicates:
-            - Path=/clienteFrecuente/**
+            - Path=/api/clientes/**
         - id: descuento-service
           uri: lb://Tingeso.Descuento
           predicates:
