@@ -17,8 +17,31 @@ spring:
         locator:
           enabled: true
       routes:
-
-        - id: tarifa-especial-service
-          uri: lb://tarifa-especial-service
+        - id: calendario-service
+          uri: lb://Tingeso.Calendario
           predicates:
-            - Path=/tarifas-especiales/**
+            - Path=/calendario/**
+        - id: clientefrecuente-service
+          uri: lb://Tingeso.ClienteFrecuente
+          predicates:
+            - Path=/clienteFrecuente/**
+        - id: descuento-service
+          uri: lb://Tingeso.Descuento
+          predicates:
+            - Path=/descuento/**
+        - id: reportes-service
+          uri: lb://Tingeso.Reportes
+          predicates:
+            - Path=/reportes/**
+        - id: reservapago-service
+          uri: lb://Tingeso.ReservaPago
+          predicates:
+            - Path=/reservaPago/**
+        - id: tarifaespecial-service
+          uri: lb://Tingeso.TarifaEspeciales
+          predicates:
+            - Path=/tarifaEspecial/**
+        - id: tarifas-service
+          uri: lb://Tingeso.Tarifas
+          predicates:
+            - Path=/tarifas/**
