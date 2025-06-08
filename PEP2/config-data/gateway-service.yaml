@@ -22,7 +22,7 @@ spring:
           predicates:
             - Path=/calendario/**
         - id: clientefrecuente-service
-          uri: lb://Tingeso.ClienteFrecuente
+          uri: lb://CLIENTEFRECUENTE-SERVICE
           predicates:
             - Path=/api/clientes/**
         - id: descuento-service
