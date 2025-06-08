@@ -25,6 +25,8 @@ spring:
           uri: lb://CLIENTEFRECUENTE-SERVICE
           predicates:
             - Path=/api/clientes/**
+          filters:
+            - RewritePath=/api/clientes/(?<segment>.*), /${segment}
         - id: descuento-service
           uri: lb://Tingeso.Descuento
           predicates:
@@ -45,3 +47,12 @@ spring:
           uri: lb://Tingeso.Tarifas
           predicates:
             - Path=/tarifas/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway, health, info, routes
+  endpoint:
+    gateway:
+      enabled: true
