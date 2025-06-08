@@ -16,17 +16,17 @@ spring:
       discovery:
         locator:
           enabled: true
+          lower-case-service-id: true
+          use-ip-address: true
       routes:
         - id: calendario-service
           uri: lb://Tingeso.Calendario
           predicates:
             - Path=/calendario/**
         - id: clientefrecuente-service
-          uri: lb://clientefrecuente-service
+          uri: lb://CLIENTEFRECUENTE-SERVICE
           predicates:
             - Path=/api/clientes/**
-          filters:
-            - RewritePath=/api/clientes/(?<segment>.*), /${segment}
         - id: descuento-service
           uri: lb://Tingeso.Descuento
           predicates:
@@ -52,7 +52,5 @@ management:
   endpoints:
     web:
       exposure:
-        include: gateway, health, info, routes
-  endpoint:
-    gateway:
-      enabled: true
+        include: "*"
+
