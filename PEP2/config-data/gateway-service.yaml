@@ -22,7 +22,7 @@ spring:
           predicates:
             - Path=/calendario/**
         - id: clientefrecuente-service
-          uri: lb://CLIENTEFRECUENTE-SERVICE
+          uri: lb://clientefrecuente-service
           predicates:
             - Path=/api/clientes/**
           filters:
