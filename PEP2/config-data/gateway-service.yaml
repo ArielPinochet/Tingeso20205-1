@@ -45,8 +45,7 @@ spring:
             - Path=/api/Carros/**
             - Path=/api/comprobante-pago/**
             - Path=/api/reservas/**
-          filters:
-            - RewritePath=/reservaPago/(?<segment>.*), /${segment}
+
 
         - id: tarifa-especial-service
           uri: lb://tarifa-especial-service

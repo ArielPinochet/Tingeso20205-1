@@ -36,7 +36,7 @@ public class ReservasController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping
+    @GetMapping("/obtener")
     public ResponseEntity<List<ReservaEntity>> listarReservas() {
         List<ReservaEntity> reservas = servicioReservas.listarTodas();
         return ResponseEntity.ok(reservas);
@@ -88,7 +88,7 @@ public class ReservasController {
 
 
 
-    @GetMapping("/ganancias")
+    @GetMapping("/ganancias/")
     public ResponseEntity<List<ReporteDTO>> obtenerGanancias(@RequestParam LocalDate inicio,
                                                              @RequestParam LocalDate fin) {
         List<ReporteDTO> reporte = servicioReservas.obtenerGananciasEntreMeses(inicio, fin);
