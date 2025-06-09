@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface ReporteRepository extends JpaRepository<ReporteEntity, Long> {
     List<ReporteEntity> findByMes(YearMonth mes);
+    List<ReporteEntity> findByMesBetweenAndTipoReporte(YearMonth inicio, YearMonth fin, String tipoReporte);
 }

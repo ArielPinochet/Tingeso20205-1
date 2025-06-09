@@ -88,6 +88,12 @@ public class ReservasController {
 
 
 
+    @GetMapping("/ganancias")
+    public ResponseEntity<List<ReporteDTO>> obtenerGanancias(@RequestParam LocalDate inicio,
+                                                             @RequestParam LocalDate fin) {
+        List<ReporteDTO> reporte = servicioReservas.obtenerGananciasEntreMeses(inicio, fin);
+        return ResponseEntity.ok(reporte);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<ReservaEntity> editarReserva(@PathVariable Long id, @RequestBody ReservaEntity reservaActualizada) {

@@ -1,7 +1,15 @@
 package com.Pep2.Tingeso.Reportes;
-
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -24,4 +32,12 @@ public class ReporteController {
     public ReporteEntity crearReporte(@RequestBody ReporteEntity reporte) {
         return reporteService.guardarReporte(reporte);
     }
+    @GetMapping("/descargarExcel")
+    public ResponseEntity<byte[]> generarReporteExcel(@RequestParam LocalDate inicio,
+                                                      @RequestParam LocalDate fin,
+                                                      @RequestParam String tipoReporte) {
+        return reporteService.generarReporteExcel(inicio, fin, tipoReporte);
+    }
+
+
 }
