@@ -49,7 +49,7 @@ spring:
           filters:
             - RewritePath=/reservaPago/(?<segment>.*), /${segment}
 
-        - id: tarifaespecial-service
+        - id: tarifa-especial-service
           uri: lb://tarifa-especial-service
           predicates:
             - Path=/api/tarifas-especiales/**
