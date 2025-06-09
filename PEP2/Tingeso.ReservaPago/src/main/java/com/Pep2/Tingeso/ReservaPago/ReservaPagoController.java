@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/app")
 public class ReservaPagoController {
 
     private final ReservaService servicioReservas;
