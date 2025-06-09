@@ -17,7 +17,7 @@ public class DescuentoController {
         this.descuentoService = descuentoService;
     }
 
-    @PostMapping("/crear")
+    @PostMapping("/")
     public ResponseEntity<DescuentoEntity> crearDescuento(
             @RequestParam int numeroPersonas,
             @RequestParam Long idReserva,

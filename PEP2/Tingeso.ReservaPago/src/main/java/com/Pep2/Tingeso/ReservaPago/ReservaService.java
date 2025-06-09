@@ -42,19 +42,19 @@ public class ReservaService {
     }
 
     // 🔹 Métodos internos para crear la tarifa, tarifa especial y descuento
-    private void crearTarifaInterna(int numeroVueltas, Long idReserva) {
+    public void crearTarifaInterna(int numeroVueltas, Long idReserva) {
         restTemplate.postForEntity("http://localhost:8080/api/tarifas/", null,
                 ResponseEntity.class, numeroVueltas, idReserva);
     }
 
-    private void crearTarifaEspecialInterna(ReservaEntity reserva) {
-        TarifaEspecialRequest request = new TarifaEspecialRequserviceest(reserva);
-        restTemplate.postForEntity("http://reservapago-/tarifa-especial/", request,
-                ResponseEntity.class);
+    public void crearTarifaEspecialInterna(ReservaEntity reserva) {
+        String url = String.format("http://localhost:8080/api/tarifas-especiales/CrearTarifaEspecial/?fecha=%s&esDiaEspecial=%b&IdReserva=%d&CantidadPersonas=%d",
+                reserva.getFechaReserva(), reserva.getDiaEspecial(), reserva.getIdReserva(), reserva.getCantidadPersonas());
+        restTemplate.postForEntity(url, null, ResponseEntity.class);
     }
 
-    private void crearDescuentoInterno(int numeroPersonas, Long idReserva, String nombreCliente) {
-        restTemplate.postForEntity("http://reservapago-service/descuento/crear", null,
+    public void crearDescuentoInterno(int numeroPersonas, Long idReserva, String nombreCliente) {
+        restTemplate.postForEntity("http://localhost:8080/api/descuentos/", null,
                 ResponseEntity.class, numeroPersonas, idReserva, nombreCliente);
     }
 

@@ -42,10 +42,9 @@ spring:
         - id: reservapago-service
           uri: lb://reservapago-service
           predicates:
-            - Path=/reservaPago/**
-            - Path=/reservaPago/Carros/**
-            - Path=/reservaPago/comprobante-pago/**
-            - Path=/reservaPago/reservas/**
+            - Path=/api/Carros/**
+            - Path=/api/comprobante-pago/**
+            - Path=/api/reservas/**
           filters:
             - RewritePath=/reservaPago/(?<segment>.*), /${segment}
 

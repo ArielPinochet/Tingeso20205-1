@@ -30,24 +30,10 @@ public class TarifaEspecialController {
     }
 
 
-    @PostMapping("/")
-    public ResponseEntity<?> crearTarifaEspecial(@RequestBody TarifaEspecialRequest request) {
-        System.out.println("Se creara nueva reserva con id: " + request.getIdReserva());
-        if (tarifaEspecialService.existeReserva(request.getIdReserva())) {
-            System.out.println("Reserva ya existe");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Error: La reserva con ID " + request.getIdReserva() + " ya existe.");
-        }
-
-        TarifaEspecialEntity nuevaTarifa = tarifaEspecialService.crearTarifaEspecial2(
-                request.getFecha(), request.isEsDiaEspecial(), request.getIdReserva(), request.getCantidadPersonas()
-        );
-        return ResponseEntity.ok(nuevaTarifa);
-    }
 
 
     @PostMapping("/CrearTarifaEspecial/")
-    public ResponseEntity<?> crearTarifaEspecial2(@RequestBody LocalDate fecha,
+    public ResponseEntity<?> crearTarifaEspecial2(@RequestParam LocalDate fecha,
                                                   @RequestParam boolean esDiaEspecial,
                                                   @RequestParam Long IdReserva,
                                                   @RequestParam int CantidadPersonas) {

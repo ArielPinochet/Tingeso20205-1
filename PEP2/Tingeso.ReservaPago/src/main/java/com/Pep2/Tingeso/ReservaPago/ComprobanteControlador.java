@@ -14,7 +14,7 @@ import java.util.Base64;
 import java.util.List;
 
 @RestController
-@RequestMapping("/comprobante-pago")
+@RequestMapping("/api/comprobante-pago")
 public class ComprobanteControlador {
     
     private final ComprobanteService servicioComprobantePago;

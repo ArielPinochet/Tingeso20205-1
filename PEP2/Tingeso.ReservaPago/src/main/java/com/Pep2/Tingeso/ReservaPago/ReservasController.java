@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@RequestMapping("/reservas")
+@RequestMapping("/api/reservas")
 public class ReservasController {
 
     private final ReservaService servicioReservas;
@@ -54,20 +54,34 @@ public class ReservasController {
             return ResponseEntity.badRequest().body(null); // 🔹 Evita guardar sin cliente
         }
 
-        // 🔹 Guardar reserva en la base de datos
         ReservaEntity nuevaReserva = servicioReservas.guardarReserva(reserva);
 
-        // 🔹 Crear Tarifa vinculada a la reserva
-        crearTarifaInterna(nuevaReserva.getNumeroVueltas(), nuevaReserva.getId());
+        Map<String, Object> resultado = new HashMap<>();
+        resultado.put("reserva", nuevaReserva);
 
-        // 🔹 Crear Tarifa Especial vinculada a la reserva
-        crearTarifaEspecialInterna(nuevaReserva);
+        // 🔹 Intentar crear tarifa
+        try {
+            servicioReservas.crearTarifaInterna(nuevaReserva.getNumeroVueltas(), nuevaReserva.getIdReserva());
+            resultado.put("tarifa", "Creada exitosamente");
+        } catch (Exception e) {
+            resultado.put("tarifa", "Error al crear la tarifa: " + e.getMessage());
+        }
 
-        // 🔹 Crear Descuento vinculado a la reserva
-        crearDescuentoInterno(nuevaReserva.getCantidadPersonas(), nuevaReserva.getId(), nuevaReserva.getNombreCliente());
+        // 🔹 Intentar crear tarifa especial
+        try {
+            servicioReservas.crearTarifaEspecialInterna(nuevaReserva);
+            resultado.put("tarifaEspecial", "Creada exitosamente");
+        } catch (Exception e) {
+            resultado.put("tarifaEspecial", "Error al crear la tarifa especial: " + e.getMessage());
+        }
 
-        // 🔹 Enviar correo de confirmación al cliente
-        emailService.sendReservationConfirmation(nuevaReserva);
+        // 🔹 Intentar crear descuento
+        try {
+            servicioReservas.crearDescuentoInterno(nuevaReserva.getCantidadPersonas(), nuevaReserva.getIdReserva(), nuevaReserva.getNombreCliente());
+            resultado.put("descuento", "Creado exitosamente");
+        } catch (Exception e) {
+            resultado.put("descuento", "Error al crear el descuento: " + e.getMessage());
+        }
 
         return ResponseEntity.ok(nuevaReserva);
     }
