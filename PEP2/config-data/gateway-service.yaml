@@ -42,7 +42,9 @@ spring:
         - id: reservapago-service
           uri: lb://reservapago-service
           predicates:
-            - Path=/api/**
+            - Path=/api/reservas/**
+            - Path=/api/comprobantes/**
+            - Path=/api/carros/**
 
         - id: tarifa-especial-service
           uri: lb://tarifa-especial-service
