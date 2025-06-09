@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@RequestMapping("/api/reservas")
+@RequestMapping("/api/reservasssssss")
 public class ReservasController {
 
     private final ReservaService servicioReservas;
@@ -28,13 +28,22 @@ public class ReservasController {
         this.repositorioReserva = repositorioReserva;
     }
 
-
     @GetMapping("/{id}")
-    public ResponseEntity<ReservaEntity> obtenerReserva(@PathVariable Long id) {
-        return servicioReservas.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> obtenerReserva(@PathVariable Long id) {
+        Optional<ReservaEntity> reservaOpt = servicioReservas.buscarPorId(id);
+
+        // 🔹 Si la reserva no existe, devuelve un error con mensaje personalizado
+        if (reservaOpt.isEmpty()) {
+            return ResponseEntity.status(404).body(new ErrorResponse("La reserva con ID " + id + " no existe."));
+        }
+
+        // 🔹 Si existe, retorna la reserva
+        return ResponseEntity.ok(reservaOpt.get());
     }
+
+
+
+
 
     @GetMapping("/obtener")
     public ResponseEntity<List<ReservaEntity>> listarReservas() {
