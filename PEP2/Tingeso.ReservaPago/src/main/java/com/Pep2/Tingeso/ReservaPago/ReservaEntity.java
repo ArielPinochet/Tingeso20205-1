@@ -82,7 +82,7 @@ public class ReservaEntity {
         return nombreCliente;
     }
 
-    public void SetnombreCliente(String nombreCliente) {
+    public void SetNombreCliente(String nombreCliente) {
         this.nombreCliente = nombreCliente;
     }
 

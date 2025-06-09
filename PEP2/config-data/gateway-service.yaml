@@ -20,33 +20,44 @@ spring:
           use-ip-address: true
       routes:
         - id: calendario-service
-          uri: lb://Tingeso.Calendario
+          uri: lb://calendario-service
           predicates:
             - Path=/calendario/**
+
         - id: clientefrecuente-service
           uri: lb://CLIENTEFRECUENTE-SERVICE
           predicates:
             - Path=/api/clientes/**
+
         - id: descuento-service
-          uri: lb://Tingeso.Descuento
+          uri: lb://descuento-service
           predicates:
-            - Path=/descuento/**
+            - Path=/api/descuentos/**
+
         - id: reportes-service
-          uri: lb://Tingeso.Reportes
+          uri: lb://reportes-service
           predicates:
             - Path=/reportes/**
+
         - id: reservapago-service
-          uri: lb://Tingeso.ReservaPago
+          uri: lb://reservapago-service
           predicates:
             - Path=/reservaPago/**
+            - Path=/reservaPago/Carros/**
+            - Path=/reservaPago/comprobante-pago/**
+            - Path=/reservaPago/reservas/**
+          filters:
+            - RewritePath=/reservaPago/(?<segment>.*), /${segment}
+
         - id: tarifaespecial-service
-          uri: lb://Tingeso.TarifaEspeciales
+          uri: lb://tarifaespecial-service
           predicates:
-            - Path=/tarifaEspecial/**
+            - Path=/api/tarifas-especiales/**
+            
         - id: tarifas-service
-          uri: lb://Tingeso.Tarifas
+          uri: lb://tarifas-service
           predicates:
-            - Path=/tarifas/**
+            - Path=/api/tarifas/**
 
 management:
   endpoints:
