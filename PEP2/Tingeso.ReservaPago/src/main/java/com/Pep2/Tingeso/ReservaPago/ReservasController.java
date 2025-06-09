@@ -50,15 +50,25 @@ public class ReservasController {
 
     @PostMapping
     public ResponseEntity<ReservaEntity> crearReserva(@RequestBody ReservaEntity reserva) {
-        if (reserva.getNombreCliente() == null ) {
+        if (reserva.getNombreCliente() == null) {
             return ResponseEntity.badRequest().body(null); // 🔹 Evita guardar sin cliente
         }
 
-        reserva.setCarros(reserva.getCarros()); // 🔹 Guarda directamente los objetos recibidos
-
+        // 🔹 Guardar reserva en la base de datos
         ReservaEntity nuevaReserva = servicioReservas.guardarReserva(reserva);
-        // Enviar correo al cliente confirmando la reserva
+
+        // 🔹 Crear Tarifa vinculada a la reserva
+        crearTarifaInterna(nuevaReserva.getNumeroVueltas(), nuevaReserva.getId());
+
+        // 🔹 Crear Tarifa Especial vinculada a la reserva
+        crearTarifaEspecialInterna(nuevaReserva);
+
+        // 🔹 Crear Descuento vinculado a la reserva
+        crearDescuentoInterno(nuevaReserva.getCantidadPersonas(), nuevaReserva.getId(), nuevaReserva.getNombreCliente());
+
+        // 🔹 Enviar correo de confirmación al cliente
         emailService.sendReservationConfirmation(nuevaReserva);
+
         return ResponseEntity.ok(nuevaReserva);
     }
 

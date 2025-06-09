@@ -36,12 +36,12 @@ public class DescuentoService {
     }
 
     private double obtenerDescuentoClienteFrecuente(String nombreCliente) {
-        String url = "http://localhost:8088/api/clientes/descuento/" + nombreCliente;
+        String url = "http://localhost:8080/api/clientes/descuento/" + nombreCliente;
         return restTemplate.getForObject(url, Double.class);
     }
 
     private double obtenerDescuentoTarifaEspecial(Long idReserva) {
-        String url = "http://localhost:8087/api/tarifas-especiales/obtener/" + idReserva;
+        String url = "http://localhost:8080/api/tarifas-especiales/obtener/" + idReserva;
         return restTemplate.getForObject(url, Double.class);
     }
 

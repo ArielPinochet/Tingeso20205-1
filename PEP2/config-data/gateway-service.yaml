@@ -50,7 +50,7 @@ spring:
             - RewritePath=/reservaPago/(?<segment>.*), /${segment}
 
         - id: tarifaespecial-service
-          uri: lb://tarifaespecial-service
+          uri: lb://tarifa-especial-service
           predicates:
             - Path=/api/tarifas-especiales/**
             

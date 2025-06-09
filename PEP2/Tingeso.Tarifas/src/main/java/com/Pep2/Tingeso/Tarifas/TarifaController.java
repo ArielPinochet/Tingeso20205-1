@@ -32,7 +32,7 @@ public class TarifaController {
     }
 
     @GetMapping("/obtener/{idReserva}")
-    public double obtenerPrecioTarifaPorIdReserva(Long idReserva) {
+    public double obtenerPrecioTarifaPorIdReserva(@PathVariable Long idReserva) {
         return tarifaRepository.findByidReserva(idReserva)
                 .map(TarifaEntity::getPrecio)
                 .orElseThrow(() -> new NoSuchElementException("Error: No se encontró la tarifa para la reserva con ID " + idReserva));

@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: tarifas-service
+    name: tarifas-especial-service
 
   datasource:
     url: jdbc:postgresql://${BD_HOST:localhost}:${BD_PORT:5432}/TingesoTarifas
