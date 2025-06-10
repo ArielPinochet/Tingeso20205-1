@@ -14,7 +14,6 @@ const crearCarro = async (carro) => {
         const response = await axios.post(CARRO_URL, carro, {
             headers: {
                 "Content-Type": "application/json",
-                "Origin": "http://localhost:5173"
             }
         });
         return response.data;
