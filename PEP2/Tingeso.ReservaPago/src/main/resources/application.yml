@@ -44,3 +44,9 @@ eureka:
 
 spring.main.web-application-type: reactive
 spring.cloud.compatibility-verifier.enabled: false
+
+logging:
+  level:
+    root: INFO
+    org.springframework.mail: DEBUG
+    org.springframework.boot.autoconfigure.mail: DEBUG

@@ -148,6 +148,17 @@ public class ReservaPagoController {
         return ResponseEntity.ok(servicioComprobantePago.listarTodos());
     }
 
+    @GetMapping("/test")
+    public ResponseEntity<?> enviarCorreoDePrueba() {
+        try {
+            emailService.enviarCorreoPrueba();
+            return ResponseEntity.ok("✔️ Correo de prueba enviado correctamente!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("🚨 Error al enviar correo de prueba: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/comprobantes/{id}")
     public ResponseEntity<?> eliminarComprobante(@PathVariable Long id) {
         if (servicioComprobantePago.buscarPorId(id).isPresent()) {

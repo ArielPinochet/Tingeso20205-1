@@ -27,6 +27,7 @@ public class EmailService {
 
     private final RestTemplate restTemplate;
 
+
     public EmailService(JavaMailSender mailSender, RestTemplate restTemplate) {
         this.mailSender = mailSender;
         this.restTemplate = restTemplate;
@@ -52,5 +53,21 @@ public class EmailService {
         }
 
 
+    }
+    public void enviarCorreoPrueba() {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setTo("ariel125e@gmail.com");
+            helper.setSubject("🚀 Correo de Prueba desde ReservaPago");
+            helper.setText("¡Hola Ariel! Esto es un correo de prueba para verificar el funcionamiento del envío.");
+
+            mailSender.send(message);
+            System.out.println("✔️ Correo de prueba enviado correctamente!");
+        } catch (Exception e) {
+            System.err.println("🚨 Error al enviar correo de prueba: " + e.getMessage());
+            throw new RuntimeException("Error al enviar correo de prueba", e);
+        }
     }
 }
