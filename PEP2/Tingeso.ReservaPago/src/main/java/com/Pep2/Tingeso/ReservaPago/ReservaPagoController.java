@@ -27,6 +27,11 @@ public class ReservaPagoController {
         this.servicioComprobantePago = servicioComprobantePago;
     }
 
+    @RequestMapping(method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> handleOptions() {
+        return ResponseEntity.ok().build();
+    }
+
     // 🚗 **Endpoints de Carros**
     @PostMapping("/carros")
     public ResponseEntity<CarrosEntity> crearCarro(@RequestBody CarrosEntity carro) {
