@@ -4,18 +4,17 @@ package com.Pep2.Tingeso.ReservaPago;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class EmailService {
@@ -59,7 +58,7 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            helper.setTo("ariel125e@gmail.com");
+            helper.setTo("ariel.pinochet@usach.cl");
             helper.setSubject("🚀 Correo de Prueba desde ReservaPago");
             helper.setText("¡Hola Ariel! Esto es un correo de prueba para verificar el funcionamiento del envío.");
 
@@ -70,4 +69,6 @@ public class EmailService {
             throw new RuntimeException("Error al enviar correo de prueba", e);
         }
     }
+
+
 }

@@ -49,6 +49,20 @@
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 
+		<!-- 🔹 Jakarta Mail (Reemplazo de Javax Mail) -->
+		<dependency>
+			<groupId>org.eclipse.angus</groupId>
+			<artifactId>angus-mail</artifactId>
+			<version>1.0.0</version> <!-- Ajusta la versión si hay una más reciente -->
+		</dependency>
+
+		<!-- 🔹 Apache Commons Email (Para facilitar la manipulación de correos) -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-email</artifactId>
+			<version>1.5</version>
+		</dependency>
+
 		<!-- Config Server para manejo de configuración centralizada -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

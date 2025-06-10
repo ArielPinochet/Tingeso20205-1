@@ -151,6 +151,7 @@ public class ReservaPagoController {
     @GetMapping("/test")
     public ResponseEntity<?> enviarCorreoDePrueba() {
         try {
+
             emailService.enviarCorreoPrueba();
             return ResponseEntity.ok("✔️ Correo de prueba enviado correctamente!");
         } catch (Exception e) {
