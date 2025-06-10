@@ -1,9 +1,10 @@
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8090";
+const API_URL = "http://localhost:8080";
 
 
-const CARRO_URL = `${API_URL}/Carros`;
+
+const CARRO_URL = `${API_URL}/app/carros`;
 
 const obtenerCarros = () => axios.get(CARRO_URL);
 const obtenerCarroPorId = (id) => axios.get(`${CARRO_URL}/${id}`);

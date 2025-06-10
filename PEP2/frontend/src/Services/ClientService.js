@@ -1,10 +1,10 @@
 
 import axios from "axios";
 
-const API_URL = "http://localhost:8090";
+const API_URL = "http://localhost:8080";
 
 
-const CLIENTES_URL = `${API_URL}/clientes`;
+const CLIENTES_URL = `${API_URL}/api/clientes`;
 
 const obtenerClientes = () => axios.get(CLIENTES_URL);
 const obtenerClientePorId = (id) => axios.get(`${CLIENTES_URL}/${id}`);

@@ -41,6 +41,10 @@ public class ServicioCliente {
         return clienteFrecuenteRepository.save(nuevoCliente);
     }
 
+    public List<EntidadCliente> listarTodos() {
+        return clienteFrecuenteRepository.findAll();
+    }
+
     public Optional<EntidadCliente> buscarPorNombre(String nombreCliente) {
         return clienteFrecuenteRepository.findByNombre(nombreCliente);
     }

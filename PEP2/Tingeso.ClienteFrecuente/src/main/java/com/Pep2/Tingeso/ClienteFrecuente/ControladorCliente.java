@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/clientes")
 public class ControladorCliente {
@@ -62,6 +62,11 @@ public class ControladorCliente {
     public ResponseEntity<Double> obtenerDescuentoFrecuente(@PathVariable String nombre) {
         double descuento = clienteFrecuenteService.obtenerDescuentoFrecuente(nombre);
         return ResponseEntity.ok(descuento);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<EntidadCliente>> listarClientes() {
+        return ResponseEntity.ok(clienteFrecuenteService.listarTodos());
     }
 
     @PostMapping("/reservas/{nombre}")

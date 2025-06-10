@@ -34,11 +34,13 @@ const FormularioCarro = () => {
         .filter(codigo => !carrosExistentes.includes(codigo));
 
     const handleChange = (e) => {
+        console.log(`Cambiando ${e.target.name}:`, e.target.value); 
         setCarro({ ...carro, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log("Datos enviados:", JSON.stringify(carro, null, 2)); 
         if (id) {
             actualizarCarro(id, carro).then(() => navigate("/Carros"));
         } else {

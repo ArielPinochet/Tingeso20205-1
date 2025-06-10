@@ -1,6 +1,7 @@
 package com.Pep2.Tingeso.ReservaPago;
 
 
+import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -28,10 +29,12 @@ public class ReservaService {
         this.dataSource = dataSource;
     }
 
+    @Transactional
     public ReservaEntity guardarReserva(ReservaEntity reserva) {
         return repositorioReserva.save(reserva);
     }
 
+    @Transactional
     public Optional<ReservaEntity> buscarPorId(Long id) {
         return repositorioReserva.findById(id);
     }
@@ -49,17 +52,20 @@ public class ReservaService {
     }
 
     // 🔹 Métodos internos para crear la tarifa, tarifa especial y descuento
+    @Transactional
     public void crearTarifaInterna(int numeroVueltas, Long idReserva) {
         restTemplate.postForEntity("http://localhost:8080/api/tarifas/", null,
                 ResponseEntity.class, numeroVueltas, idReserva);
     }
 
+    @Transactional
     public void crearTarifaEspecialInterna(ReservaEntity reserva) {
         String url = String.format("http://localhost:8080/api/tarifas-especiales/CrearTarifaEspecial/?fecha=%s&esDiaEspecial=%b&IdReserva=%d&CantidadPersonas=%d",
                 reserva.getFechaReserva(), reserva.getDiaEspecial(), reserva.getIdReserva(), reserva.getCantidadPersonas());
         restTemplate.postForEntity(url, null, ResponseEntity.class);
     }
 
+    @Transactional
     public void crearDescuentoInterno(int numeroPersonas, Long idReserva, String nombreCliente) {
         restTemplate.postForEntity("http://localhost:8080/api/descuentos/", null,
                 ResponseEntity.class, numeroPersonas, idReserva, nombreCliente);

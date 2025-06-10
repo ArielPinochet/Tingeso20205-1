@@ -19,7 +19,7 @@ public class ReservaEntity {
     private String estadoReserva;
     private String nombreCliente;
     private Integer duracionTotal;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> carros;
 
     public Long getIdReserva() {
