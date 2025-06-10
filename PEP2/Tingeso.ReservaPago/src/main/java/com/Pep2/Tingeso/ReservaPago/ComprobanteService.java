@@ -1,5 +1,11 @@
 package com.Pep2.Tingeso.ReservaPago;
 
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -48,6 +54,40 @@ public class ComprobanteService {
     }
 
 
+
+    @Transactional
+    public byte[] generarComprobantePDF(Long idReserva, String fechaEmision, String fechaReserva, String horaInicio,
+                                        int cantidadPersonas, int numeroVueltas, int duracionTotal, String nombreCliente,
+                                        double precioFinalConIVA, double precioFinalSinIVA, List<String> correosClientes) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+             PdfWriter writer = new PdfWriter(outputStream);
+             Document document = new Document(new com.itextpdf.kernel.pdf.PdfDocument(writer))) {
+
+            document.add(new Paragraph("Comprobante de Pago"));
+            document.add(new Paragraph("ID Reserva: " + idReserva));
+            document.add(new Paragraph("Fecha de Emisión: " + fechaEmision));
+            document.add(new Paragraph("Fecha de Reserva: " + fechaReserva));
+            document.add(new Paragraph("Hora de Inicio: " + horaInicio));
+            document.add(new Paragraph("Cantidad de Personas: " + cantidadPersonas));
+            document.add(new Paragraph("Número de Vueltas: " + numeroVueltas));
+            document.add(new Paragraph("Duración Total: " + duracionTotal + " min"));
+            document.add(new Paragraph("Cliente Responsable: " + nombreCliente));
+            document.add(new Paragraph("Precio Final (sin IVA): $" + precioFinalSinIVA));
+            document.add(new Paragraph("Precio Final (con IVA): $" + precioFinalConIVA));
+
+            // Correos de participantes
+            document.add(new Paragraph("\nCorreos de Participantes:"));
+            for (int i = 0; i < correosClientes.size(); i++) {
+                document.add(new Paragraph((i + 1) + ". " + correosClientes.get(i)));
+            }
+
+            document.close();
+            return outputStream.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Error al generar el comprobante PDF", e);
+        }
+    }
+
     public ComprobanteEntity generarComprobante( List<String> correosClientes, Long idReserva) {
 
         ComprobanteEntity comprobante = new ComprobanteEntity();
@@ -65,14 +105,5 @@ public class ComprobanteService {
         return guardado;
     }
 
-    public void enviarComprobante(ComprobanteEntity comprobante) {
-        try {
-            logger.info("Iniciando envío de comprobante con id: {}", comprobante.getIdComprobante());
-            byte[] pdfBytes = Base64.getDecoder().decode(comprobante.getArchivoPdf());
-            emailService.enviarComprobante(comprobante, pdfBytes);
-            logger.info("Envío de comprobante completado exitosamente");
-        } catch(Exception e) {
-            logger.error("Error al enviar comprobante: ", e);
-        }
-    }
+
 }

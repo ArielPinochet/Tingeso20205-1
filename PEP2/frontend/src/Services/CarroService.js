@@ -8,22 +8,58 @@ const CARRO_URL = `${API_URL}/app/carros`;
 
 const obtenerCarros = () => axios.get(CARRO_URL);
 const obtenerCarroPorId = (id) => axios.get(`${CARRO_URL}/${id}`);
-const crearCarro = async (carro) => {
+const crearCarro = async (codigoCarros, modelo, estado) => {
     try {
-        console.log("🔹 Enviando carro:", carro); 
-        const response = await axios.post(CARRO_URL, carro, {
+        console.log("🔹 Enviando carro con fetch:", { codigoCarros, modelo, estado });
+
+        const response = await fetch(`${CARRO_URL}?codigoCarros=${encodeURIComponent(codigoCarros)}&modelo=${encodeURIComponent(modelo)}&estado=${encodeURIComponent(estado)}`, {
+            method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded"
             }
         });
-        return response.data;
+
+        if (!response.ok) {
+            console.error("🚨 Error en la respuesta:", response.status);
+            const errorData = await response.text();
+            console.error("🔹 Detalles del error:", errorData);
+            throw new Error(`Error ${response.status}: ${errorData}`);
+        }
+
+        const data = await response.json();
+        console.log("✔️ Respuesta del servidor:", data);
+        return data;
     } catch (error) {
-        console.error("🚨 Error al enviar carro:", error);
+        console.error("🚨 Error al enviar carro con fetch:", error);
         throw error;
     }
 };
 
+
+
 const actualizarCarro = (id, carro) => axios.put(`${CARRO_URL}/${id}`, carro);
-const eliminarCarro = (id) => axios.delete(`${CARRO_URL}/${id}`);
+
+const eliminarCarro = async (codigo) => {
+    try {
+        console.log(`🔹 Eliminando carro con código: ${codigo}`);
+        
+        const response = await axios.delete(`${CARRO_URL}/${encodeURIComponent(codigo)}`);
+
+        console.log("✔️ Carro eliminado con éxito");
+        return response.data;
+    } catch (error) {
+        console.error("🚨 Error al eliminar carro:", error);
+        
+        if (error.response) {
+            console.error("🔹 Detalles del error:", error.response.data);
+            console.error("🔹 Código de estado:", error.response.status);
+        } else {
+            console.error("🔹 No hay respuesta del servidor.");
+        }
+
+        throw error;
+    }
+};
+
 
 export { obtenerCarros, obtenerCarroPorId, crearCarro, actualizarCarro, eliminarCarro };

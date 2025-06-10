@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
@@ -19,22 +21,37 @@ public class ReservaPagoController {
     private final CarrosService servicioCarros;
     private final EmailService emailService;
     private final ComprobanteService servicioComprobantePago;
+    private final ComprobanteRepository comprobanteRepository;
 
-    public ReservaPagoController(ReservaService servicioReservas, CarrosService servicioCarros, EmailService emailService, ComprobanteService servicioComprobantePago) {
+    public ReservaPagoController(ReservaService servicioReservas, CarrosService servicioCarros, EmailService emailService,
+                                 ComprobanteService servicioComprobantePago, ComprobanteRepository comprobanteRepository) {
         this.servicioReservas = servicioReservas;
         this.servicioCarros = servicioCarros;
         this.emailService = emailService;
         this.servicioComprobantePago = servicioComprobantePago;
+        this.comprobanteRepository = comprobanteRepository;
     }
 
-    @RequestMapping(method = RequestMethod.OPTIONS)
+    @CrossOrigin("*")
+    @RequestMapping(method = RequestMethod.OPTIONS, value = "/carros")
     public ResponseEntity<?> handleOptions() {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok()
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Access-Control-Allow-Headers", "*")
+                .header("Access-Control-Allow-Credentials", "false")
+                .build();
     }
 
     // 🚗 **Endpoints de Carros**
     @PostMapping("/carros")
-    public ResponseEntity<CarrosEntity> crearCarro(@RequestBody CarrosEntity carro) {
+    public ResponseEntity<CarrosEntity> crearCarro(@RequestParam String codigoCarros,
+                                                   @RequestParam String modelo,
+                                                   @RequestParam String estado) {
+        CarrosEntity carro = new CarrosEntity();
+        carro.setCodigoCarros(codigoCarros);
+        carro.setModelo(modelo);
+        carro.setEstado(estado);
         return ResponseEntity.ok(servicioCarros.guardarCarros(carro));
     }
 
@@ -76,29 +93,46 @@ public class ReservaPagoController {
     // 🧾 **Endpoints de Comprobantes**
     @PostMapping("/comprobantes")
     public ResponseEntity<?> crearComprobante(
-            @RequestParam("idReserva") Long idReserva,
-            @RequestParam("fechaEmision") String fechaEmision,
-            @RequestParam("totalConIva") Double totalConIva,
-            @RequestParam("archivoPdf") MultipartFile archivoPdf,
-            @RequestParam("correosClientes") String correosClientes) {
+            @RequestParam Long idReserva,
+            @RequestParam String fechaEmision,
+            @RequestParam Double totalConIva,
+            @RequestParam String fechaReserva,
+            @RequestParam String horaInicio,
+            @RequestParam int cantidadPersonas,
+            @RequestParam int numeroVueltas,
+            @RequestParam int duracionTotal,
+            @RequestParam String nombreCliente,
+            @RequestParam double precioFinalSinIVA,
+            @RequestParam List<String> correosClientes) {
         try {
+            // 🔹 Generamos el PDF internamente
+            byte[] pdfBytes = servicioComprobantePago.generarComprobantePDF(idReserva, fechaEmision, fechaReserva, horaInicio,
+                    cantidadPersonas, numeroVueltas, duracionTotal, nombreCliente, totalConIva, precioFinalSinIVA, correosClientes);
+
+            if (comprobanteRepository.existsByIdReserva(idReserva)) {
+                throw new IllegalArgumentException("🚨 Ya existe un comprobante para la reserva ID " + idReserva);
+            }
+
+            // 🔹 Guardamos el comprobante en la BD
             ComprobanteEntity comprobante = new ComprobanteEntity();
             comprobante.setIdReserva(idReserva);
             comprobante.setFechaEmision(LocalDate.parse(fechaEmision));
             comprobante.setTotalConIva(totalConIva);
-            comprobante.setArchivoPdf(Base64.getEncoder().encodeToString(archivoPdf.getBytes()));
-
-            List<String> listaCorreos = Arrays.asList(correosClientes.split(","));
-            comprobante.setCorreosClientes(listaCorreos);
+            comprobante.setArchivoPdf(Base64.getEncoder().encodeToString(pdfBytes));
+            comprobante.setCorreosClientes(correosClientes);
 
             ComprobanteEntity comprobanteGuardado = servicioComprobantePago.guardarComprobante(comprobante);
-            servicioComprobantePago.enviarComprobante(comprobanteGuardado);
+
+            // 🔹 Enviamos el comprobante por correo
+            emailService.enviarComprobantePorCorreo(correosClientes, pdfBytes);
 
             return ResponseEntity.ok(comprobanteGuardado);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al guardar comprobante.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("🚨 Error al generar y enviar el comprobante: " + e.getMessage());
         }
     }
+
 
     @GetMapping("/comprobantes/{id}")
     public ResponseEntity<?> obtenerComprobante(@PathVariable Long id) {
@@ -142,13 +176,25 @@ public class ReservaPagoController {
         return ResponseEntity.ok(servicioReservas.listarTodas());
     }
 
+
     @PostMapping("/reservas")
-    public ResponseEntity<ReservaEntity> crearReserva(@RequestBody ReservaEntity reserva) {
-        if (reserva.getNombreCliente() == null) {
-            return ResponseEntity.badRequest().body(null);
+    public ResponseEntity<?> crearReserva(
+            @RequestParam String nombreCliente,
+            @RequestParam String fechaReserva,
+            @RequestParam String horaInicio,
+            @RequestParam Integer numeroVueltas,
+            @RequestParam Integer cantidadPersonas,
+            @RequestParam Boolean diaEspecial
+    ) {
+        try {
+            ReservaEntity reserva = servicioReservas.guardarReserva(
+                    nombreCliente, fechaReserva, horaInicio, numeroVueltas, cantidadPersonas, diaEspecial);
+            return ResponseEntity.ok(reserva);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.ok(servicioReservas.guardarReserva(reserva));
     }
+
 
     @DeleteMapping("/reservas/{id}")
     public ResponseEntity<?> eliminarReserva(@PathVariable Long id) {
@@ -183,8 +229,7 @@ public class ReservaPagoController {
         reservaExistente.get().setEstadoReserva("Pendiente");
         reservaExistente.get().SetNombreCliente(reservaActualizada.getNombreCliente());
 
-        ReservaEntity reservaGuardada = servicioReservas.guardarReserva(reservaExistente.get());
-        emailService.sendReservationEditedConfirmation(reservaGuardada);
+        ReservaEntity reservaGuardada = servicioReservas.salvarReserva(reservaExistente.get());
         return ResponseEntity.ok(reservaGuardada);
     }
 }

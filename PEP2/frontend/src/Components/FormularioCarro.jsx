@@ -39,14 +39,16 @@ const FormularioCarro = () => {
     };
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Datos enviados:", JSON.stringify(carro, null, 2)); 
-        if (id) {
-            actualizarCarro(id, carro).then(() => navigate("/Carros"));
-        } else {
-            crearCarro(carro).then(() => navigate("/Carros"));
-        }
-    };
+    e.preventDefault();
+    console.log("Datos enviados:", JSON.stringify(carro, null, 2));
+
+    if (id) {
+        actualizarCarro(id, carro).then(() => navigate("/Carros"));
+    } else {
+        crearCarro(carro.codigoCarros, carro.modelo, carro.estado).then(() => navigate("/Carros"));
+    }
+};
+
 
     return (
         <div className="container mt-4">

@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/tarifas")
 public class TarifaController {

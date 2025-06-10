@@ -10,100 +10,61 @@ const ListaReservas = () => {
     obtenerReservas()
       .then((response) => {
         const data = response.data;
-        // Si data no es un arreglo, lo convertimos a arreglo.
         const reservasArray = Array.isArray(data) ? data : [data];
         setReservas(reservasArray);
       })
       .catch((error) => {
-        console.error("Error al obtener reservas:", error);
+        console.error("🚨 Error al obtener reservas:", error);
       });
   }, []);
 
-  const handleEliminar = (id) => {
-    eliminarReserva(id).then(() => {
-      setReservas(reservas.filter((reserva) => reserva.idReserva !== id));
-    });
+  const handleEliminar = async (id) => {
+    try {
+      console.log(`🔹 Eliminando reserva con ID: ${id}`);
+      await eliminarReserva(id);
+      setReservas((prevReservas) => prevReservas.filter((reserva) => reserva.idReserva !== id));
+      console.log("✔️ Reserva eliminada con éxito");
+    } catch (error) {
+      console.error("🚨 Error al eliminar reserva:", error);
+    }
   };
 
   return (
     <div className="container mt-4">
       <h2>Lista de Reservas</h2>
-      <Link to="/crear-reserva" className="btn btn-primary mb-3">
-        Nueva Reserva
-      </Link>
+      <Link to="/crear-reserva" className="btn btn-primary mb-3">Nueva Reserva</Link>
 
       <div className="row">
-        {reservas.map((reserva) => (
+        {reservas.length > 0 ? reservas.map((reserva) => (
           <div key={reserva.idReserva} className="col-md-4 mb-3">
             <div className="card shadow-sm">
               <div className="card-body">
-                <h5 className="card-title">Reserva #{reserva.idReserva}</h5>
-                <p>
-                  <strong>Fecha:</strong>{" "}
-                  {new Date(reserva.fechaReserva).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>Hora Inicio:</strong> {reserva.horaInicio}
-                </p>
-                <p>
-                  <strong>Número de Vueltas:</strong> {reserva.numeroVueltas}
-                </p>
-                <p>
-                  <strong>Duración:</strong> {reserva.duracionTotal} minutos
-                </p>
-                <p>
-                  <strong>Cantidad de Personas:</strong> {reserva.cantidadPersonas}
-                </p>
-                <p>
-                  <strong>Día Especial:</strong>{" "}
-                  {reserva.diaEspecial === true || reserva.diaEspecial === "true"
-                    ? "Sí"
-                    : "No"}
-                </p>
-                <p>
-                  <strong>Cliente Responsable:</strong>{" "}
-                  {reserva.clienteResponsable?.nombre}
-                </p>
-                <p>
-                  <strong>Precio Total Antes de descuentos:</strong> $
-                  {reserva.precioTotal}
-                </p>
+                <h5 className="card-title">Reserva #{reserva.idReserva || "Desconocida"}</h5>
+                <p><strong>Fecha:</strong> {reserva.fechaReserva ? new Date(reserva.fechaReserva).toLocaleDateString() : "Sin definir"}</p>
+                <p><strong>Hora Inicio:</strong> {reserva.horaInicio || "Sin definir"}</p>
+                <p><strong>Número de Vueltas:</strong> {reserva.numeroVueltas || 0}</p>
+                <p><strong>Duración:</strong> {reserva.duracionTotal ? `${reserva.duracionTotal} minutos` : "No calculada"}</p>
+                <p><strong>Cantidad de Personas:</strong> {reserva.cantidadPersonas || "No especificada"}</p>
+                <p><strong>Día Especial:</strong> {reserva.diaEspecial === true || reserva.diaEspecial === "true" ? "Sí" : "No"}</p>
+                <p><strong>Cliente Responsable:</strong> {reserva.nombreCliente || "No especificado"}</p>
 
-                {/* Si se detecta que la reserva ya fue pagada, no se muestran los botones */}
                 {reserva.comprobantePago ? (
-                  <div className="alert alert-secondary mt-2">
-                    Reserva Pagada
-                  </div>
+                  <div className="alert alert-secondary mt-2">Reserva Pagada</div>
                 ) : (
                   <>
-                    <button
-                      className="btn btn-warning"
-                      onClick={() =>
-                        navigate(`/editar-reserva/${reserva.idReserva}`)
-                      }
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-danger ms-2"
-                      onClick={() => handleEliminar(reserva.idReserva)}
-                    >
-                      Eliminar
-                    </button>
-                    <button
-                      className="btn btn-success ms-2"
-                      onClick={() =>
-                        navigate(`/crear-comprobante/${reserva.idReserva}`)
-                      }
-                    >
-                      Proceder al Pago
-                    </button>
+                    <button className="btn btn-warning" onClick={() => navigate(`/editar-reserva/${reserva.idReserva}`)}>Editar</button>
+                    <button className="btn btn-danger ms-2" onClick={() => handleEliminar(reserva.idReserva)}>Eliminar</button>
+                    <button className="btn btn-success ms-2" onClick={() => navigate(`/crear-comprobante/${reserva.idReserva}`)}>Proceder al Pago</button>
                   </>
                 )}
               </div>
             </div>
           </div>
-        ))}
+        )) : (
+          <div className="col-12 text-center mt-4">
+            <p className="alert alert-info">No hay reservas disponibles</p>
+          </div>
+        )}
       </div>
     </div>
   );

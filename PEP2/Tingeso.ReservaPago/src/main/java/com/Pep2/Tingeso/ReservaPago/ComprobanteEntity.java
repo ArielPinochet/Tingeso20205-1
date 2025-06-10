@@ -15,7 +15,7 @@ public class ComprobanteEntity {
     private Long idReserva;
     private LocalDate fechaEmision;
     private Double totalConIva;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "comprobante_correos", joinColumns = @JoinColumn(name = "id_comprobante"))
     @Column(name = "correo_cliente")
     private List<String> correosClientes;

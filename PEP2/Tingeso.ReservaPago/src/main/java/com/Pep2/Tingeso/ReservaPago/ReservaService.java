@@ -10,6 +10,8 @@ import java.sql.*;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +31,52 @@ public class ReservaService {
         this.dataSource = dataSource;
     }
 
-    @Transactional
-    public ReservaEntity guardarReserva(ReservaEntity reserva) {
+    public ReservaEntity salvarReserva(ReservaEntity reserva) {
         return repositorioReserva.save(reserva);
+    }
+
+    @Transactional
+    public ReservaEntity guardarReserva(String nombreCliente, String fechaReserva, String horaInicio,
+                                        Integer numeroVueltas, Integer cantidadPersonas, Boolean diaEspecial) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+        ReservaEntity reserva = new ReservaEntity();
+        reserva.SetNombreCliente(nombreCliente);
+        reserva.setFechaReserva(LocalDateTime.parse(fechaReserva, formatter));
+        reserva.setHoraInicio(LocalDateTime.parse(horaInicio, formatter));
+        reserva.setNumeroVueltas(numeroVueltas);
+        reserva.setCantidadPersonas(cantidadPersonas);
+        reserva.setDiaEspecial(diaEspecial);
+
+        // 🔹 Cálculo automático de duración total y precio
+        int duracionTotal;
+        double precioTotal;
+
+        if (numeroVueltas <= 10) {
+            duracionTotal = 30;
+            precioTotal = 15000.0;
+        } else if (numeroVueltas <= 15) {
+            duracionTotal = 35;
+            precioTotal = 20000.0;
+        } else if (numeroVueltas <= 20) {
+            duracionTotal = 40;
+            precioTotal = 25000.0;
+        } else {
+            throw new IllegalArgumentException("Número de vueltas inválido. Máximo permitido: 20.");
+        }
+
+        reserva.setDuracionTotal(duracionTotal);
+
+        // 🔹 Guardar reserva en la base de datos
+        ReservaEntity reservaGuardada = repositorioReserva.save(reserva);
+
+        // 🔹 Llamar servicios externos para tarifas y descuentos
+        crearTarifaInterna(numeroVueltas, reservaGuardada.getIdReserva());
+        crearTarifaEspecialInterna(reservaGuardada);
+        crearDescuentoInterno(cantidadPersonas, reservaGuardada.getIdReserva(), nombreCliente);
+
+        incrementarReservasInterna(nombreCliente);
+        return reservaGuardada;
     }
 
     @Transactional
@@ -51,24 +96,68 @@ public class ReservaService {
         return  repositorioReserva.findByIdReserva(idReserva);
     }
 
-    // 🔹 Métodos internos para crear la tarifa, tarifa especial y descuento
     @Transactional
     public void crearTarifaInterna(int numeroVueltas, Long idReserva) {
-        restTemplate.postForEntity("http://localhost:8080/api/tarifas/", null,
-                ResponseEntity.class, numeroVueltas, idReserva);
+        String url = String.format("http://localhost:8080/api/tarifas/?numeroVueltas=%d&idReserva=%d", numeroVueltas, idReserva);
+
+        System.out.println("🔹 Enviando tarifa con URL: " + url);
+
+        try {
+            ResponseEntity<?> response = restTemplate.postForEntity(url, null, ResponseEntity.class);
+            System.out.println("✔️ Respuesta del servidor tarifas: " + response.getStatusCode());
+        } catch (Exception e) {
+            System.err.println("🚨 Error al enviar tarifa: " + e.getMessage());
+        }
     }
+
+
 
     @Transactional
     public void crearTarifaEspecialInterna(ReservaEntity reserva) {
+        String fechaFormateada = reserva.getFechaReserva().toLocalDate().toString();  // 🔹 Convierte `LocalDateTime` a `String`
+
         String url = String.format("http://localhost:8080/api/tarifas-especiales/CrearTarifaEspecial/?fecha=%s&esDiaEspecial=%b&IdReserva=%d&CantidadPersonas=%d",
-                reserva.getFechaReserva(), reserva.getDiaEspecial(), reserva.getIdReserva(), reserva.getCantidadPersonas());
-        restTemplate.postForEntity(url, null, ResponseEntity.class);
+                fechaFormateada, reserva.getDiaEspecial(), reserva.getIdReserva(), reserva.getCantidadPersonas());
+
+        System.out.println("🔹 Enviando tarifa especial con URL: " + url);
+
+        try {
+            ResponseEntity<?> response = restTemplate.postForEntity(url, null, ResponseEntity.class);
+            System.out.println("✔️ Respuesta del servidor tarifas especiales: " + response.getStatusCode());
+        } catch (Exception e) {
+            System.err.println("🚨 Error al enviar tarifa especial: " + e.getMessage());
+        }
     }
+
 
     @Transactional
     public void crearDescuentoInterno(int numeroPersonas, Long idReserva, String nombreCliente) {
-        restTemplate.postForEntity("http://localhost:8080/api/descuentos/", null,
-                ResponseEntity.class, numeroPersonas, idReserva, nombreCliente);
+        String url = String.format("http://localhost:8080/api/descuentos/?numeroPersonas=%d&idReserva=%d&nombreCliente=%s",
+                numeroPersonas, idReserva, nombreCliente);
+
+        System.out.println("🔹 Enviando descuento con URL: " + url);
+
+        try {
+            ResponseEntity<?> response = restTemplate.postForEntity(url, null, ResponseEntity.class);
+            System.out.println("✔️ Respuesta del servidor descuentos: " + response.getStatusCode());
+        } catch (Exception e) {
+            System.err.println("🚨 Error al enviar descuento: " + e.getMessage());
+        }
+    }
+
+
+    @Transactional
+    public void incrementarReservasInterna(String nombreCliente) {
+        String url = String.format("http://localhost:8080/api/clientes/reservas/%s", nombreCliente);
+
+        System.out.println("🔹 Enviando solicitud para incrementar reservas del cliente: " + nombreCliente);
+
+        try {
+            ResponseEntity<?> response = restTemplate.postForEntity(url, null, ResponseEntity.class);
+            System.out.println("✔️ Respuesta del servidor clientes: " + response.getStatusCode());
+        } catch (Exception e) {
+            System.err.println("🚨 Error al incrementar reservas del cliente: " + e.getMessage());
+        }
     }
 
 

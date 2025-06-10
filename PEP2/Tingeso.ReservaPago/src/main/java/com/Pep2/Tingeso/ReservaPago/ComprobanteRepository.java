@@ -5,5 +5,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ComprobanteRepository extends JpaRepository<ComprobanteEntity, Long> {
+    boolean existsByIdReserva(Long idReserva);
 
 }

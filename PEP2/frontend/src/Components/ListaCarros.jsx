@@ -10,11 +10,26 @@ const ListaCarros = () => {
         obtenerCarros().then(response => setCarros(response.data));
     }, []);
 
-    const handleEliminar = (id) => {
-        eliminarCarro(id).then(() => {
-            setCarros(carros.filter(carro => carro.codigoCarros !== id));
-        });
-    };
+   const handleEliminar = async (codigo) => {
+    try {
+        console.log(`🔹 Eliminando carro con código: ${codigo}`);
+        
+        await eliminarCarro(codigo); // 🔹 Esperar a que la eliminación se complete
+        setCarros(prevCarros => prevCarros.filter(carro => carro.codigoCarros !== codigo));
+        
+        console.log("✔️ Carro eliminado con éxito");
+    } catch (error) {
+        console.error("🚨 Error al eliminar carro:", error);
+        
+        if (error.response) {
+            console.error("🔹 Detalles del error:", error.response.data);
+            console.error("🔹 Código de estado:", error.response.status);
+        } else {
+            console.error("🔹 No hay respuesta del servidor.");
+        }
+    }
+};
+
 
     // 🔹 Filtrar carros según el estado seleccionado
     const carrosFiltrados = filtroEstado ? carros.filter(carro => carro.estado === filtroEstado) : carros;
@@ -51,8 +66,6 @@ const ListaCarros = () => {
                             <td>{carro.modelo}</td>
                             <td>{carro.estado}</td>
                             <td>
-                                <Link to={`/editar-carro/${carro.codigoCarros}`} className="btn btn-warning">Editar</Link>
-                                <button className="btn btn-danger ms-2" onClick={() => handleEliminar(carro.codigoCarros)}>Eliminar</button>
                             </td>
                         </tr>
                     ))}

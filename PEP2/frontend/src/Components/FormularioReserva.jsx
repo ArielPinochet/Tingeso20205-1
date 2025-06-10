@@ -165,36 +165,27 @@ const FormularioReserva = () => {
       alert("Debes seleccionar un cliente válido.");
       return;
     }
-    // Sumar 1 día a la fecha de reserva para corregir el desfase
-    const correctedFechaReserva = (() => {
-      // Se asume que reserva.fechaReserva ya viene en formato "YYYY-MM-DD"
-      const originalDate = new Date(reserva.fechaReserva + "T00:00:00");
-      const newDate = new Date(originalDate.getTime() + 24 * 60 * 60 * 1000);
-      return formatLocalDate(newDate);
-    })();
-    const carrosSeleccionados = Object.values(reserva.carrosAsignados || {})
-      .map((codigoCarro) => {
-        return carros.find((carro) => carro.codigoCarros === codigoCarro);
-      })
-      .filter((carro) => carro !== undefined);
-    const reservaFinal = {
-      fechaReserva: reserva.fechaReserva,
-      horaInicio: reserva.horaInicio,
+
+    if (!reserva.fechaReserva || !reserva.horaInicio) {
+      alert("Debes seleccionar fecha y hora de inicio.");
+      return;
+    }
+
+    const fechaHora = `${reserva.fechaReserva}T${reserva.horaInicio}:00`;
+
+    // Solo los campos requeridos por el backend como request param
+    const reservaParams = {
+      nombreCliente: clienteSeleccionado.nombre,
+      fechaReserva: fechaHora,
+      horaInicio: fechaHora,
       numeroVueltas: reserva.numeroVueltas,
       cantidadPersonas: reserva.cantidadPersonas,
-      diaEspecial: reserva.diaEspecial,
-      estadoReserva: reserva.estadoReserva,
-      precioTotal: reserva.precioTotal,
-      duracionTotal: reserva.duracionTotal,
-      clienteResponsable: clienteSeleccionado,
-      carros: carrosSeleccionados
+      diaEspecial: reserva.diaEspecial === "true" || reserva.diaEspecial === true
     };
-    console.log("Datos enviados al backend:", reservaFinal);
-    if (id) {
-      actualizarReserva(id, reservaFinal).then(() => navigate("/reservas"));
-    } else {
-      crearReserva(reservaFinal).then(() => navigate("/reservas"));
-    }
+
+    console.log("Params enviados al backend:", reservaParams);
+
+    crearReserva(reservaParams).then(() => navigate("/reservas"));
   };
 
   return (
