@@ -19,13 +19,20 @@ public class EntidadCalendario {
     @Enumerated(EnumType.STRING)
     private EstadoOcupacion estado;
 
-    private Long clienteId;
+    private String clienteNombre;
     private Long reservaId;
 
     public enum EstadoOcupacion {
         DISPONIBLE, RESERVADO
     }
 
+    public String getClienteNombre() {
+        return clienteNombre;
+    }
+
+    public void setClienteNombre(String clienteNombre) {
+        this.clienteNombre = clienteNombre;
+    }
 
     public Long getId() {
         return id;
@@ -65,14 +72,6 @@ public class EntidadCalendario {
 
     public void setEstado(EstadoOcupacion estado) {
         this.estado = estado;
-    }
-
-    public Long getClienteId() {
-        return clienteId;
-    }
-
-    public void setClienteId(Long clienteId) {
-        this.clienteId = clienteId;
     }
 
     public Long getReservaId() {

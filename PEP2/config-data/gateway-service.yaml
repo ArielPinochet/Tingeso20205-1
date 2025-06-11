@@ -69,6 +69,11 @@ spring:
           uri: lb://tarifas-service
           predicates:
             - Path=/api/tarifas/**
+        
+        - id: calendario-service
+          uri: lb://calendario-service
+          predicates:
+            - Path=/api/calendario/**
 
 management:
   endpoints:

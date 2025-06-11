@@ -19,6 +19,9 @@ public class ServicioCalendario {
         return calendarioRepository.findByFecha(fecha);
     }
 
+    public List<EntidadCalendario> obtenerTodos(){
+        return calendarioRepository.findAll();
+    }
     public EntidadCalendario guardarReserva(EntidadCalendario reserva) {
         return calendarioRepository.save(reserva);
     }
