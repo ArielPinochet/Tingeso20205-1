@@ -23,18 +23,9 @@ public class ReporteController {
         this.reporteService = reporteService;
     }
 
-    @GetMapping("/{mes}")
-    public List<ReporteEntity> obtenerPorMes(@PathVariable YearMonth mes) {
-        return reporteService.obtenerPorMes(mes);
-    }
-
-    @PostMapping("/")
-    public ReporteEntity crearReporte(@RequestBody ReporteEntity reporte) {
-        return reporteService.guardarReporte(reporte);
-    }
     @GetMapping("/descargarExcel")
-    public ResponseEntity<byte[]> generarReporteExcel(@RequestParam LocalDate inicio,
-                                                      @RequestParam LocalDate fin,
+    public ResponseEntity<byte[]> generarReporteExcel(@RequestParam String inicio,
+                                                      @RequestParam String fin,
                                                       @RequestParam String tipoReporte) {
         return reporteService.generarReporteExcel(inicio, fin, tipoReporte);
     }

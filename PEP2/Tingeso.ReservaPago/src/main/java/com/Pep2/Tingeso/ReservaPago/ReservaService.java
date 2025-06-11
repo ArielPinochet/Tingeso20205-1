@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +75,11 @@ public class ReservaService {
         crearTarifaInterna(numeroVueltas, reservaGuardada.getIdReserva());
         crearTarifaEspecialInterna(reservaGuardada);
         crearDescuentoInterno(cantidadPersonas, reservaGuardada.getIdReserva(), nombreCliente);
+
+        LocalDateTime fechaReservaDT = LocalDateTime.parse(fechaReserva, formatter);
+        LocalDateTime horaInicioDT = LocalDateTime.parse(horaInicio, formatter);
+
+        crearCalendarioDesdeReserva(fechaReservaDT.toLocalDate(), horaInicioDT.toLocalTime(), duracionTotal, nombreCliente, reservaGuardada.getIdReserva());
 
         incrementarReservasInterna(nombreCliente);
         return reservaGuardada;
@@ -160,15 +166,32 @@ public class ReservaService {
         }
     }
 
+    public void crearCalendarioDesdeReserva(LocalDate fecha, LocalTime horaInicio, int duracionMinutos, String clienteNombre, Long reservaId) {
+        String url = String.format("http://localhost:8080/api/calendario/crear?fecha=%s&horaInicio=%s&duracionMinutos=%d&clienteNombre=%s&reservaId=%d",
+                fecha, horaInicio, duracionMinutos, clienteNombre, reservaId);
+
+        System.out.println("🔹 Enviando solicitud para crear calendario desde reserva: " + reservaId);
+
+        try {
+            ResponseEntity<?> response = restTemplate.postForEntity(url, null, ResponseEntity.class);
+            System.out.println("✔️ Respuesta del servidor calendario: " + response.getStatusCode());
+        } catch (Exception e) {
+            System.err.println("🚨 Error al crear calendario desde reserva: " + e.getMessage());
+        }
+    }
 
     public List<ReporteDTO> obtenerGananciasEntreMeses(LocalDate inicio, LocalDate fin) {
         String sql = """
-        SELECT r.fecha_reserva AS mes, r.numero_vueltas, r.cantidad_personas, c.total_pago
-        FROM reservas r
+        SELECT DATE_TRUNC('month', r.fecha_reserva) AS mes, 
+            SUM(r.numero_vueltas) AS numero_vueltas, 
+            SUM(r.cantidad_personas) AS cantidad_personas, 
+            SUM(c.total_con_iva) AS total_pago
+        FROM reserva r
         INNER JOIN comprobante_pago c ON r.id_reserva = c.id_reserva
         WHERE r.fecha_reserva BETWEEN ? AND ?
-        ORDER BY r.fecha_reserva
-    """;
+       GROUP BY mes
+        ORDER BY mes
+                   """;
 
         List<ReporteDTO> reporte = new ArrayList<>();
 

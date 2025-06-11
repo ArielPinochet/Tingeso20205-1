@@ -5,72 +5,31 @@ import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es'; 
 import axios from 'axios';
 
-const API_URL = "http://localhost:8090";
-
-const RESERVA_URL = `${API_URL}/reservas`;
-
+const CALENDARIO_URL = "http://localhost:8080/api/calendario/todos";
 
 const Calendario = () => {
-  const [reservas, setReservas] = useState([]);
+  const [eventos, setEventos] = useState([]);
 
   useEffect(() => {
-    console.log("Iniciando solicitud al backend...");
-    
-    axios.get(RESERVA_URL)
-    
+    axios.get(CALENDARIO_URL)
       .then((response) => {
-        console.log("URL desde .env:", process.env.REACT_APP_API_URL);
-        console.log("Respuesta completa del backend:", response);
-        console.log("Datos en response.data:", response.data);
-
-        // Validar que la respuesta es un array de reservas
-        const data = Array.isArray(response.data) ? response.data : response.data.reservas || [];
-        console.log("Reservas procesadas:", data);
-
-        if (!Array.isArray(data)) {
-          console.error("Error: La respuesta del backend no es un array. Recibido:", data);
-          return;
-        }
-
-        const eventos = data.map((r) => {
-          console.log("Procesando reserva:", r); // Ver los datos reales
-        
-          const startDateParts = r.fechaReserva.split("-");
-          const timeParts = r.horaInicio.split(":");
-          
-          const startDate = new Date(
-            Number(startDateParts[0]),  // Año
-            Number(startDateParts[1]) - 1,  // Mes 
-            Number(startDateParts[2]) - 1,  // Día
-            Number(timeParts[0]),  // Hora
-            Number(timeParts[1])   // Minutos
-          );
-        
-          // Verificar si `startDate` es válido antes de seguir
-          if (isNaN(startDate.getTime())) {
-            console.error(`Hora de inicio inválida para reserva ID ${r.id}:`, r.horaInicio);
-            return null;
-          }
-        
-          // Calcular la hora de fin sumando la duración total en minutos
-          const endDate = new Date(startDate.getTime() + r.duracionTotal * 60000);
-        
-          console.log(`Reserva ${r.id}: Fecha ${r.fechaReserva}, Inicio ${startDate.toISOString()}, Fin ${endDate.toISOString()}`);
-        
+        const data = Array.isArray(response.data) ? response.data : [];
+        const eventosProcesados = data.map((item) => {
+          // Construir fecha de inicio y fin en formato ISO
+          const start = `${item.fecha}T${item.horaInicio}`;
+          const end = `${item.fecha}T${item.horaFin}`;
           return {
-            id: r.id || `Reserva-${Math.random()}`,
-            title: `Reserva ${r.id}`,
-            start: startDate.toISOString(),
-            end: endDate.toISOString(),
+            id: item.id,
+            title: `Reserva ${item.reservaId} - ${item.clienteNombre}`,
+            start,
+            end,
+            color: item.estado === "RESERVADO" ? "#28a745" : "#dc3545"
           };
-        }).filter(Boolean); // Filtra las reservas inválidas
-        
-
-        console.log("Eventos finales a mostrar:", eventos);
-        setReservas(eventos);
+        });
+        setEventos(eventosProcesados);
       })
       .catch((error) => {
-        console.error("Error al obtener reservas:", error);
+        console.error("Error al obtener calendario:", error);
       });
   }, []);
 
@@ -82,14 +41,14 @@ const Calendario = () => {
         initialView="timeGridWeek"
         locale={esLocale}
         headerToolbar={{
-          left: "prev,next hoy",
+          left: "prev,next today",
           center: "title",
           right: "timeGridWeek,timeGridDay"
         }}
         allDaySlot={false}
         slotMinTime="05:00:00"
         slotMaxTime="23:00:00"
-        events={reservas} 
+        events={eventos}
         height="auto"
       />
     </div>

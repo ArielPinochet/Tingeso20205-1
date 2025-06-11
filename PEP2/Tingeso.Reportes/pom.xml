@@ -14,10 +14,10 @@
 	</parent>
 
 	<groupId>com.Pep2</groupId>
-	<artifactId>Tingeso.TarifaEspeciales</artifactId>
+	<artifactId>reportes-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Tingeso.Tarifa</name>
-	<description>Microservicio de tarifas</description>
+	<name>reportes-service</name>
+	<description>Microservicio de reportes-service</description>
 
 	<properties>
 		<java.version>17</java.version>

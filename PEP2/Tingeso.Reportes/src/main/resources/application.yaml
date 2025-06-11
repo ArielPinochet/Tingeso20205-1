@@ -1,0 +1,32 @@
+server:
+  port: 0  # Puerto dinámico asignado por el sistema
+
+spring:
+  application:
+    name: calendario-service
+  cloud:
+    config:
+      uri: http://localhost:8081
+      enabled: true
+  config:
+    import: "optional:configserver:"
+
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      default-zone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+spring.main.web-application-type: reactive
+spring.cloud.compatibility-verifier.enabled: false
+
+logging:
+  level:
+    root: INFO
+    org.springframework.mail: DEBUG
+    org.springframework.boot.autoconfigure.mail: DEBUG

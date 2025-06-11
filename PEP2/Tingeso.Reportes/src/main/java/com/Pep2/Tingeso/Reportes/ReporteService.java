@@ -19,25 +19,14 @@ import java.util.List;
 @Service
 public class ReporteService {
 
-    private final ReporteRepository reporteRepository;
     private final RestTemplate restTemplate;
 
-    public ReporteService(ReporteRepository reporteRepository, RestTemplate restTemplate) {
-        this.reporteRepository = reporteRepository;
+    public ReporteService( RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    public List<ReporteEntity> obtenerPorMes(YearMonth mes) {
-        return reporteRepository.findByMes(mes);
-    }
 
-    public ReporteEntity guardarReporte(ReporteEntity reporte) {
-        return reporteRepository.save(reporte);
-    }
-    public List<ReporteEntity> obtenerReporte(YearMonth inicio, YearMonth fin, String tipoReporte) {
-        return reporteRepository.findByMesBetweenAndTipoReporte(inicio, fin, tipoReporte);
-    }
-    public List<ReporteDTO> obtenerGananciasEntreMeses(LocalDate inicio, LocalDate fin) {
+    public List<ReporteDTO> obtenerGananciasEntreMeses(String inicio, String fin) {
         String url = String.format("http://localhost:8080/api/reservas/ganancias?inicio=%s&fin=%s",
                 inicio, fin);
 
@@ -46,7 +35,7 @@ public class ReporteService {
 
     }
 
-    public ResponseEntity<byte[]> generarReporteExcel(LocalDate inicio, LocalDate fin, String tipoReporte) {
+    public ResponseEntity<byte[]> generarReporteExcel(String inicio, String fin, String tipoReporte) {
         // 🔹 Obtener datos desde `reporte-pago-service`
         List<ReporteDTO> reportes = obtenerGananciasEntreMeses(inicio, fin);
 

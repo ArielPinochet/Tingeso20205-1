@@ -143,6 +143,21 @@ public class ReservaPagoController {
         return ResponseEntity.ok(comprobanteOpt.get());
     }
 
+    @GetMapping("/ganancias")
+    public ResponseEntity<List<ReporteDTO>> obtenerGanancias(
+            @RequestParam String inicio,
+            @RequestParam String fin) {
+
+        LocalDate inicioDate = LocalDate.parse(inicio.trim());
+        LocalDate finDate = LocalDate.parse(fin.trim());
+
+        System.out.println("🔹 Generando reporte de ganancias desde " + inicio + " hasta " + fin);
+
+        List<ReporteDTO> reporte = servicioReservas.obtenerGananciasEntreMeses(inicioDate, finDate);
+
+        return ResponseEntity.ok(reporte);
+    }
+
     @GetMapping("/comprobantes")
     public ResponseEntity<List<ComprobanteEntity>> listarComprobantes() {
         return ResponseEntity.ok(servicioComprobantePago.listarTodos());
