@@ -4,7 +4,9 @@ server:
 spring:
   application:
     name: tarifas-service
-
+  jpa:
+    hibernate:
+      ddl-auto: none  
 eureka:
   client:
     fetch-registry: true

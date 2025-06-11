@@ -12,6 +12,10 @@ spring:
     import: "optional:configserver:"
 
 
+  jpa:
+    hibernate:
+      ddl-auto: none  # 🔹 Evita intentos de configurar una DB
+
 eureka:
   client:
     fetch-registry: true
