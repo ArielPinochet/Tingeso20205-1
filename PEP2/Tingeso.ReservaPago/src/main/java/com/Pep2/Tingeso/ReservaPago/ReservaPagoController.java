@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.time.LocalDate;
 import org.springframework.web.multipart.MultipartFile;
 
-@CrossOrigin(origins = "http://localhost:5173")
+
 @RestController
 @RequestMapping("/app")
 public class ReservaPagoController {

@@ -1,0 +1,161 @@
+version: '3.8'
+services:
+  postgres-service:
+    image: postgres:latest
+    container_name: postgres-service
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - tingeso-network
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+
+  config-service:
+    build:
+      context: ./config-service
+      dockerfile: Dockerfile
+    container_name: config-service
+    ports:
+      - "8081:8081"
+    networks:
+      - tingeso-network
+
+  eureka-service:
+    build:
+      context: ./eureka-service
+      dockerfile: Dockerfile
+    container_name: eureka-service
+    environment:
+      CONFIG_SERVER: "http://config-service:8081"
+    depends_on:
+      - config-service
+    ports:
+      - "8761:8761"
+    networks:
+      - tingeso-network
+
+  gateway-service:
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile
+    container_name: gateway-service
+    environment:
+      EUREKA_SERVER: "http://eureka-service:8761/eureka"
+    depends_on:
+      - eureka-service
+    ports:
+      - "8080:8080"
+    networks:
+      - tingeso-network
+  reservapago-service:
+    build:
+      context: ./Tingeso.ReservaPago
+      dockerfile: Dockerfile
+    container_name: reservapago-service
+    environment:
+      BD_HOST: postgres-service
+      BD_PORT: 5432
+      BD_USER: postgres
+      BD_PASS: postgres
+      BD_NAME: TingesoReservas
+      EUREKA_SERVER: "http://eureka-service:8761/eureka"
+    depends_on:
+      - postgres-service
+      - eureka-service
+    networks:
+      - tingeso-network
+
+  clientefrecuente-service:
+    build:
+      context: ./Tingeso.ClienteFrecuente
+      dockerfile: Dockerfile
+    container_name: clientefrecuente-service
+    environment:
+      BD_HOST: postgres-service
+      BD_PORT: 5432
+      BD_USER: postgres
+      BD_PASS: postgres
+      BD_NAME: TingesoClientes
+      EUREKA_SERVER: "http://eureka-service:8761/eureka"
+    depends_on:
+      - postgres-service
+      - eureka-service
+    networks:
+      - tingeso-network
+
+  descuentos-service:
+    build:
+      context: ./Tingeso.Descuento
+      dockerfile: Dockerfile
+    container_name: descuentos-service
+    environment:
+      BD_HOST: postgres-service
+      BD_PORT: 5432
+      BD_USER: postgres
+      BD_PASS: postgres
+      BD_NAME: TingesoDescuentos
+      EUREKA_SERVER: "http://eureka-service:8761/eureka"
+    depends_on:
+      - postgres-service
+      - eureka-service
+    networks:
+      - tingeso-network
+
+  tarifas-service:
+    build:
+      context: ./Tingeso.Tarifas
+      dockerfile: Dockerfile
+    container_name: tarifas-service
+    environment:
+      BD_HOST: postgres-service
+      BD_PORT: 5432
+      BD_USER: postgres
+      BD_PASS: postgres
+      BD_NAME: TingesoTarifas
+      EUREKA_SERVER: "http://eureka-service:8761/eureka"
+    depends_on:
+      - postgres-service
+      - eureka-service
+    networks:
+      - tingeso-network
+
+  tarifa-especial-service:
+    build:
+      context: ./Tingeso.TarifaEspeciales
+      dockerfile: Dockerfile
+    container_name: tarifa-especial-service
+    environment:
+      BD_HOST: postgres-service
+      BD_PORT: 5432
+      BD_USER: postgres
+      BD_PASS: postgres
+      BD_NAME: TingesoTarifaEspecial
+      EUREKA_SERVER: "http://eureka-service:8761/eureka"
+    depends_on:
+      - postgres-service
+      - eureka-service
+    networks:
+      - tingeso-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "80:5173"
+    depends_on:
+      - gateway-service
+    networks:
+      - tingeso-network
+
+networks:
+  tingeso-network:
+    driver: bridge
+
+volumes:
+  pg_data:

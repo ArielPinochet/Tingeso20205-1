@@ -14,10 +14,10 @@
 	</parent>
 
 	<groupId>com.Pep2</groupId>
-	<artifactId>Tingeso.TarifaEspeciales</artifactId>
+	<artifactId>clientefrecuente-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Tingeso.Tarifa</name>
-	<description>Microservicio de tarifas</description>
+	<name>clientefrecuente-service</name>
+	<description>clientefrecuente-service</description>
 
 	<properties>
 		<java.version>17</java.version>
@@ -106,12 +106,7 @@
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</path>
-					</annotationProcessorPaths>
+
 				</configuration>
 			</plugin>
 		</plugins>
