@@ -219,4 +219,108 @@ public class ReservaService {
         return reporte;
     }
 
+    public List<ReportePersonasDTO> obtenerGananciasEntreMesesPersonas(LocalDate inicio, LocalDate fin) {
+        String sql = """
+        
+                SELECT DATE_TRUNC('month', r.fecha_reserva) AS mes,
+                           CASE\s
+                               WHEN r.cantidad_personas BETWEEN 1 AND 2 THEN '1-2 personas'
+                               WHEN r.cantidad_personas BETWEEN 3 AND 5 THEN '3-5 personas'
+                               WHEN r.cantidad_personas BETWEEN 6 AND 10 THEN '6-10 personas'
+                               WHEN r.cantidad_personas BETWEEN 11 AND 15 THEN '11-15 personas'
+                               ELSE 'Otro'
+                           END AS grupo_personas,
+                           SUM(c.total_con_iva) AS total_pago
+                    FROM reserva r
+                    INNER JOIN comprobante_pago c ON r.id_reserva = c.id_reserva
+                    WHERE r.fecha_reserva BETWEEN ? AND ?
+                    GROUP BY mes, grupo_personas
+                    ORDER BY mes;
+                   """;
+
+        List<ReportePersonasDTO> reporte = new ArrayList<>();
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDate(1, java.sql.Date.valueOf(inicio));
+            stmt.setDate(2, java.sql.Date.valueOf(fin));
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                ReportePersonasDTO dto = new ReportePersonasDTO(
+                        rs.getDate("mes").toLocalDate(),
+                        rs.getString("grupo_personas"),
+                        rs.getBigDecimal("total_pago")
+                );
+                reporte.add(dto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return reporte;
+    }
+
+
+    public List<ReporteVueltasDTO> obtenerGananciasEntreMesesVueltas(LocalDate inicio, LocalDate fin) {
+        String sql = """
+        
+                SELECT DATE_TRUNC('month', r.fecha_reserva) AS mes,
+                       CASE\s
+                           WHEN r.numero_vueltas <= 10 THEN '10 vueltas o máx 10 min'
+                           WHEN r.numero_vueltas <= 15 THEN '15 vueltas o máx 15 min'
+                           WHEN r.numero_vueltas <= 20 THEN '20 vueltas o máx 20 min'
+                           ELSE 'Otro'
+                       END AS categoria_vueltas,
+                       SUM(c.total_con_iva) AS total_pago
+                FROM reserva r
+                INNER JOIN comprobante_pago c ON r.id_reserva = c.id_reserva
+                WHERE r.fecha_reserva BETWEEN ? AND ?
+                GROUP BY mes, categoria_vueltas
+                ORDER BY mes;
+                
+                   """;
+
+        List<ReporteVueltasDTO> reporte = new ArrayList<>();
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDate(1, java.sql.Date.valueOf(inicio));
+            stmt.setDate(2, java.sql.Date.valueOf(fin));
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                ReporteVueltasDTO dto = new ReporteVueltasDTO(
+                        rs.getDate("mes").toLocalDate(),
+                        rs.getString("categoria_vueltas"),
+                        rs.getBigDecimal("total_pago")
+                );
+                reporte.add(dto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return reporte;
+    }
+    private List<String> obtenerListaCompletaDeMeses(String inicio, String fin) {
+        List<String> mesesCompletos = new ArrayList<>();
+        LocalDate inicioDate = LocalDate.parse(inicio + "-01");
+        LocalDate finDate = LocalDate.parse(fin + "-01");
+
+        while (!inicioDate.isAfter(finDate)) {
+            // ✅ Obtener el último día del mes correctamente
+            LocalDate ultimoDiaDelMes = inicioDate.withDayOfMonth(inicioDate.lengthOfMonth());
+            mesesCompletos.add(ultimoDiaDelMes.toString());
+
+            inicioDate = inicioDate.plusMonths(1);
+        }
+
+        return mesesCompletos;
+    }
+
 }

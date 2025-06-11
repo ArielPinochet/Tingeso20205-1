@@ -38,7 +38,7 @@ const App = () => {
                   <Link className="nav-link" to="/comprobantes">Comprobantes</Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/reservas">Booking</Link>
+                  <Link className="nav-link" to="/reservas">Reservas</Link>
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/Calendario">Calendario</Link>

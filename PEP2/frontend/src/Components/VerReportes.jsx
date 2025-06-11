@@ -12,24 +12,34 @@ const VerReportes = () => {
       return;
     }
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/reportes/descargarExcel`,
-        {
-          params: {
-            inicio: startMonth,
-            fin: endMonth,
-            tipoReporte: selectedReport
-          },
-          responseType: "blob"
-        }
-      );
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      let url = "";
+      let params = {};
+      let filename = "";
+
+      if (selectedReport === "VUELTAS") {
+        url = "http://localhost:8080/api/reportes/descargarExcelVueltas";
+        params = {
+          inicio: startMonth,
+          fin: endMonth
+        };
+        filename = `Reporte_VUELTAS_${startMonth}_a_${endMonth}.xlsx`;
+      } else if (selectedReport === "PERSONAS") {
+        url = "http://localhost:8080/api/reportes/descargarExcelPersonas";
+        params = {
+          inicio: startMonth,
+          fin: endMonth
+        };
+        filename = `Reporte_PERSONAS_${startMonth}_a_${endMonth}.xlsx`;
+      }
+
+      const response = await axios.get(url, {
+        params,
+        responseType: "blob"
+      });
+      const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute(
-        "download",
-        `Reporte_${selectedReport}_${startMonth}_a_${endMonth}.xlsx`
-      );
+      link.href = blobUrl;
+      link.setAttribute("download", filename);
       document.body.appendChild(link);
       link.click();
       link.remove();

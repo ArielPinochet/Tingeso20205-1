@@ -4,9 +4,13 @@ server:
 spring:
   application:
     name: tarifas-service
+    
+  datasource:
+    url: ''  # 🔹 Esto evita que Spring intente configurar una DB
+    driver-class-name: ''  # 🔹 No es necesario definir un driver si no hay DB
   jpa:
-    hibernate:
-      ddl-auto: none  
+    database-platform: ''
+
 eureka:
   client:
     fetch-registry: true

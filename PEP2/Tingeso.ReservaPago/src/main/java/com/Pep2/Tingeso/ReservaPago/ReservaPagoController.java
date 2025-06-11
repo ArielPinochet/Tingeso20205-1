@@ -259,4 +259,33 @@ public class ReservaPagoController {
         ReservaEntity reservaGuardada = servicioReservas.salvarReserva(reservaExistente.get());
         return ResponseEntity.ok(reservaGuardada);
     }
+
+    @GetMapping("/gananciaspersonas")
+    public ResponseEntity<List<ReportePersonasDTO>> obtenerGananciasPersonas(
+            @RequestParam String inicio,
+            @RequestParam String fin) {
+
+        LocalDate inicioDate = LocalDate.parse(inicio.trim());
+        LocalDate finDate = LocalDate.parse(fin.trim());
+
+        System.out.println("🔹 Generando reporte de ganancias de personas desde " + inicio + " hasta " + fin);
+
+        List<ReportePersonasDTO> reporte = servicioReservas.obtenerGananciasEntreMesesPersonas(inicioDate, finDate);
+
+        return ResponseEntity.ok(reporte);
+    }
+    @GetMapping("/gananciasvueltas")
+    public ResponseEntity<List<ReporteVueltasDTO>> obtenerGananciasVueltas(
+            @RequestParam String inicio,
+            @RequestParam String fin) {
+
+        LocalDate inicioDate = LocalDate.parse(inicio.trim());
+        LocalDate finDate = LocalDate.parse(fin.trim());
+
+        System.out.println("🔹 Generando reporte de ganancias de ReporteVueltasDTO desde " + inicio + " hasta " + fin);
+
+        List<ReporteVueltasDTO> reporte = servicioReservas.obtenerGananciasEntreMesesVueltas(inicioDate, finDate);
+
+        return ResponseEntity.ok(reporte);
+    }
 }

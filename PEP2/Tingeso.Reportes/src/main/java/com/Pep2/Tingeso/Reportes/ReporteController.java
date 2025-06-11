@@ -30,5 +30,17 @@ public class ReporteController {
         return reporteService.generarReporteExcel(inicio, fin, tipoReporte);
     }
 
+    @GetMapping("/descargarExcelPersonas")
+    public ResponseEntity<byte[]> generarReporteExcelPersonas(@RequestParam String inicio,
+                                                      @RequestParam String fin) {
+        return reporteService.generarReportePersonasExcel(inicio, fin);
+    }
+
+    @GetMapping("/descargarExcelVueltas")
+    public ResponseEntity<byte[]> generarReporteExcelVueltas(@RequestParam String inicio,
+                                                              @RequestParam String fin) {
+        return reporteService.generarReporteVueltasExcel(inicio, fin);
+    }
+
 
 }
