@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eureka-service-deployment
+  labels:
+    app: eureka-service
+spec:
+  selector:
+    matchLabels:
+      app: eureka-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: eureka-service
+    spec:
+      containers:
+        - name: eureka-service
+          image: magikarp511/eureka-service:latest  # 🔄 Usa tu imagen en Docker Hub
+          ports:
+            - containerPort: 8761  # 📌 Puerto que usa `eureka-service`
+          env:
+            - name: CONFIG_SERVER
+              value: "http://config-service-service:8081"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eureka-service-service
+  labels:
+    app: eureka-service
+spec:
+  selector:
+    app: eureka-service
+  ports:
+    - protocol: TCP
+      port: 8761
+      targetPort: 8761
+  type: LoadBalancer

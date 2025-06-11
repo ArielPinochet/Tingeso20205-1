@@ -5,7 +5,7 @@ services:
     container_name: postgres-service
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: 1253
     ports:
       - "5432:5432"
     networks:
@@ -21,6 +21,13 @@ services:
     container_name: config-service
     ports:
       - "8081:8081"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/application/default"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
     networks:
       - tingeso-network
 
@@ -60,8 +67,8 @@ services:
       BD_HOST: postgres-service
       BD_PORT: 5432
       BD_USER: postgres
-      BD_PASS: postgres
-      BD_NAME: TingesoReservas
+      BD_PASS: 1253
+      BD_NAME: tingesoreservas
       EUREKA_SERVER: "http://eureka-service:8761/eureka"
     depends_on:
       - postgres-service
@@ -78,8 +85,8 @@ services:
       BD_HOST: postgres-service
       BD_PORT: 5432
       BD_USER: postgres
-      BD_PASS: postgres
-      BD_NAME: TingesoClientes
+      BD_PASS: 1253
+      BD_NAME: tingesoclientes
       EUREKA_SERVER: "http://eureka-service:8761/eureka"
     depends_on:
       - postgres-service
@@ -96,8 +103,8 @@ services:
       BD_HOST: postgres-service
       BD_PORT: 5432
       BD_USER: postgres
-      BD_PASS: postgres
-      BD_NAME: TingesoDescuentos
+      BD_PASS: 1253
+      BD_NAME: tingesodescuentos
       EUREKA_SERVER: "http://eureka-service:8761/eureka"
     depends_on:
       - postgres-service
@@ -114,8 +121,8 @@ services:
       BD_HOST: postgres-service
       BD_PORT: 5432
       BD_USER: postgres
-      BD_PASS: postgres
-      BD_NAME: TingesoTarifas
+      BD_PASS: 1253
+      BD_NAME: tingesotarifas
       EUREKA_SERVER: "http://eureka-service:8761/eureka"
     depends_on:
       - postgres-service
@@ -127,13 +134,13 @@ services:
     build:
       context: ./Tingeso.TarifaEspeciales
       dockerfile: Dockerfile
-    container_name: tarifa-especial-service
+    container_name: tarifa-especial
     environment:
       BD_HOST: postgres-service
       BD_PORT: 5432
       BD_USER: postgres
-      BD_PASS: postgres
-      BD_NAME: TingesoTarifaEspecial
+      BD_PASS: 1253
+      BD_NAME: tingesotarifaespecial
       EUREKA_SERVER: "http://eureka-service:8761/eureka"
     depends_on:
       - postgres-service

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tarifas-service-deployment
+  labels:
+    app: tarifas-service
+spec:
+  selector:
+    matchLabels:
+      app: tarifas-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tarifas-service
+    spec:
+      containers:
+        - name: tarifas-service
+          image: magikarp511/tarifas-service:latest  # 🔄 Usa tu imagen en Docker Hub
+          ports:
+            - containerPort: 0  # 📌 Ajusta según el puerto de `tarifas-service`
+          env:
+            - name: BD_HOST
+              value: "postgres-service"
+            - name: BD_PORT
+              value: "5432"
+            - name: BD_USER
+              value: "postgres"
+            - name: BD_PASS
+              value: "1253"
+            - name: BD_NAME
+              value: "tingesotarifas"
+            - name: EUREKA_SERVER
+              value: "http://eureka-service-service:8761/eureka"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tarifas-service-service
+  labels:
+    app: tarifas-service
+spec:
+  selector:
+    app: tarifas-service
+  ports:
+    - protocol: TCP
+      port: 0
+      targetPort: 0
+  type: LoadBalancer

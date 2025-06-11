@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tarifas-db-config
+data:
+  POSTGRES_DB: tingesotarifas
+  POSTGRES_USER: postgres

@@ -1,7 +1,21 @@
 spring:
   application:
     name: eureka-service
+
   cloud:
     config:
       enabled: true
-      uri: http://localhost:8081
+      uri: http://config-service:8081  # 🛠️ Usa el nombre del contenedor dentro de Docker en lugar de localhost
+      fail-fast: true  # 🔄 Falla rápido si `config-service` no responde, en lugar de seguir intentando indefinidamente
+
+server:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: eureka-service  # 📌 Asegura que use el nombre del servicio en Docker en lugar de localhost
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      default-zone: http://${eureka.instance.hostname}:${server.port}/eureka/

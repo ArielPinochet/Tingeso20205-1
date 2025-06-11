@@ -12,7 +12,7 @@ spring:
     import: "optional:configserver:"
 
   datasource:
-    url: jdbc:postgresql://${BD_HOST:localhost}:${BD_PORT:5432}/TingesoClientes
+    url: jdbc:postgresql://${BD_HOST:localhost}:${BD_PORT:5432}/${BD_NAME:TingesoClientes}
     username: ${BD_USER}
     password: ${BD_PASS}
     driver-class-name: org.postgresql.Driver

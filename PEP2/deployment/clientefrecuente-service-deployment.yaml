@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clientefrecuente-service-deployment
+  labels:
+    app: clientefrecuente-service
+spec:
+  selector:
+    matchLabels:
+      app: clientefrecuente-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: clientefrecuente-service
+    spec:
+      containers:
+        - name: clientefrecuente-service
+          image: magikarp511/clientefrecuente-service:latest  # 🔄 Usa tu imagen en Docker Hub
+          ports:
+            - containerPort: 0  # 📌 Ajusta según el puerto de `clientefrecuente-service`
+          env:
+            - name: BD_HOST
+              value: "postgres-service"
+            - name: BD_PORT
+              value: "5432"
+            - name: BD_USER
+              value: "postgres"
+            - name: BD_PASS
+              value: "1253"
+            - name: BD_NAME
+              value: "tingesoclientes"
+            - name: EUREKA_SERVER
+              value: "http://eureka-service-service:8761/eureka"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clientefrecuente-service-service
+  labels:
+    app: clientefrecuente-service
+spec:
+  selector:
+    app: clientefrecuente-service
+  ports:
+    - protocol: TCP
+      port: 0
+      targetPort: 0
+  type: LoadBalancer

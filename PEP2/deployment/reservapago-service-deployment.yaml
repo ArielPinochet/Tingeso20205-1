@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reservapago-service-deployment
+  labels:
+    app: reservapago-service
+spec:
+  selector:
+    matchLabels:
+      app: reservapago-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: reservapago-service
+    spec:
+      containers:
+        - name: reservapago-service
+          image: magikarp511/reservapago-service:latest  # 🔄 Usa tu imagen en Docker Hub
+          ports:
+            - containerPort: 0  # 📌 Ajusta según el puerto de `reservapago-service`
+          env:
+            - name: BD_HOST
+              value: "postgres-service"
+            - name: BD_PORT
+              value: "5432"
+            - name: BD_USER
+              value: "postgres"
+            - name: BD_PASS
+              value: "1253"
+            - name: BD_NAME
+              value: "tingesoreservas"
+            - name: EUREKA_SERVER
+              value: "http://eureka-service-service:8761/eureka"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reservapago-service-service
+  labels:
+    app: reservapago-service
+spec:
+  selector:
+    app: reservapago-service
+  ports:
+    - protocol: TCP
+      port: 0
+      targetPort: 0
+  type: LoadBalancer

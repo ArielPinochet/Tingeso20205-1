@@ -1,7 +1,83 @@
 spring:
   application:
     name: gateway-service
+
   cloud:
     config:
       enabled: true
-      uri: http://localhost:8081
+      uri: http://config-service:8081
+      fail-fast: true
+
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+          use-ip-address: true
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:5173"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+      routes:
+        - id: calendario-service
+          uri: lb://calendario-service
+          predicates:
+            - Path=/calendario/**
+
+        - id: clientefrecuente-service
+          uri: lb://clientefrecuente-service
+          predicates:
+            - Path=/api/clientes/**
+
+        - id: descuento-service
+          uri: lb://descuento-service
+          predicates:
+            - Path=/api/descuentos/**
+
+        - id: reportes-service
+          uri: lb://reportes-service
+          predicates:
+            - Path=/reportes/**
+
+        - id: reservapago-service
+          uri: lb://reservapago-service
+          predicates:
+            - Path=/app/**
+
+        - id: tarifa-especial-service
+          uri: lb://tarifa-especial-service
+          predicates:
+            - Path=/api/tarifas-especiales/**
+
+        - id: tarifas-service
+          uri: lb://tarifas-service
+          predicates:
+            - Path=/api/tarifas/**
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      default-zone: http://eureka-service:8761/eureka
+  instance:
+    hostname: gateway-service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
