@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -53,9 +54,26 @@ public class ControladorCliente {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarCliente(@PathVariable Long id) {
+        try {
+            clienteFrecuenteService.eliminarCliente(id);
+            return ResponseEntity.ok("Cliente con ID " + id + " eliminado correctamente.");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("❌ Cliente con ID " + id + " no encontrado.");
+        }
+    }
+
     @PostMapping("/")
-    public EntidadCliente crearCliente(@RequestParam String nombre, @RequestParam String email) {
-        return clienteFrecuenteService.guardarCliente(nombre,email);
+    public ResponseEntity<?> crearCliente(@RequestParam String nombre, @RequestParam String email) {
+        try {
+            EntidadCliente nuevoCliente = clienteFrecuenteService.guardarCliente(nombre, email);
+            return ResponseEntity.ok(nuevoCliente);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("❗ Error: " + e.getMessage());
+        }
     }
 
     @GetMapping("/descuento/{nombre}")
@@ -80,5 +98,29 @@ public class ControladorCliente {
         return ResponseEntity.ok(nombres);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<EntidadCliente> obtenerEntidadCliente(@PathVariable Long id) {
+        EntidadCliente cliente = clienteFrecuenteService.obtenerPorId(id);
+        return ResponseEntity.ok(cliente);
+    }
+
+    @PutMapping("/editar-correo")
+    public ResponseEntity<?> editarCorreoCliente(
+            @RequestParam String nombre,
+            @RequestParam String emailNuevo
+    ) {
+        Optional<EntidadCliente> clienteOpt = repositorioCliente.findEntidadClienteByNombre(nombre);
+
+        if (clienteOpt.isPresent()) {
+            EntidadCliente cliente = clienteOpt.get();
+            cliente.setEmail(emailNuevo);
+            repositorioCliente.save(cliente); // 🔄 Guarda el cambio en el repositorio
+
+            return ResponseEntity.ok(cliente);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error: Cliente con nombre " + nombre + " no encontrado.");
+        }
+    }
 }
 

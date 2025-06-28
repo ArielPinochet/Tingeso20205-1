@@ -17,6 +17,10 @@ const FormularioComprobante = () => {
   const [correosClientes, setCorreosClientes] = useState([]);
   const [emailErrors, setEmailErrors] = useState([]);
 
+  // Estados para el guardado
+  const [guardando, setGuardando] = useState(false);
+  const [comprobanteGuardado, setComprobanteGuardado] = useState(false);
+
   // Regex para validar correo
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -102,6 +106,8 @@ const FormularioComprobante = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setGuardando(true); // Mostrar modal de guardando
+
     // Construir los parámetros
     const params = new URLSearchParams({
       idReserva: reserva.idReserva,
@@ -122,13 +128,14 @@ const FormularioComprobante = () => {
 
     try {
       const response = await fetch(url, { method: "POST" });
+      setGuardando(false);
       if (!response.ok) {
         const errorData = await response.text();
         throw new Error(errorData);
       }
-      alert("Pago realizado con éxito. Se ha generado y enviado el comprobante.");
-      navigate("/comprobantes");
+      setComprobanteGuardado(true); // Mostrar modal de éxito
     } catch (error) {
+      setGuardando(false);
       console.error("Error al enviar comprobante:", error);
       alert("Error al enviar comprobante. Revisa la consola.");
     }
@@ -140,6 +147,47 @@ const FormularioComprobante = () => {
 
   return (
     <div className="container mt-4">
+      {/* Modal de guardando */}
+      {guardando && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+          background: "rgba(0,0,0,0.3)", zIndex: 3000,
+          display: "flex", alignItems: "center", justifyContent: "center"
+        }}>
+          <div style={{
+            background: "#fff", padding: "2rem", borderRadius: "10px",
+            boxShadow: "0 2px 16px rgba(0,0,0,0.2)", minWidth: "320px", textAlign: "center"
+          }}>
+            <h5>Generando comprobante...</h5>
+            <div className="spinner-border text-primary mt-3" role="status">
+              <span className="visually-hidden">Guardando...</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de comprobante generado */}
+      {comprobanteGuardado && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+          background: "rgba(0,0,0,0.3)", zIndex: 3000,
+          display: "flex", alignItems: "center", justifyContent: "center"
+        }}>
+          <div style={{
+            background: "#fff", padding: "2rem", borderRadius: "10px",
+            boxShadow: "0 2px 16px rgba(0,0,0,0.2)", minWidth: "320px", textAlign: "center"
+          }}>
+            <h5>¡Comprobante generado y enviado!</h5>
+            <button className="btn btn-success mt-3" onClick={() => {
+              setComprobanteGuardado(false);
+              navigate("/comprobantes");
+            }}>
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
       <h2>Crear Comprobante de Pago</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">

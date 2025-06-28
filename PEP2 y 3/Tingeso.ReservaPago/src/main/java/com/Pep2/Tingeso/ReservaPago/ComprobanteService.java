@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ComprobanteService {
@@ -105,5 +106,13 @@ public class ComprobanteService {
         return guardado;
     }
 
+    public List<Long> obtenerIdsReservasConComprobante() {
+        List<ComprobanteEntity> comprobantes = repositorioComprobantePago.findAll();
+
+        return comprobantes.stream()
+                .map(ComprobanteEntity::getIdReserva)
+                .distinct() // opcional si quieres evitar duplicados
+                .collect(Collectors.toList());
+    }
 
 }

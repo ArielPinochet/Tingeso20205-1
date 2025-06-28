@@ -23,5 +23,7 @@ const crearCliente = async (cliente) => {
 };
 const actualizarCliente = (id, cliente) => axios.put(`${CLIENTES_URL}/${id}`, cliente);
 const eliminarCliente = (id) => axios.delete(`${CLIENTES_URL}/${id}`);
+const editarCorreoCliente = (nombre, emailNuevo) =>
+  axios.put(`${CLIENTES_URL}/editar-correo?nombre=${encodeURIComponent(nombre)}&emailNuevo=${encodeURIComponent(emailNuevo)}`);
 
-export { obtenerClientes, obtenerClientePorId, crearCliente, actualizarCliente, eliminarCliente };
+export { obtenerClientes, obtenerClientePorId, crearCliente, actualizarCliente, eliminarCliente, editarCorreoCliente };

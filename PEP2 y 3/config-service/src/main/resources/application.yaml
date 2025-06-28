@@ -8,4 +8,4 @@ spring:
         git:
           uri: https://github.com/ArielPinochet/Tingeso20205-1
           default-label: main
-          search-paths: PEP2/config-data
+          search-paths: "PEP2 y 3/config-data"

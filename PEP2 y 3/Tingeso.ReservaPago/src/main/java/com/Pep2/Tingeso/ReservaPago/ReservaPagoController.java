@@ -64,6 +64,33 @@ public class ReservaPagoController {
         return ResponseEntity.ok(carroOpt.get());
     }
 
+    @GetMapping("/carros-ocupados")
+    public ResponseEntity<List<String>> obtenerCarrosOcupados(
+            @RequestParam String fecha,   // formato: yyyy-MM-dd
+            @RequestParam String hora     // formato: HH:mm
+    ) {
+        try {
+            LocalDateTime fechaHora = LocalDateTime.parse(fecha + "T" + hora); // Combinar fecha y hora
+
+            List<ReservaEntity> reservas = servicioReservas.listarTodas(); // trae todas las reservas
+            List<String> carrosOcupados = new ArrayList<>();
+
+            for (ReservaEntity reserva : reservas) {
+                LocalDateTime inicio = reserva.getHoraInicio(); // debe ser LocalDateTime
+                LocalDateTime fin = inicio.plusMinutes(reserva.getDuracionTotal());
+
+                if (!fechaHora.isBefore(inicio) && !fechaHora.isAfter(fin)) {
+                    carrosOcupados.addAll(reserva.getCarros());
+                }
+            }
+
+            return ResponseEntity.ok(carrosOcupados);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(List.of("Error al procesar fecha/hora: " + e.getMessage()));
+        }
+    }
+
     @GetMapping("/carros")
     public ResponseEntity<List<CarrosEntity>> listarCarros() {
         return ResponseEntity.ok(servicioCarros.listarTodos());
@@ -211,11 +238,12 @@ public class ReservaPagoController {
             @RequestParam String horaInicio,
             @RequestParam Integer numeroVueltas,
             @RequestParam Integer cantidadPersonas,
-            @RequestParam Boolean diaEspecial
+            @RequestParam Boolean diaEspecial,
+            @RequestParam List<String> codigosCarros
     ) {
         try {
             ReservaEntity reserva = servicioReservas.guardarReserva(
-                    nombreCliente, fechaReserva, horaInicio, numeroVueltas, cantidadPersonas, diaEspecial);
+                    nombreCliente, fechaReserva, horaInicio, numeroVueltas, cantidadPersonas, diaEspecial,codigosCarros);
             return ResponseEntity.ok(reserva);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -232,33 +260,6 @@ public class ReservaPagoController {
         return ResponseEntity.status(404).body("La reserva con ID " + id + " no existe.");
     }
 
-    @PutMapping("/reservas/{id}")
-    public ResponseEntity<?> editarReserva(@PathVariable Long id, @RequestBody ReservaEntity reservaActualizada) {
-        Optional<ReservaEntity> reservaExistente = servicioReservas.buscarPorId(id);
-
-        if (reservaExistente.isEmpty()) {
-            return ResponseEntity.notFound().build(); // 🔹 Si la reserva no existe, devuelve 404
-        }
-
-
-        List<String> codigosCarrosSeleccionados = new ArrayList<>(new HashSet<>(reservaActualizada.getCarros())); // 🔹 Elimina duplicados
-
-        List<String> carrosValidos = codigosCarrosSeleccionados.stream()
-                .filter(codigo -> servicioCarros.buscarPorCodigo(codigo).isPresent()) // 🔹 Filtra solo los códigos existentes
-                .collect(Collectors.toList());
-
-        reservaExistente.get().setCarros(carrosValidos);
-        reservaExistente.get().setFechaReserva(reservaActualizada.getFechaReserva());
-        reservaExistente.get().setHoraInicio(reservaActualizada.getHoraInicio());
-        reservaExistente.get().setNumeroVueltas(reservaActualizada.getNumeroVueltas());
-        reservaExistente.get().setCantidadPersonas(reservaActualizada.getCantidadPersonas());
-        reservaExistente.get().setDiaEspecial(reservaActualizada.getDiaEspecial());
-        reservaExistente.get().setEstadoReserva("Pendiente");
-        reservaExistente.get().SetNombreCliente(reservaActualizada.getNombreCliente());
-
-        ReservaEntity reservaGuardada = servicioReservas.salvarReserva(reservaExistente.get());
-        return ResponseEntity.ok(reservaGuardada);
-    }
 
     @GetMapping("/gananciaspersonas")
     public ResponseEntity<List<ReportePersonasDTO>> obtenerGananciasPersonas(
@@ -288,4 +289,42 @@ public class ReservaPagoController {
 
         return ResponseEntity.ok(reporte);
     }
+
+    @PutMapping("/reservas/editar")
+    public ResponseEntity<?> editarReserva(
+            @RequestParam Long idReserva,
+            @RequestParam String nombreCliente,
+            @RequestParam String fechaReserva,
+            @RequestParam String horaInicio,
+            @RequestParam Integer numeroVueltas,
+            @RequestParam Integer cantidadPersonas,
+            @RequestParam Boolean diaEspecial,
+            @RequestParam List<String> codigosCarros
+    ) {
+        try {
+            if (codigosCarros.size() > 15) {
+                return ResponseEntity.badRequest().body("Se permiten como máximo 15 códigos de carros.");
+            }
+
+            ReservaEntity reservaActualizada = servicioReservas.editarReserva(
+                    idReserva, nombreCliente, fechaReserva, horaInicio,
+                    numeroVueltas, cantidadPersonas, diaEspecial, codigosCarros
+            );
+
+            return ResponseEntity.ok(reservaActualizada);
+
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reserva no encontrada: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Datos inválidos: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/reservas/con-comprobante")
+    public ResponseEntity<List<Long>> getIdsReservasConComprobante() {
+        List<Long> ids = servicioComprobantePago.obtenerIdsReservasConComprobante();
+        return ResponseEntity.ok(ids);
+    }
+
+
 }

@@ -5,12 +5,14 @@ const VerReportes = () => {
   const [selectedReport, setSelectedReport] = useState("VUELTAS");
   const [startMonth, setStartMonth] = useState("");
   const [endMonth, setEndMonth] = useState("");
+  const [cargando, setCargando] = useState(false);
 
   const descargarExcel = async () => {
     if (!startMonth || !endMonth) {
       alert("Por favor, seleccione el mes de inicio y el de fin.");
       return;
     }
+    setCargando(true);
     try {
       let url = "";
       let params = {};
@@ -47,6 +49,7 @@ const VerReportes = () => {
       alert("Error al descargar el reporte.");
       console.error(error);
     }
+    setCargando(false);
   };
 
   return (
@@ -65,6 +68,7 @@ const VerReportes = () => {
             borderRadius: "5px",
             fontWeight: "bold"
           }}
+          disabled={cargando}
         >
           Reporte por Vueltas
         </button>
@@ -79,6 +83,7 @@ const VerReportes = () => {
             borderRadius: "5px",
             fontWeight: "bold"
           }}
+          disabled={cargando}
         >
           Reporte por Personas
         </button>
@@ -90,6 +95,7 @@ const VerReportes = () => {
             type="month"
             value={startMonth}
             onChange={(e) => setStartMonth(e.target.value)}
+            disabled={cargando}
           />
         </label>
         &nbsp;&nbsp;
@@ -99,6 +105,7 @@ const VerReportes = () => {
             type="month"
             value={endMonth}
             onChange={(e) => setEndMonth(e.target.value)}
+            disabled={cargando}
           />
         </label>
       </div>
@@ -107,8 +114,16 @@ const VerReportes = () => {
           onClick={descargarExcel}
           className="btn btn-success"
           style={{ fontWeight: "bold", fontSize: "16px" }}
+          disabled={cargando}
         >
-          Descargar Reporte en Excel
+          {cargando ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Descargando...
+            </>
+          ) : (
+            "Descargar Reporte en Excel"
+          )}
         </button>
       </div>
     </div>

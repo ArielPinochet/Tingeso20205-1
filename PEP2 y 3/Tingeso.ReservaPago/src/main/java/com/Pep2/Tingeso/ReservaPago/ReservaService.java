@@ -15,7 +15,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservaService {
@@ -38,7 +40,7 @@ public class ReservaService {
 
     @Transactional
     public ReservaEntity guardarReserva(String nombreCliente, String fechaReserva, String horaInicio,
-                                        Integer numeroVueltas, Integer cantidadPersonas, Boolean diaEspecial) {
+                                        Integer numeroVueltas, Integer cantidadPersonas, Boolean diaEspecial, List<String> carros) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
         ReservaEntity reserva = new ReservaEntity();
@@ -48,6 +50,7 @@ public class ReservaService {
         reserva.setNumeroVueltas(numeroVueltas);
         reserva.setCantidadPersonas(cantidadPersonas);
         reserva.setDiaEspecial(diaEspecial);
+        reserva.setCarros(carros);
 
         // 🔹 Cálculo automático de duración total y precio
         int duracionTotal;
@@ -94,8 +97,9 @@ public class ReservaService {
         return repositorioReserva.findAll();
     }
 
-    public void eliminarPorId(Long id) {
+    public void eliminarPorId(Long id){
         repositorioReserva.deleteById(id);
+        sincronizarConCalendario("eliminar", id, null, null, null);
     }
 
     public ReservaEntity ObtenerReservaPorId(Long idReserva) {
@@ -118,6 +122,9 @@ public class ReservaService {
 
 
 
+
+
+
     @Transactional
     public void crearTarifaEspecialInterna(ReservaEntity reserva) {
         String fechaFormateada = reserva.getFechaReserva().toLocalDate().toString();  // 🔹 Convierte `LocalDateTime` a `String`
@@ -133,6 +140,62 @@ public class ReservaService {
         } catch (Exception e) {
             System.err.println("🚨 Error al enviar tarifa especial: " + e.getMessage());
         }
+    }
+
+    @Transactional
+    public void sincronizarConCalendario(String accion, Long reservaId, LocalDate nuevaFecha, LocalTime nuevaHora, Integer duracionMinutos) {
+        String urlBase = "http://localhost:8080/api/calendario/";
+
+        try {
+            if ("eliminar".equalsIgnoreCase(accion)) {
+                String url = urlBase + "eliminar?reservaId=" + reservaId;
+                restTemplate.delete(url);
+                System.out.println("🗑️ Calendario eliminado para reservaId=" + reservaId);
+
+            } else if ("editar".equalsIgnoreCase(accion)) {
+                String url = String.format(
+                        urlBase + "editar-fecha?reservaId=%d&nuevaFecha=%s&nuevaHoraInicio=%s&duracionMinutos=%d",
+                        reservaId, nuevaFecha, nuevaHora, duracionMinutos
+                );
+                restTemplate.put(url, null);
+                System.out.println("📝 Calendario actualizado para reservaId=" + reservaId);
+            } else {
+                System.out.println("⚠️ Acción no reconocida: " + accion);
+            }
+        } catch (Exception e) {
+            System.err.println("🚨 Error al sincronizar con Calendario (" + accion + "): " + e.getMessage());
+        }
+    }
+
+
+
+    public ReservaEntity editarReserva(Long id, String cliente, String fecha, String hora, int vueltas, int personas, boolean especial, List<String> carros) {
+        ReservaEntity reserva = repositorioReserva.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("ID no existe: " + id));
+
+        reserva.SetNombreCliente(cliente);
+        reserva.setFechaReserva(LocalDateTime.parse(fecha));
+        reserva.setHoraInicio(LocalDateTime.parse(hora));
+        reserva.setNumeroVueltas(vueltas);
+        reserva.setCantidadPersonas(personas);
+        reserva.setDiaEspecial(especial);
+        reserva.setCarros(carros); // debes tener setter para la lista de códigos
+
+        // 🔹 Obtener fecha, hora y duración para sincronizar calendario
+        LocalDate nuevaFecha = LocalDateTime.parse(fecha).toLocalDate();
+        LocalTime nuevaHora = LocalDateTime.parse(hora).toLocalTime();
+        int duracion;
+        if (vueltas <= 10) {
+            duracion = 30;
+        } else if (vueltas <= 15) {
+            duracion = 35;
+        } else if (vueltas <= 20) {
+            duracion = 40;
+        } else {
+            throw new IllegalArgumentException("Número de vueltas inválido. Máximo permitido: 20.");
+        }
+        sincronizarConCalendario("editar", id, nuevaFecha, nuevaHora, duracion);
+        return repositorioReserva.save(reserva);
     }
 
 
@@ -322,5 +385,8 @@ public class ReservaService {
 
         return mesesCompletos;
     }
+
+
+
 
 }

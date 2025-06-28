@@ -35,6 +35,12 @@ const crearCarro = async (codigoCarros, modelo, estado) => {
     }
 };
 
+export const obtenerCarrosOcupados = async (fecha, hora) => {
+  const response = await axios.get(`http://localhost:8080/app/carros-ocupados?fecha=${fecha}&hora=${hora}`);
+  console.log("Carros ocupados para", fecha, hora, ":", response.data);
+  return response;
+};
+
 
 
 const actualizarCarro = (id, carro) => axios.put(`${CARRO_URL}/${id}`, carro);

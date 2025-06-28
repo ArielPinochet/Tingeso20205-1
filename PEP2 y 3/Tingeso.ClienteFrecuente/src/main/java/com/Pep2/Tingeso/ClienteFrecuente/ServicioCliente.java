@@ -1,6 +1,7 @@
 package com.Pep2.Tingeso.ClienteFrecuente;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -16,6 +17,10 @@ public class ServicioCliente {
         this.clienteFrecuenteRepository = clienteFrecuenteRepository;
     }
 
+    public EntidadCliente obtenerPorId(Long id) {
+        return clienteFrecuenteRepository.findById(id).orElseThrow(NoSuchElementException::new);
+    }
+
 
     public EntidadCliente guardarCliente(String nombre, String email) {
         // Convertir nombre de usuario eliminando espacios y convirtiéndolo en minúsculas
@@ -26,10 +31,6 @@ public class ServicioCliente {
             throw new IllegalStateException("Error: El cliente con nombre '" + username + "' ya existe.");
         }
 
-        // Verificar si el email ya existe
-        if (clienteFrecuenteRepository.existsByEmail(email)) {
-            throw new IllegalStateException("Error: El cliente con email '" + email + "' ya está registrado.");
-        }
 
         // Si el cliente no existe, crear uno nuevo
         EntidadCliente nuevoCliente = new EntidadCliente();
@@ -73,6 +74,14 @@ public class ServicioCliente {
         clienteFrecuenteRepository.save(cliente);
         return descuento;
     }
+
+
+    public void eliminarCliente(Long id) {
+        EntidadCliente cliente = clienteFrecuenteRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("ID no encontrado: " + id));
+        clienteFrecuenteRepository.delete(cliente);
+    }
+
 
     public EntidadCliente incrementarReservas(String nombre) {
         // Buscar el cliente

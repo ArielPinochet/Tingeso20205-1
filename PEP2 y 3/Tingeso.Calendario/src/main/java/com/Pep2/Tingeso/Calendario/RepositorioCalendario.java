@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface RepositorioCalendario extends JpaRepository<EntidadCalendario, Long> {
     List<EntidadCalendario> findByFecha(LocalDate fecha);
+    EntidadCalendario findByReservaId(Long reservaId);
 }

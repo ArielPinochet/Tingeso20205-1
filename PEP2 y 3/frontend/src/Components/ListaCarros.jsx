@@ -34,20 +34,19 @@ const ListaCarros = () => {
     // 🔹 Filtrar carros según el estado seleccionado
     const carrosFiltrados = filtroEstado ? carros.filter(carro => carro.estado === filtroEstado) : carros;
 
+    // 🔹 Ordenar por código de carro de menor a mayor
+    const carrosOrdenados = [...carrosFiltrados].sort((a, b) => a.codigoCarros - b.codigoCarros);
+
     return (
         <div className="container mt-4">
             <h2>Lista de Carros</h2>
 
             {/* 🔹 Botón para agregar un nuevo carro */}
             <div className="mb-3 d-flex justify-content-between">
-                <Link to="/crear-carro" className="btn btn-primary">Agregar Carro</Link>
 
                 {/* 🔹 Botones para filtrar por estado */}
                 <div>
-                    <button className="btn btn-info me-2" onClick={() => setFiltroEstado("")}>Mostrar Todos</button>
-                    <button className="btn btn-success me-2" onClick={() => setFiltroEstado("activo")}>Mostrar Activos</button>
-                    <button className="btn btn-warning" onClick={() => setFiltroEstado("mantenimiento")}>Mostrar Mantenimiento</button>
-                </div>
+                                  </div>
             </div>
 
             <table className="table table-bordered">
@@ -55,18 +54,13 @@ const ListaCarros = () => {
                     <tr>
                         <th>Código</th>
                         <th>Modelo</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {carrosFiltrados.map(carro => (
+                    {carrosOrdenados.map(carro => (
                         <tr key={carro.codigoCarros}>
                             <td>{carro.codigoCarros}</td>
                             <td>{carro.modelo}</td>
-                            <td>{carro.estado}</td>
-                            <td>
-                            </td>
                         </tr>
                     ))}
                 </tbody>

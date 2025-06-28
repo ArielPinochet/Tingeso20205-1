@@ -29,7 +29,12 @@ const VerComprobante = () => {
 
 
             {comprobante.archivoPdf && (
-                <iframe src={comprobante.archivoPdf} width="100%" height="600px" />
+                <iframe
+                  src={`data:application/pdf;base64,${comprobante.archivoPdf}`}
+                  width="100%"
+                  height="600px"
+                  title="Comprobante PDF"
+                />
             )}
 
             <button className="btn btn-secondary mt-3" onClick={() => navigate("/comprobantes")}>Volver</button>

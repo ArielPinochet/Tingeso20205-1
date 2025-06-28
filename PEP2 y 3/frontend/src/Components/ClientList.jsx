@@ -25,23 +25,24 @@ const ListaClientes = () => {
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Email</th>
-                        <th>Fecha de Nacimiento</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {clientes.map(cliente => (
-                        <tr key={cliente.idCliente}>
-                            <td>{cliente.idCliente}</td>
-                            <td>{cliente.nombre}</td>
-                            <td>{cliente.email}</td>
-                            <td>{cliente.fechaNacimiento}</td>
-                            <td>
-                                <Link to={`/editar-cliente/${cliente.idCliente}`} className="btn btn-warning">Editar</Link>
-                                <button className="btn btn-danger ms-2" onClick={() => handleEliminar(cliente.idCliente)}>Eliminar</button>
-                            </td>
-                        </tr>
-                    ))}
+                    {clientes
+                        .slice() // Copia para no mutar el estado original
+                        .sort((a, b) => a.idCliente - b.idCliente)
+                        .map(cliente => (
+                            <tr key={cliente.idCliente}>
+                                <td>{cliente.idCliente}</td>
+                                <td>{cliente.nombre}</td>
+                                <td>{cliente.email}</td>
+                                <td>
+                                    <Link to={`/editar-cliente/${cliente.idCliente}`} className="btn btn-warning">Editar</Link>
+                                    <button className="btn btn-danger ms-2" onClick={() => handleEliminar(cliente.idCliente)}>Eliminar</button>
+                                </td>
+                            </tr>
+                        ))}
                 </tbody>
             </table>
         </div>

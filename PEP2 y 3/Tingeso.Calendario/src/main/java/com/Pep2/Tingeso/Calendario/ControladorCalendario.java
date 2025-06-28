@@ -1,11 +1,14 @@
 package com.Pep2.Tingeso.Calendario;
 
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/calendario")
@@ -32,6 +35,34 @@ public class ControladorCalendario {
     public List<EntidadCalendario> obtenerTodosLosCalendarios() {
         return calendarioService.obtenerTodos();
     }
+
+    @DeleteMapping("/eliminar")
+    public ResponseEntity<?> eliminarCalendarioPorReservaId(@RequestParam Long reservaId) {
+        try {
+            calendarioService.eliminarPorReservaId(reservaId);
+            return ResponseEntity.ok("Calendario eliminado para la reserva con ID " + reservaId);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró calendario con reservaId: " + reservaId);
+        }
+    }
+
+    @PutMapping("/editar-fecha")
+    public ResponseEntity<?> editarFechaYHoraCalendario(
+            @RequestParam Long reservaId,
+            @RequestParam LocalDate nuevaFecha,
+            @RequestParam LocalTime nuevaHoraInicio,
+            @RequestParam int duracionMinutos
+    ) {
+        try {
+            EntidadCalendario calendario = calendarioService.actualizarFechaYHora(reservaId, nuevaFecha, nuevaHoraInicio,duracionMinutos);
+            return ResponseEntity.ok(calendario);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No se encontró calendario con reservaId: " + reservaId);
+        }
+    }
+
 
     @PostMapping("/crear")
     public EntidadCalendario crearCalendario(

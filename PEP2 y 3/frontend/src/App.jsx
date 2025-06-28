@@ -12,6 +12,8 @@ import FormularioReserva from "./Components/FormularioReserva";
 import FormularioPago from "./Components/FormularioPago";
 import Calendario from "./Components/Calendario";
 import VerReportes from "./Components/VerReportes";
+import PaginaPrincipal from "./Components/PaginaPrincipal";
+import logo2 from "./assets/logo2.png"; // Asegúrate de que la ruta sea correcta
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -21,7 +23,14 @@ const App = () => {
       <div className="container mt-4">
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
           <div className="container">
-            <Link className="navbar-brand" to="/">KartRent</Link>
+            <Link className="navbar-brand d-flex align-items-center" to="/">
+              <img
+                src={logo2}
+                alt="Logo"
+                style={{ height: "40px", marginRight: "10px" }}
+              />
+              KartingRM
+            </Link>
             <button className="navbar-toggler" type="button" 
                     data-bs-toggle="collapse" data-bs-target="#navbarNav">
               <span className="navbar-toggler-icon"></span>
@@ -56,7 +65,7 @@ const App = () => {
             <Route path="/clientes" element={<ListaClientes />} />
             <Route path="/crear-cliente" element={<FormularioCliente />} />
             <Route path="/editar-cliente/:id" element={<FormularioCliente />} />
-            <Route path="/" element={<ListaClientes />} /> {/* Página principal */}
+            <Route path="/" element={<PaginaPrincipal />} /> {/* Página principal */}
 
             <Route path="/carros" element={<ListaCarros />} />
             <Route path="/crear-carro" element={<FormularioCarro />} />

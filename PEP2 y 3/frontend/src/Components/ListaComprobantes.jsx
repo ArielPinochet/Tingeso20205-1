@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { obtenerComprobantes, eliminarComprobante } from "../Services/ComprobanteService";
+import { obtenerComprobantes } from "../Services/ComprobanteService";
 import { Link } from "react-router-dom";
 
 const ListaComprobantes = () => {
@@ -12,12 +12,6 @@ const ListaComprobantes = () => {
         }).catch(error => console.error("Error cargando comprobantes:", error));
     }, []);
 
-    const handleEliminar = (id) => {
-        eliminarComprobante(id).then(() => {
-            setComprobantes(comprobantes.filter(comprobante => comprobante.idComprobante !== id));
-        });
-    };
-
     return (
         <div className="container mt-4">
             <h2>Lista de Comprobantes de Pago</h2>
@@ -29,15 +23,7 @@ const ListaComprobantes = () => {
                                 <h5 className="card-title">Comprobante #{comprobante.idComprobante}</h5>
                                 <p className="card-text"><strong>Fecha:</strong> {comprobante.fechaEmision}</p>
                                 <p className="card-text"><strong>Total con IVA:</strong> ${comprobante.totalConIva}</p>
-                                
-
                                 <Link to={`/ver-comprobante/${comprobante.idComprobante}`} className="btn btn-info">Ver</Link>
-                                
-
-                                <Link to={`/editar-comprobante/${comprobante.idComprobante}`} className="btn btn-warning ms-2">Editar</Link>
-                                
-
-                                <button className="btn btn-danger ms-2" onClick={() => handleEliminar(comprobante.idComprobante)}>Eliminar</button>
                             </div>
                         </div>
                     </div>

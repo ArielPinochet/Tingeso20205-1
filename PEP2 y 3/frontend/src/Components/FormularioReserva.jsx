@@ -8,7 +8,7 @@ import {
   obtenerReservas  // función para obtener todas las reservas
 } from "../Services/ReservaService";
 import { obtenerClientes } from "../Services/ClientService";
-import { obtenerCarros } from "../Services/CarroService";
+import { obtenerCarros, obtenerCarrosOcupados } from "../Services/CarroService";
 import { useNavigate, useParams } from "react-router-dom";
 
 /*
@@ -61,6 +61,8 @@ const FormularioReserva = () => {
   const [carros, setCarros] = useState([]);
   // Estado para almacenar las reservas existentes para filtrar karts ya reservados.
   const [reservasExistentes, setReservasExistentes] = useState([]);
+  const [guardando, setGuardando] = useState(false);
+  const [reservaGuardada, setReservaGuardada] = useState(false);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -71,31 +73,47 @@ const FormularioReserva = () => {
     obtenerCarros().then((response) => setCarros(response.data));
     if (id) {
       obtenerReservaPorId(id).then((response) => {
-        // Suponiendo que la reserva que viene tiene fechaReserva en "YYYY-MM-DD" ya ajustada
-        setReserva(response.data);
+        const data = response.data;
+        // Si la fecha viene como "2025-06-27T22:46:00", sepárala
+        let fecha = data.fechaReserva;
+        let hora = data.horaInicio;
+        if (fecha && fecha.includes("T")) {
+          const [f, h] = fecha.split("T");
+          fecha = f;
+          hora = h ? h.substring(0, 5) : ""; // "22:46"
+        }
+        // Asegura que carrosAsignados siempre sea un objeto con índices como claves
+        let carrosAsignados = {};
+        if (Array.isArray(data.codigosCarros)) {
+          data.codigosCarros.forEach((codigo, idx) => {
+            carrosAsignados[idx] = codigo;
+          });
+        }
+        setReserva({
+          ...data,
+          fechaReserva: fecha,
+          horaInicio: hora,
+          carrosAsignados: carrosAsignados,
+          cantidadPersonas: data.cantidadPersonas || (data.codigosCarros ? data.codigosCarros.length : 1)
+        });
       });
     }
   }, [id]);
 
   // Cada vez que cambia la fecha u hora, obtén las reservas existentes desde la API.
   useEffect(() => {
+    // Solo consulta si hay fecha y hora seleccionadas
     if (reserva.fechaReserva && reserva.horaInicio) {
-      obtenerReservas()
+      // Llama al endpoint de carros ocupados
+      obtenerCarrosOcupados(reserva.fechaReserva, reserva.horaInicio)
         .then((response) => {
-          const data = Array.isArray(response.data)
-            ? response.data
-            : response.data.reservas || [];
-          console.log("Todas las reservas recibidas:", data);
-          // Para comparar, convertimos la fecha de la API a fecha local usando convertUTCToLocal.
-          const filtradas = data.filter((r) => {
-            return convertUTCToLocal(r.fechaReserva) === reserva.fechaReserva;
-        });
-        console.log("Reservas existentes filtradas para el día:", filtradas);
-        setReservasExistentes(filtradas);
+          // response.data es un array de códigos de carros ocupados
+          setReservasExistentes(response.data); // Ahora reservasExistentes es un array de códigos ocupados
         })
-        .catch((error) =>
-          console.error("Error al obtener reservas para filtrar:", error)
-        );
+        .catch((error) => {
+          console.error("Error al obtener carros ocupados:", error);
+          setReservasExistentes([]);
+        });
     }
   }, [reserva.fechaReserva, reserva.horaInicio]);
 
@@ -148,6 +166,11 @@ const FormularioReserva = () => {
   const handleCarroAsignadoChange = (index, carroId) => {
     if (Object.values(reserva.carrosAsignados).includes(carroId)) {
       alert("Este carro ya fue seleccionado. Escoge otro.");
+      // 🔹 Deselecciona el carro para este índice
+      setReserva({
+        ...reserva,
+        carrosAsignados: { ...reserva.carrosAsignados, [index]: "" }
+      });
       return;
     }
     setReserva({
@@ -156,8 +179,49 @@ const FormularioReserva = () => {
     });
   };
 
+  // Función para saber si la fecha/hora seleccionada ya pasó
+  const esFechaHoraPasada = () => {
+    if (!reserva.fechaReserva || !reserva.horaInicio) return false;
+    const ahora = new Date();
+    const [anio, mes, dia] = reserva.fechaReserva.split("-");
+    const [hora, minuto] = reserva.horaInicio.split(":");
+    const fechaSeleccionada = new Date(anio, mes - 1, dia, hora, minuto);
+    return fechaSeleccionada < ahora;
+  };
+
+  // Función para saber si la hora está fuera del horario permitido (22:00 a 06:00)
+  const esHoraFueraDeHorario = () => {
+    if (!reserva.horaInicio) return false;
+    const [hora, minuto] = reserva.horaInicio.split(":").map(Number);
+    // Si la hora es >= 22 o < 6, está fuera de horario
+    return hora >= 22 || hora < 6;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (esFechaHoraPasada()) {
+      alert("No puedes reservar una fecha/hora que ya pasó.");
+      return;
+    }
+
+    if (esHoraFueraDeHorario()) {
+      alert("No puedes reservar fuera del horario de atención (06:00 a 21:59).");
+      return;
+    }
+
+    // 🔹 Filtrar carros disponibles para la fecha/hora seleccionada
+    const carrosDisponibles = carros.filter(
+      (carro) =>
+        !carro.enMantenimiento &&
+        !reservasExistentes.includes(carro.codigoCarros)
+    );
+
+    if (reserva.cantidadPersonas > carrosDisponibles.length) {
+      alert("No hay carros suficientes para la cantidad de personas seleccionada.");
+      return;
+    }
+
     const clienteSeleccionado = clientes.find(
       (cliente) => cliente.idCliente === Number(reserva.idClienteResponsable)
     );
@@ -173,30 +237,104 @@ const FormularioReserva = () => {
 
     const fechaHora = `${reserva.fechaReserva}T${reserva.horaInicio}:00`;
 
-    // Solo los campos requeridos por el backend como request param
+    // 🔹 Obtener los códigos de carros seleccionados como array de string
+    const codigosCarros = Object.values(reserva.carrosAsignados)
+      .filter(Boolean)
+      .map(String);
+
     const reservaParams = {
       nombreCliente: clienteSeleccionado.nombre,
       fechaReserva: fechaHora,
       horaInicio: fechaHora,
       numeroVueltas: reserva.numeroVueltas,
       cantidadPersonas: reserva.cantidadPersonas,
-      diaEspecial: reserva.diaEspecial === "true" || reserva.diaEspecial === true
+      diaEspecial: reserva.diaEspecial === "true" || reserva.diaEspecial === true,
+      codigosCarros // 🔹 Enviar como List<String>
     };
 
     console.log("Params enviados al backend:", reservaParams);
 
-    crearReserva(reservaParams).then(() => navigate("/reservas"));
+    setGuardando(true); // Mostrar modal de guardando
+
+    if (id) {
+      // Si hay id, actualiza la reserva existente
+      actualizarReserva(id, reservaParams)
+        .then(() => {
+          setGuardando(false);
+          setReservaGuardada(true);
+        })
+        .catch(() => {
+          setGuardando(false);
+          alert("Ocurrió un error al actualizar la reserva.");
+        });
+    } else {
+      // Si no hay id, crea una nueva reserva
+      crearReserva(reservaParams)
+        .then(() => {
+          setGuardando(false);
+          setReservaGuardada(true); // Mostrar modal de éxito
+        })
+        .catch(() => {
+          setGuardando(false);
+          alert("Ocurrió un error al guardar la reserva.");
+        });
+    }
   };
 
   return (
     <div className="container mt-4">
+      {/* Modal de guardando */}
+      {guardando && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+          background: "rgba(0,0,0,0.3)", zIndex: 3000,
+          display: "flex", alignItems: "center", justifyContent: "center"
+        }}>
+          <div style={{
+            background: "#fff", padding: "2rem", borderRadius: "10px",
+            boxShadow: "0 2px 16px rgba(0,0,0,0.2)", minWidth: "320px", textAlign: "center"
+          }}>
+            <h5>Guardando reserva...</h5>
+            <div className="spinner-border text-primary mt-3" role="status">
+              <span className="visually-hidden">Guardando...</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de reserva guardada */}
+      {reservaGuardada && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+          background: "rgba(0,0,0,0.3)", zIndex: 3000,
+          display: "flex", alignItems: "center", justifyContent: "center"
+        }}>
+          <div style={{
+            background: "#fff", padding: "2rem", borderRadius: "10px",
+            boxShadow: "0 2px 16px rgba(0,0,0,0.2)", minWidth: "320px", textAlign: "center"
+          }}>
+            <h5>¡Reserva guardada!</h5>
+            <button className="btn btn-success mt-3" onClick={() => {
+              setReservaGuardada(false);
+              navigate("/reservas");
+            }}>
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
       <h2>{id ? "Editar Reserva" : "Crear Reserva"}</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Fecha de Reserva</label>
           {/* Para el DatePicker usamos la fecha formateada y la sumamos manualmente si es necesaria */}
           <DatePicker
-            selected={reserva.fechaReserva ? new Date(reserva.fechaReserva + "T00:00:00") : new Date()}
+            selected={
+              reserva.fechaReserva && /^\d{4}-\d{2}-\d{2}$/.test(reserva.fechaReserva)
+                ? new Date(reserva.fechaReserva + "T00:00:00")
+                : new Date()
+            }
             onChange={(date) =>
               setReserva({
                 ...reserva,
@@ -247,7 +385,7 @@ const FormularioReserva = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Día Especial (CUMPLEAÑOS DE ALGUNO?)</label>
+          <label className="form-label">Es el cumpleaños de alguno?</label>
           <select
             className="form-select"
             name="diaEspecial"
@@ -288,6 +426,7 @@ const FormularioReserva = () => {
             </label>
             <select
   className="form-select"
+  value={reserva.carrosAsignados[index] || ""}
   onChange={(e) => handleCarroAsignadoChange(index, e.target.value)}
   required
 >
@@ -296,59 +435,8 @@ const FormularioReserva = () => {
     .filter((carro) => {
       // 1. Excluir carros en mantenimiento.
       if (carro.enMantenimiento) return false;
-
-      // 2. Si hay fecha, hora y duración definidos, evaluamos la superposición de horarios.
-      if (reserva.fechaReserva && reserva.horaInicio && reserva.duracionTotal) {
-        // Obtenemos la hora del input, por ejemplo "11:11", y añadimos segundos para construir el Date.
-        const newTime = reserva.horaInicio.length >= 5 ? reserva.horaInicio.substr(0, 5) : reserva.horaInicio;
-        const newResStart = new Date(`${reserva.fechaReserva}T${newTime}:00`);
-        const newResEnd = new Date(newResStart.getTime() + reserva.duracionTotal * 60000);
-
-        // Revisamos todas las reservas existentes para ese día.
-        const isReserved = reservasExistentes.some((r) => {
-          // La hora de la reserva existente (normalizamos a "HH:mm")
-          const existingTime = r.horaInicio && r.horaInicio.length >= 5 
-            ? r.horaInicio.substr(0, 5) 
-            : r.horaInicio;
-
-          // Convertir la fecha de la API (en UTC) a local.
-          const existingDate = convertUTCToLocal(r.fechaReserva);
-          const existingStart = new Date(`${existingDate}T${existingTime}:00`);
-          const existingEnd = new Date(existingStart.getTime() + r.duracionTotal * 60000);
-
-          console.log(
-            `Comparando nueva reserva [${newResStart.toLocaleTimeString()} - ${newResEnd.toLocaleTimeString()}] con existente [${existingStart.toLocaleTimeString()} - ${existingEnd.toLocaleTimeString()}]`
-          );
-
-          // Verificar si hay solapamiento de intervalos.
-          const overlap = newResStart < existingEnd && existingStart < newResEnd;
-          
-          if (overlap) {
-            // Construimos un array con los códigos de carro reservados en la reserva existente.
-            let assignedCarCodes = [];
-            if (r.kartId) {
-              assignedCarCodes.push(r.kartId.toString());
-            }
-            if (r.carros && Array.isArray(r.carros) && r.carros.length > 0) {
-              // Concatenamos todos los códigos de carro presentes.
-              assignedCarCodes = assignedCarCodes.concat(
-                r.carros.map((c) => c.codigoCarros)
-              );
-            }
-            // Registramos en consola para ver la comparación.
-            console.log(
-              `Reserva existente tiene asignado: [${assignedCarCodes.join(", ")}]. Evaluando carro: ${carro.codigoCarros}`
-            );
-            // Se marca reservado si el array incluye el código del carro en evaluación.
-            return assignedCarCodes.includes(carro.codigoCarros);
-          }
-          return false;
-        });
-        if (isReserved) {
-          console.log(`El carro ${carro.codigoCarros} está reservado en este intervalo.`);
-          return false;
-        }
-      }
+      // 2. Excluir carros ocupados en la hora seleccionada
+      if (reservasExistentes.includes(carro.codigoCarros)) return false;
       return true;
     })
     .sort((a, b) =>
@@ -366,9 +454,23 @@ const FormularioReserva = () => {
 
           </div>
         ))}
-        <button type="submit" className="btn btn-success">
+        <button
+          type="submit"
+          className="btn btn-success"
+          disabled={esFechaHoraPasada() || esHoraFueraDeHorario()}
+        >
           {id ? "Actualizar" : "Guardar"}
         </button>
+        {esFechaHoraPasada() && (
+          <div className="alert alert-warning mt-2">
+            No puedes reservar una fecha/hora que ya pasó.
+          </div>
+        )}
+        {esHoraFueraDeHorario() && (
+          <div className="alert alert-warning mt-2">
+            El horario de reservas es de 06:00 a 21:59.
+          </div>
+        )}
         <button
           type="button"
           className="btn btn-secondary ms-2"
