@@ -1,0 +1,6 @@
+projectKey=KartRentFrontEnd
+serverUrl=http://localhost:9000
+serverVersion=25.6.0.109173
+dashboardUrl=http://localhost:9000/dashboard?id=KartRentFrontEnd
+ceTaskId=a33b2c39-777e-46b3-b77b-7f6d3cb00b2e
+ceTaskUrl=http://localhost:9000/api/ce/task?id=a33b2c39-777e-46b3-b77b-7f6d3cb00b2e

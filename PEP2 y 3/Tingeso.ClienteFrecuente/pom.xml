@@ -22,6 +22,10 @@
 	<properties>
 		<java.version>17</java.version>
 		<spring-cloud.version>2023.0.0</spring-cloud.version> <!-- Manejo de Spring Cloud BOM -->
+		<sonar.projectKey>KartRentCliente</sonar.projectKey>
+		<sonar.projectName>KartRentCliente</sonar.projectName>
+		<sonar.host.url>http://localhost:9000</sonar.host.url>
+		<sonar.token>sqp_feafb3c11f64d77d48a3a022ca0f60c87afa1729</sonar.token>
 	</properties>
 
 	<!-- Dependencias -->
@@ -68,6 +72,7 @@
 			<scope>provided</scope>
 		</dependency>
 
+
 		<!-- Dependencias de pruebas -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -96,6 +101,12 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.9.1.2184</version> <!-- o una versión estable reciente -->
 			</plugin>
 
 			<!-- Plugin del Compilador -->

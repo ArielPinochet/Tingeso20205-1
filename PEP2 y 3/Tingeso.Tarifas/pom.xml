@@ -21,6 +21,10 @@
 
 	<properties>
 		<java.version>17</java.version>
+		<sonar.projectKey>KartRentTarifa</sonar.projectKey>
+		<sonar.projectName>KartRentTarifa</sonar.projectName>
+		<sonar.host.url>http://localhost:9000</sonar.host.url>
+		<sonar.token>sqp_82943b11859c08f5aaa7a56b6c385453ee197d6b</sonar.token>
 		<spring-cloud.version>2023.0.0</spring-cloud.version> <!-- Manejo de Spring Cloud BOM -->
 	</properties>
 
@@ -104,6 +108,12 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.9.1.2184</version> <!-- o una versión estable reciente -->
 			</plugin>
 
 			<!-- Plugin del Compilador -->

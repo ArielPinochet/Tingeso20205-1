@@ -43,4 +43,8 @@ public class ReporteController {
     }
 
 
+    @GetMapping("/estado")
+    public ResponseEntity<String> estadoServicio() {
+        return ResponseEntity.ok("Servicio activo");
+    }
 }

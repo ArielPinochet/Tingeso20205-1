@@ -63,40 +63,53 @@ const FormularioReserva = () => {
   const [reservasExistentes, setReservasExistentes] = useState([]);
   const [guardando, setGuardando] = useState(false);
   const [reservaGuardada, setReservaGuardada] = useState(false);
+  const [errorServicio, setErrorServicio] = useState(false);
 
   const navigate = useNavigate();
   const { id } = useParams();
 
   // Cargar clientes, carros y, si es edición, la reserva por ID
   useEffect(() => {
-    obtenerClientes().then((response) => setClientes(response.data));
-    obtenerCarros().then((response) => setCarros(response.data));
-    if (id) {
-      obtenerReservaPorId(id).then((response) => {
-        const data = response.data;
-        // Si la fecha viene como "2025-06-27T22:46:00", sepárala
-        let fecha = data.fechaReserva;
-        let hora = data.horaInicio;
-        if (fecha && fecha.includes("T")) {
-          const [f, h] = fecha.split("T");
-          fecha = f;
-          hora = h ? h.substring(0, 5) : ""; // "22:46"
-        }
-        // Asegura que carrosAsignados siempre sea un objeto con índices como claves
-        let carrosAsignados = {};
-        if (Array.isArray(data.codigosCarros)) {
-          data.codigosCarros.forEach((codigo, idx) => {
-            carrosAsignados[idx] = codigo;
-          });
-        }
-        setReserva({
-          ...data,
-          fechaReserva: fecha,
-          horaInicio: hora,
-          carrosAsignados: carrosAsignados,
-          cantidadPersonas: data.cantidadPersonas || (data.codigosCarros ? data.codigosCarros.length : 1)
-        });
+    obtenerClientes()
+      .then((response) => setClientes(response.data))
+      .catch((error) => {
+        setErrorServicio(true);
       });
+    obtenerCarros()
+      .then((response) => setCarros(response.data))
+      .catch((error) => {
+        setErrorServicio(true);
+      });
+    if (id) {
+      obtenerReservaPorId(id)
+        .then((response) => {
+          const data = response.data;
+          // Si la fecha viene como "2025-06-27T22:46:00", sepárala
+          let fecha = data.fechaReserva;
+          let hora = data.horaInicio;
+          if (fecha && fecha.includes("T")) {
+            const [f, h] = fecha.split("T");
+            fecha = f;
+            hora = h ? h.substring(0, 5) : ""; // "22:46"
+          }
+          // Asegura que carrosAsignados siempre sea un objeto con índices como claves
+          let carrosAsignados = {};
+          if (Array.isArray(data.codigosCarros)) {
+            data.codigosCarros.forEach((codigo, idx) => {
+              carrosAsignados[idx] = codigo;
+            });
+          }
+          setReserva({
+            ...data,
+            fechaReserva: fecha,
+            horaInicio: hora,
+            carrosAsignados: carrosAsignados,
+            cantidadPersonas: data.cantidadPersonas || (data.codigosCarros ? data.codigosCarros.length : 1)
+          });
+        })
+        .catch((error) => {
+          setErrorServicio(true);
+        });
     }
   }, [id]);
 
@@ -281,6 +294,46 @@ const FormularioReserva = () => {
     }
   };
 
+  // Nueva función para selección rápida
+  const seleccionarRapidoCarros = () => {
+    // Filtra carros disponibles (no en mantenimiento ni ocupados)
+    const carrosDisponibles = carros
+      .filter(
+        (carro) =>
+          !carro.enMantenimiento &&
+          !reservasExistentes.includes(carro.codigoCarros)
+      )
+      .sort((a, b) =>
+        parseInt(a.codigoCarros.replace(/\D/g, "")) -
+        parseInt(b.codigoCarros.replace(/\D/g, ""))
+      );
+
+    if (carrosDisponibles.length < reserva.cantidadPersonas) {
+      alert("No hay suficientes carros disponibles");
+      return;
+    }
+
+    // Asigna los primeros X carros disponibles
+    const nuevosAsignados = {};
+    for (let i = 0; i < reserva.cantidadPersonas; i++) {
+      nuevosAsignados[i] = carrosDisponibles[i].codigoCarros;
+    }
+    setReserva({
+      ...reserva,
+      carrosAsignados: nuevosAsignados
+    });
+  };
+
+  if (errorServicio) {
+    return (
+      <div className="container mt-4">
+        <div className="alert alert-danger text-center">
+          Servicio temporalmente fuera de servicio, intente más tarde.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mt-4">
       {/* Modal de guardando */}
@@ -401,57 +454,71 @@ const FormularioReserva = () => {
         </div>
         <div className="mb-3">
           <label className="form-label">Cliente Responsable</label>
-          <select
-            className="form-select"
-            name="idClienteResponsable"
-            value={reserva.idClienteResponsable}
-            onChange={(e) =>
-              setReserva({ ...reserva, idClienteResponsable: e.target.value })
-            }
-            required
-          >
-            <option value="">Selecciona un cliente</option>
-            {clientes.map((cliente) => (
-              <option key={cliente.idCliente} value={cliente.idCliente}>
-                {cliente.nombre}
-              </option>
-            ))}
-          </select>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <select
+              className="form-select"
+              name="idClienteResponsable"
+              value={reserva.idClienteResponsable}
+              onChange={(e) => {
+                if (e.target.value === "crear") {
+                  navigate("/crear-cliente");
+                } else {
+                  setReserva({ ...reserva, idClienteResponsable: e.target.value });
+                }
+              }}
+              required
+              style={{ flex: 1 }}
+            >
+              <option value="">Selecciona un cliente</option>
+              {clientes.map((cliente) => (
+                <option key={cliente.idCliente} value={cliente.idCliente}>
+                  {cliente.nombre}
+                </option>
+              ))}
+              <option value="crear">➕ Crear cliente</option>
+            </select>
+          </div>
         </div>
         {/* Selección de carros según la cantidad de personas */}
         {Array.from({ length: reserva.cantidadPersonas }, (_, index) => (
-          <div className="mb-3" key={index}>
-            <label className="form-label">
-              Seleccione Carro {index + 1}
+          <div className="mb-3" key={index} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <label className="form-label" style={{ minWidth: 120 }}>
+              Seleccione Kart {index + 1}
             </label>
             <select
-  className="form-select"
-  value={reserva.carrosAsignados[index] || ""}
-  onChange={(e) => handleCarroAsignadoChange(index, e.target.value)}
-  required
->
-  <option value="">Selecciona un carro</option>
-  {carros
-    .filter((carro) => {
-      // 1. Excluir carros en mantenimiento.
-      if (carro.enMantenimiento) return false;
-      // 2. Excluir carros ocupados en la hora seleccionada
-      if (reservasExistentes.includes(carro.codigoCarros)) return false;
-      return true;
-    })
-    .sort((a, b) =>
-      parseInt(a.codigoCarros.replace(/\D/g, "")) -
-      parseInt(b.codigoCarros.replace(/\D/g, ""))
-    )
-    .map((carro) => (
-      <option key={carro.idCarro} value={carro.codigoCarros}>
-        {carro.codigoCarros}
-      </option>
-    ))}
-</select>
-
-
-
+              className="form-select"
+              value={reserva.carrosAsignados[index] || ""}
+              onChange={(e) => handleCarroAsignadoChange(index, e.target.value)}
+              required
+              style={{ flex: 1 }}
+            >
+              <option value="">Selecciona un kart</option>
+              {carros
+                .filter((carro) => {
+                  if (carro.enMantenimiento) return false;
+                  if (reservasExistentes.includes(carro.codigoCarros)) return false;
+                  return true;
+                })
+                .sort((a, b) =>
+                  parseInt(a.codigoCarros.replace(/\D/g, "")) -
+                  parseInt(b.codigoCarros.replace(/\D/g, ""))
+                )
+                .map((carro) => (
+                  <option key={carro.idCarro} value={carro.codigoCarros}>
+                    {carro.codigoCarros}
+                  </option>
+                ))}
+            </select>
+            {index === 0 && (
+              <button
+                type="button"
+                className="btn btn-outline-primary"
+                style={{ whiteSpace: "nowrap" }}
+                onClick={seleccionarRapidoCarros}
+              >
+                Selección rápida
+              </button>
+            )}
           </div>
         ))}
         <button

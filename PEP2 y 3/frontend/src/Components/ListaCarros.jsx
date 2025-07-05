@@ -4,51 +4,45 @@ import { Link } from "react-router-dom";
 
 const ListaCarros = () => {
     const [carros, setCarros] = useState([]);
-    const [filtroEstado, setFiltroEstado] = useState(""); // 🔹 Estado de filtro
+    const [filtroEstado, setFiltroEstado] = useState("");
+    const [error, setError] = useState(false);
 
     useEffect(() => {
-        obtenerCarros().then(response => setCarros(response.data));
+        obtenerCarros()
+            .then(response => {
+                setCarros(response.data);
+                setError(false);
+            })
+            .catch(() => {
+                setError(true);
+            });
     }, []);
 
-   const handleEliminar = async (codigo) => {
-    try {
-        console.log(`🔹 Eliminando carro con código: ${codigo}`);
-        
-        await eliminarCarro(codigo); // 🔹 Esperar a que la eliminación se complete
-        setCarros(prevCarros => prevCarros.filter(carro => carro.codigoCarros !== codigo));
-        
-        console.log("✔️ Carro eliminado con éxito");
-    } catch (error) {
-        console.error("🚨 Error al eliminar carro:", error);
-        
-        if (error.response) {
-            console.error("🔹 Detalles del error:", error.response.data);
-            console.error("🔹 Código de estado:", error.response.status);
-        } else {
-            console.error("🔹 No hay respuesta del servidor.");
+    const handleEliminar = async (codigo) => {
+        try {
+            await eliminarCarro(codigo);
+            setCarros(prevCarros => prevCarros.filter(carro => carro.codigoCarros !== codigo));
+        } catch (error) {
+            // Manejo de error opcional
         }
-    }
-};
+    };
 
-
-    // 🔹 Filtrar carros según el estado seleccionado
     const carrosFiltrados = filtroEstado ? carros.filter(carro => carro.estado === filtroEstado) : carros;
-
-    // 🔹 Ordenar por código de carro de menor a mayor
     const carrosOrdenados = [...carrosFiltrados].sort((a, b) => a.codigoCarros - b.codigoCarros);
 
     return (
         <div className="container mt-4">
             <h2>Lista de Carros</h2>
-
-            {/* 🔹 Botón para agregar un nuevo carro */}
+            {error && (
+                <div className="alert alert-danger text-center" style={{ fontSize: "1.1rem" }}>
+                    Servicio temporalmente fuera de servicio, inténtelo más tarde.
+                </div>
+            )}
             <div className="mb-3 d-flex justify-content-between">
-
-                {/* 🔹 Botones para filtrar por estado */}
                 <div>
-                                  </div>
+                    {/* Aquí puedes agregar botones de filtro si lo deseas */}
+                </div>
             </div>
-
             <table className="table table-bordered">
                 <thead>
                     <tr>

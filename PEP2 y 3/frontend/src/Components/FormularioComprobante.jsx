@@ -1,8 +1,19 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import axios from "axios";
 import { crearComprobante } from "../Services/ComprobanteService";
+import { obtenerClientes } from "../Services/ClientService";
+
+const EMAIL_DOMAINS = [
+  "@gmail.com",
+  "@outlook.com",
+  "@hotmail.com",
+  "@yahoo.com",
+  "@icloud.com",
+  "@usach.cl",
+  "Otro"
+];
 
 const FormularioComprobante = () => {
   const { id } = useParams();
@@ -16,6 +27,12 @@ const FormularioComprobante = () => {
   // Estado para los correos y errores
   const [correosClientes, setCorreosClientes] = useState([]);
   const [emailErrors, setEmailErrors] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [emailUserList, setEmailUserList] = useState([]); // [{user, domain, customDomain}]
+  const [emailDomainList, setEmailDomainList] = useState([]); // ["@gmail.com", ...]
+  const [showSuggestions, setShowSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+  const [activeInput, setActiveInput] = useState(null);
 
   // Estados para el guardado
   const [guardando, setGuardando] = useState(false);
@@ -32,6 +49,9 @@ const FormularioComprobante = () => {
         setReserva(res.data);
         setCorreosClientes(Array.from({ length: res.data.cantidadPersonas }, () => ""));
         setEmailErrors(Array.from({ length: res.data.cantidadPersonas }, () => ""));
+        setEmailUserList(Array.from({ length: res.data.cantidadPersonas }, () => ""));
+        setEmailDomainList(Array.from({ length: res.data.cantidadPersonas }, () => EMAIL_DOMAINS[0]));
+        setShowSuggestions(Array.from({ length: res.data.cantidadPersonas }, () => false));
       });
 
     // 2. Obtener tarifa
@@ -41,32 +61,151 @@ const FormularioComprobante = () => {
     // 3. Obtener descuento
     axios.get(`http://localhost:8080/api/descuentos/obtener/${id}`)
       .then(res => setDescuento(res.data));
+
+    // 4. Obtener clientes para sugerencias de correo
+    obtenerClientes().then(res => {
+      // Evitar duplicados
+      const correosUnicos = Array.from(new Set(res.data.map(c => c.email).filter(Boolean)));
+      setClientes(correosUnicos);
+    });
   }, [id]);
 
   // Calcular totales
   const precioSinDescuento = tarifa?.precio || 0;
-  const descuentoTotal = descuento?.descuentoTotal || 0;
-  const precioConDescuento = precioSinDescuento - descuentoTotal;
-  const precioConIva = +(precioConDescuento).toFixed(2); // YA INCLUYE IVA
+  const descuentoPorcentaje = descuento?.descuentoTotal || 0;
+  const precioConDescuento = precioSinDescuento - (precioSinDescuento * descuentoPorcentaje / 100);
   const precioSinIva = +(precioConDescuento / 1.19).toFixed(2);
+  const precioConIva = +(precioConDescuento).toFixed(2);
 
-  // Manejar cambios de correo
-  const handleCorreoChange = (index, value) => {
-    const trimmedValue = value.replace(/\s/g, "");
+  // --- Email helpers para cada input ---
+  const handleEmailUserChange = (index, value) => {
+    // Solo la parte antes de @, sin espacios
+    const user = value.replace(/\s+/g, "");
+    setEmailUserList(prev => {
+      const arr = [...prev];
+      arr[index] = user;
+      return arr;
+    });
+    // Actualiza el correo completo
+    updateCorreoCompleto(index, user, emailDomainList[index], "");
+    // Sugerencias
+    if (user.length > 0) {
+      const sugerencias = clientes.filter(correo => correo.toLowerCase().startsWith(user.toLowerCase()));
+      setSuggestions(sugs => {
+        const arr = [...sugs];
+        arr[index] = sugerencias;
+        return arr;
+      });
+      setShowSuggestions(prev => {
+        const arr = [...prev];
+        arr[index] = true;
+        return arr;
+      });
+    } else {
+      setShowSuggestions(prev => {
+        const arr = [...prev];
+        arr[index] = false;
+        return arr;
+      });
+    }
+  };
+
+  const handleEmailDomainChange = (index, value) => {
+    setEmailDomainList(prev => {
+      const arr = [...prev];
+      arr[index] = value;
+      return arr;
+    });
+    if (value !== "Otro") {
+      updateCorreoCompleto(index, emailUserList[index], value, "");
+    } else {
+      updateCorreoCompleto(index, emailUserList[index], value, "");
+    }
+  };
+
+  const handleCustomDomainChange = (index, value) => {
+    // Solo para "Otro"
+    updateCorreoCompleto(index, emailUserList[index], "Otro", value.replace(/\s+/g, ""));
+  };
+
+  const updateCorreoCompleto = (index, user, domain, customDomain) => {
+    let email = user;
+    if (user) {
+      if (domain === "Otro" && customDomain) {
+        email += "@" + customDomain;
+      } else if (domain !== "Otro") {
+        email += domain;
+      }
+    }
+    setCorreosClientes(prev => {
+      const arr = [...prev];
+      arr[index] = email;
+      return arr;
+    });
+    // Validación
     let errorMessage = "";
-    if (!emailRegex.test(trimmedValue)) {
+    if (email && !emailRegex.test(email)) {
       errorMessage = "El correo es inválido. Ingrese un correo con el formato x@x.xx";
     }
-    setEmailErrors((prevErrors) => {
-      const newErrors = [...prevErrors];
-      newErrors[index] = errorMessage;
-      return newErrors;
+    setEmailErrors(prev => {
+      const arr = [...prev];
+      arr[index] = errorMessage;
+      return arr;
     });
-    setCorreosClientes((prevCorreos) => {
-      const nuevosCorreos = [...prevCorreos];
-      nuevosCorreos[index] = trimmedValue;
-      return nuevosCorreos;
+  };
+
+  // Cuando selecciona una sugerencia
+  const handleSuggestionClick = (index, correo) => {
+    setCorreosClientes(prev => {
+      const arr = [...prev];
+      arr[index] = correo;
+      return arr;
     });
+    setEmailUserList(prev => {
+      const arr = [...prev];
+      arr[index] = correo.split("@")[0];
+      return arr;
+    });
+    setEmailDomainList(prev => {
+      const arr = [...prev];
+      const domain = "@" + correo.split("@")[1];
+      arr[index] = EMAIL_DOMAINS.includes(domain) ? domain : "Otro";
+      return arr;
+    });
+    setShowSuggestions(prev => {
+      const arr = [...prev];
+      arr[index] = false;
+      return arr;
+    });
+  };
+
+  // Mostrar sugerencias al enfocar
+  const handleEmailFocus = (index) => {
+    if (emailUserList[index] && clientes.length > 0) {
+      const sugerencias = clientes.filter(correo => correo.toLowerCase().startsWith(emailUserList[index].toLowerCase()));
+      setSuggestions(sugs => {
+        const arr = [...sugs];
+        arr[index] = sugerencias;
+        return arr;
+      });
+      setShowSuggestions(prev => {
+        const arr = [...prev];
+        arr[index] = true;
+        return arr;
+      });
+    }
+    setActiveInput(index);
+  };
+
+  // Ocultar sugerencias al salir del input (con pequeño delay para permitir click)
+  const handleEmailBlur = (index) => {
+    setTimeout(() => {
+      setShowSuggestions(prev => {
+        const arr = [...prev];
+        arr[index] = false;
+        return arr;
+      });
+    }, 150);
   };
 
   // Generar PDF
@@ -188,7 +327,7 @@ const FormularioComprobante = () => {
         </div>
       )}
 
-      <h2>Crear Comprobante de Pago</h2>
+      <h2>Comprobante de Pago</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label>ID Reserva</label>
@@ -215,7 +354,7 @@ const FormularioComprobante = () => {
           <input type="text" className="form-control" value={reserva.numeroVueltas} readOnly />
         </div>
         <div className="mb-3">
-          <label>Duración Total (min)</label>
+          <label>Duración Total (en minutos)</label>
           <input type="number" className="form-control" value={tarifa?.duracionTotal || reserva.duracionTotal} readOnly />
         </div>
         <div className="mb-3">
@@ -227,8 +366,8 @@ const FormularioComprobante = () => {
           <input type="number" className="form-control" value={precioSinDescuento.toFixed(2)} readOnly />
         </div>
         <div className="mb-3">
-          <label>Descuento total</label>
-          <input type="number" className="form-control" value={descuentoTotal.toFixed(2)} readOnly />
+          <label> % de Descuento total</label>
+          <input type="number" className="form-control" value={descuentoPorcentaje.toFixed(2)} readOnly />
         </div>
         <div className="mb-3">
           <label>Precio final (sin IVA)</label>
@@ -241,23 +380,90 @@ const FormularioComprobante = () => {
 
         <h4>Correos de Participantes</h4>
         {correosClientes.map((correo, index) => (
-          <div className="mb-3" key={index}>
+          <div className="mb-3" key={index} style={{ position: "relative" }}>
             <label>Correo Participante {index + 1}</label>
-            <input
-              type="email"
-              className={`form-control ${emailErrors[index] ? "is-invalid" : ""}`}
-              value={correo}
-              onChange={(e) => handleCorreoChange(index, e.target.value)}
-              placeholder="Ingrese el correo"
-            />
+            <div className="input-group">
+              <input
+                type="text"
+                className={`form-control ${emailErrors[index] ? "is-invalid" : ""}`}
+                placeholder="usuario"
+                value={emailUserList[index] || ""}
+                onChange={e => handleEmailUserChange(index, e.target.value)}
+                onFocus={() => handleEmailFocus(index)}
+                onBlur={() => handleEmailBlur(index)}
+                autoComplete="off"
+              />
+              <select
+                className="form-select"
+                value={emailDomainList[index] || EMAIL_DOMAINS[0]}
+                onChange={e => handleEmailDomainChange(index, e.target.value)}
+              >
+                {EMAIL_DOMAINS.map((domain) => (
+                  <option key={domain} value={domain}>{domain === "Otro" ? "Otro..." : domain}</option>
+                ))}
+              </select>
+              {emailDomainList[index] === "Otro" && (
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="dominio.com"
+                  value={
+                    correo.includes("@") && !EMAIL_DOMAINS.includes("@" + correo.split("@")[1])
+                      ? correo.split("@")[1]
+                      : ""
+                  }
+                  onChange={e => handleCustomDomainChange(index, e.target.value)}
+                />
+              )}
+            </div>
+            {/* Sugerencias tipo Google */}
+            {showSuggestions[index] && suggestions[index] && suggestions[index].length > 0 && (
+              <ul
+                style={{
+                  position: "absolute",
+                  top: "100%",
+                  left: 0,
+                  right: 0,
+                  zIndex: 20,
+                  background: "#fff",
+                  border: "1px solid #ccc",
+                  borderRadius: "0 0 8px 8px",
+                  maxHeight: "180px",
+                  overflowY: "auto",
+                  margin: 0,
+                  padding: "0.25rem 0",
+                  listStyle: "none"
+                }}
+              >
+                {suggestions[index].map((sug, i) => (
+                  <li
+                    key={sug}
+                    style={{
+                      padding: "0.5rem 1rem",
+                      cursor: "pointer",
+                      background: (correosClientes[index] === sug) ? "#f0f0f0" : "#fff"
+                    }}
+                    onMouseDown={() => handleSuggestionClick(index, sug)}
+                  >
+                    {sug}
+                  </li>
+                ))}
+              </ul>
+            )}
             {emailErrors[index] && (
               <div className="invalid-feedback">{emailErrors[index]}</div>
             )}
           </div>
         ))}
-
         <button type="submit" className="btn btn-success">
-          Generar y Enviar Comprobante
+          Aceptar
+        </button>
+        <button
+          type="button"
+          className="btn btn-secondary ms-2"
+          onClick={() => navigate("/comprobantes")}
+        >
+          Cancelar
         </button>
       </form>
     </div>

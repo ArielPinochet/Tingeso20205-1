@@ -11,6 +11,8 @@ const ListaReservas = () => {
   const [modoAdmin, setModoAdmin] = useState(false);
   const [mostrarClaveAdmin, setMostrarClaveAdmin] = useState(false);
   const [claveInput, setClaveInput] = useState("");
+  const [filtro, setFiltro] = useState("porPagar"); // "porPagar" o "todas"
+  const [errorServicio, setErrorServicio] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,8 +21,11 @@ const ListaReservas = () => {
         const data = response.data;
         const reservasArray = Array.isArray(data) ? data : [data];
         setReservas(reservasArray);
+        setErrorServicio(false);
       })
       .catch((error) => {
+        // Mostrar error para cualquier tipo de fallo (no solo 500)
+        setErrorServicio(true);
         console.error("🚨 Error al obtener reservas:", error);
       });
 
@@ -67,6 +72,22 @@ const ListaReservas = () => {
     }
   };
 
+  // Filtrado de reservas
+  let reservasFiltradas = reservas;
+  if (filtro === "porPagar") {
+    reservasFiltradas = reservas.filter((reserva) => {
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      const fechaReserva = reserva.fechaReserva ? new Date(reserva.fechaReserva) : null;
+      if (fechaReserva) fechaReserva.setHours(0, 0, 0, 0);
+      const fechaYaPaso = fechaReserva && fechaReserva < hoy;
+      return (
+        !reservasConComprobante.includes(reserva.idReserva) &&
+        !fechaYaPaso
+      );
+    });
+  }
+
   return (
     <>
       {mostrarClaveAdmin && (
@@ -102,110 +123,135 @@ const ListaReservas = () => {
       )}
       <div className="container mt-4">
         <h2>Lista de Reservas</h2>
-        <Link to="/crear-reserva" className="btn btn-primary mb-3">Nueva Reserva</Link>
-        <button
-          className={`btn btn-${modoAdmin ? "danger" : "secondary"} ms-2 mb-3`}
-          onClick={handleAdminClick}
-        >
-          {modoAdmin ? "Salir de Administrador" : "ADMINISTRADOR"}
-        </button>
-
-        <div className="row">
-          {reservas.length > 0 ? reservas.map((reserva) => {
-            const hoy = new Date();
-            const yyyy = hoy.getFullYear();
-            const mm = String(hoy.getMonth() + 1).padStart(2, '0');
-            const dd = String(hoy.getDate()).padStart(2, '0');
-            const fechaHoy = `${yyyy}-${mm}-${dd}`;
-
-            let fechaReservaSolo = reserva.fechaReserva;
-            if (fechaReservaSolo && fechaReservaSolo.includes("T")) {
-              fechaReservaSolo = fechaReservaSolo.split("T")[0];
-            }
-
-            const esHoy = fechaReservaSolo === fechaHoy;
-            const fechaReservaDate = new Date(reserva.fechaReserva);
-            const fechaYaPaso = fechaReservaDate < hoy;
-            const tieneComprobante = reservasConComprobante.includes(reserva.idReserva);
-
-            const accionesDeshabilitadas = (fechaYaPaso || tieneComprobante) && !modoAdmin;
-
-            return (
-              <div key={reserva.idReserva} className="col-md-4 mb-3">
-                <div className="card shadow-sm">
-                  <div className="card-body">
-                    <h5 className="card-title">Reserva #{reserva.idReserva || "Desconocida"}</h5>
-                    <p><strong>Fecha:</strong> {reserva.fechaReserva ? new Date(reserva.fechaReserva).toLocaleDateString() : "Sin definir"}</p>
-                    <p><strong>Hora Inicio:</strong> {
-                      reserva.horaInicio
-                        ? (reserva.horaInicio.includes("T")
-                            ? reserva.horaInicio.split("T")[1].substring(0,5)
-                            : reserva.horaInicio.substring(0,5))
-                    : "Sin definir"
-                    }</p>
-                    <p><strong>Número de Vueltas:</strong> {reserva.numeroVueltas || 0}</p>
-                    <p><strong>Duración:</strong> {reserva.duracionTotal ? `${reserva.duracionTotal} minutos` : "No calculada"}</p>
-                    <p><strong>Cantidad de Personas:</strong> {reserva.cantidadPersonas || "No especificada"}</p>
-                    <p><strong>Día Especial:</strong> {reserva.diaEspecial === true || reserva.diaEspecial === "true" ? "Sí" : "No"}</p>
-                    <p><strong>Cliente Responsable:</strong> {reserva.nombreCliente || "No especificado"}</p>
-
-                    {tieneComprobante ? (
-                      <div className="alert alert-secondary mt-2">Reserva Pagada</div>
-                    ) : null}
-
-                    {accionesDeshabilitadas ? (
-                      <div className="alert alert-info mt-2">
-                        {tieneComprobante
-                          ? "Reserva pagada, no se puede modificar ni eliminar."
-                          : "La fecha de la reserva ya pasó, no se puede modificar ni eliminar."}
-                      </div>
-                    ) : (
-                      <>
-                        <button
-                          className="btn btn-warning"
-                          onClick={() => navigate(`/editar-reserva/${reserva.idReserva}`)}
-                          disabled={esHoy && !modoAdmin} // No permite editar si es hoy y no es admin
-                          title={esHoy && !modoAdmin ? "No se puede editar una reserva el mismo día" : ""}
-                        >
-                          Editar
-                        </button>
-                        <button
-                          className="btn btn-danger ms-2"
-                          onClick={() => handleEliminar(reserva.idReserva)}
-                          disabled={esHoy && !modoAdmin} // No permite eliminar si es hoy y no es admin
-                          title={esHoy && !modoAdmin ? "No se puede eliminar una reserva el mismo día" : ""}
-                        >
-                          Eliminar
-                        </button>
-                        <button
-                          className="btn btn-success ms-2"
-                          onClick={() => navigate(`/crear-comprobante/${reserva.idReserva}`)}
-                          disabled={false} // Siempre permite pagar, incluso si es hoy
-                          title=""
-                        >
-                          Proceder al Pago
-                        </button>
-                      </>
-                    )}
-                    {/* Si es admin, muestra el botón eliminar aunque esté deshabilitado para usuarios normales */}
-                    {modoAdmin && accionesDeshabilitadas && (
-                      <button
-                        className="btn btn-danger mt-2"
-                        onClick={() => handleEliminar(reserva.idReserva)}
-                      >
-                        Eliminar (Admin)
-                      </button>
-                    )}
-                  </div>
+        {errorServicio ? (
+          <div className="alert alert-danger text-center" style={{ fontSize: "1.1rem" }}>
+            Servicio temporalmente fuera de servicio, inténtelo más tarde.
+          </div>
+        ) : (
+          <>
+            <div className="d-flex align-items-center mb-3">
+              <Link to="/crear-reserva" className="btn btn-primary me-2">Nueva Reserva</Link>
+              <button
+                className={`btn btn-${modoAdmin ? "danger" : "secondary"} ms-2`}
+                onClick={handleAdminClick}
+              >
+                {modoAdmin ? "Salir de Administrador" : "ADMINISTRADOR"}
+              </button>
+              <div className="ms-auto">
+                <div className="btn-group" role="group">
+                  <button
+                    className={`btn btn-outline-primary${filtro === "porPagar" ? " active" : ""}`}
+                    onClick={() => setFiltro("porPagar")}
+                  >
+                    Por Pagar
+                  </button>
+                  <button
+                    className={`btn btn-outline-secondary${filtro === "todas" ? " active" : ""}`}
+                    onClick={() => setFiltro("todas")}
+                  >
+                    Todas
+                  </button>
                 </div>
               </div>
-            );
-          }) : (
-            <div className="col-12 text-center mt-4">
-              <p className="alert alert-info">No hay reservas disponibles</p>
             </div>
-          )}
-        </div>
+            <div className="row">
+              {reservasFiltradas.length > 0 ? reservasFiltradas.map((reserva) => {
+                const hoy = new Date();
+                const yyyy = hoy.getFullYear();
+                const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+                const dd = String(hoy.getDate()).padStart(2, '0');
+                const fechaHoy = `${yyyy}-${mm}-${dd}`;
+
+                let fechaReservaSolo = reserva.fechaReserva;
+                if (fechaReservaSolo && fechaReservaSolo.includes("T")) {
+                  fechaReservaSolo = fechaReservaSolo.split("T")[0];
+                }
+
+                const esHoy = fechaReservaSolo === fechaHoy;
+                const fechaReservaDate = new Date(reserva.fechaReserva);
+                const fechaYaPaso = fechaReservaDate < hoy;
+                const tieneComprobante = reservasConComprobante.includes(reserva.idReserva);
+
+                const accionesDeshabilitadas = (fechaYaPaso || tieneComprobante) && !modoAdmin;
+
+                return (
+                  <div key={reserva.idReserva} className="col-md-4 mb-3">
+                    <div className="card shadow-sm">
+                      <div className="card-body">
+                        <h5 className="card-title">Reserva #{reserva.idReserva || "Desconocida"}</h5>
+                        <p><strong>Fecha:</strong> {reserva.fechaReserva ? new Date(reserva.fechaReserva).toLocaleDateString() : "Sin definir"}</p>
+                        <p><strong>Hora Inicio:</strong> {
+                          reserva.horaInicio
+                            ? (reserva.horaInicio.includes("T")
+                                ? reserva.horaInicio.split("T")[1].substring(0,5)
+                                : reserva.horaInicio.substring(0,5))
+                        : "Sin definir"
+                        }</p>
+                        <p><strong>Número de Vueltas:</strong> {reserva.numeroVueltas || 0}</p>
+                        <p><strong>Duración:</strong> {reserva.duracionTotal ? `${reserva.duracionTotal} minutos` : "No calculada"}</p>
+                        <p><strong>Cantidad de Personas:</strong> {reserva.cantidadPersonas || "No especificada"}</p>
+                        <p><strong>Día Especial:</strong> {reserva.diaEspecial === true || reserva.diaEspecial === "true" ? "Sí" : "No"}</p>
+                        <p><strong>Cliente Responsable:</strong> {reserva.nombreCliente || "No especificado"}</p>
+
+                        {tieneComprobante ? (
+                          <div className="alert alert-secondary mt-2">Reserva Pagada</div>
+                        ) : null}
+
+                        {accionesDeshabilitadas ? (
+                          <div className="alert alert-info mt-2">
+                            {tieneComprobante
+                              ? "Reserva pagada, no se puede modificar ni eliminar."
+                              : "La fecha de la reserva ya pasó, no se puede modificar ni eliminar."}
+                          </div>
+                        ) : (
+                          <>
+                            <button
+                              className="btn btn-warning"
+                              onClick={() => navigate(`/editar-reserva/${reserva.idReserva}`)}
+                              disabled={esHoy && !modoAdmin} // No permite editar si es hoy y no es admin
+                              title={esHoy && !modoAdmin ? "No se puede editar una reserva el mismo día" : ""}
+                            >
+                              Editar
+                            </button>
+                            <button
+                              className="btn btn-danger ms-2"
+                              onClick={() => handleEliminar(reserva.idReserva)}
+                              disabled={esHoy && !modoAdmin} // No permite eliminar si es hoy y no es admin
+                              title={esHoy && !modoAdmin ? "No se puede eliminar una reserva el mismo día" : ""}
+                            >
+                              Eliminar
+                            </button>
+                            <button
+                              className="btn btn-success ms-2"
+                              onClick={() => navigate(`/crear-comprobante/${reserva.idReserva}`)}
+                              disabled={false} // Siempre permite pagar, incluso si es hoy
+                              title=""
+                            >
+                              Proceder al Pago
+                            </button>
+                          </>
+                        )}
+                        {/* Si es admin, muestra el botón eliminar aunque esté deshabilitado para usuarios normales */}
+                        {modoAdmin && accionesDeshabilitadas && (
+                          <button
+                            className="btn btn-danger mt-2"
+                            onClick={() => handleEliminar(reserva.idReserva)}
+                          >
+                            Eliminar (Admin)
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }) : (
+                <div className="col-12 text-center mt-4">
+                  <p className="alert alert-info">No hay reservas disponibles</p>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </>
   );

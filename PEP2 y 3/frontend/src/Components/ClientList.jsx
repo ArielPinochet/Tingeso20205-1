@@ -4,9 +4,17 @@ import { Link } from "react-router-dom";
 
 const ListaClientes = () => {
     const [clientes, setClientes] = useState([]);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
-        obtenerClientes().then(response => setClientes(response.data));
+        obtenerClientes()
+            .then(response => {
+                setClientes(response.data);
+                setError(false);
+            })
+            .catch(() => {
+                setError(true);
+            });
     }, []);
 
     const handleEliminar = (id) => {
@@ -18,7 +26,20 @@ const ListaClientes = () => {
     return (
         <div className="container mt-4">
             <h2>Lista de Clientes</h2>
-            <Link to="/crear-cliente" className="btn btn-primary mb-3">Agregar Cliente</Link>
+            {error && (
+                <div className="alert alert-danger text-center" style={{ fontSize: "1.1rem" }}>
+                    Servicio temporalmente fuera de servicio, inténtelo más tarde.
+                </div>
+            )}
+            <Link
+                to="/crear-cliente"
+                className="btn btn-primary mb-3"
+                style={{ pointerEvents: error ? "none" : "auto", opacity: error ? 0.5 : 1 }}
+                tabIndex={error ? -1 : 0}
+                aria-disabled={error ? "true" : "false"}
+            >
+                Agregar Cliente
+            </Link>
             <table className="table table-bordered">
                 <thead>
                     <tr>

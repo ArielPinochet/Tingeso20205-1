@@ -14,6 +14,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -33,16 +35,21 @@ public class EmailService {
     }
 
     @Transactional
-    public void enviarComprobantePorCorreo(List<String> correosClientes, byte[] pdfBytes) {
+    public void enviarComprobantePorCorreo(List<String> correosClientes, byte[] pdfBytes, String nombreCliente) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm");
+        String fechaEmision = LocalDateTime.now().format(formatter);
+
         for (String destinatario : correosClientes) {
             try {
                 MimeMessage message = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
                 helper.setTo(destinatario);
-                helper.setSubject("Comprobante de Pago");
+                helper.setSubject("Comprobante de Pago - KartRent");
                 helper.setText("Adjunto su comprobante de pago en PDF.");
-                helper.addAttachment("Comprobante.pdf", new ByteArrayResource(pdfBytes));
+
+                String nombreArchivo = "Comprobante KartRent - " + nombreCliente + " - " + fechaEmision + ".pdf";
+                helper.addAttachment(nombreArchivo, new ByteArrayResource(pdfBytes));
 
                 mailSender.send(message);
                 System.out.println("✔️ Comprobante enviado a: " + destinatario);
@@ -50,9 +57,8 @@ public class EmailService {
                 System.err.println("🚨 Error al enviar comprobante a " + destinatario + ": " + e.getMessage());
             }
         }
-
-
     }
+
     public void enviarCorreoPrueba() {
         try {
             MimeMessage message = mailSender.createMimeMessage();

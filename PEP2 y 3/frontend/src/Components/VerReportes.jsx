@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const VerReportes = () => {
@@ -6,6 +6,21 @@ const VerReportes = () => {
   const [startMonth, setStartMonth] = useState("");
   const [endMonth, setEndMonth] = useState("");
   const [cargando, setCargando] = useState(false);
+  const [errorServicio, setErrorServicio] = useState(false);
+
+  // Verifica el servicio apenas se entra a la página
+  useEffect(() => {
+    const checkServicio = async () => {
+      try {
+        // Prueba con un endpoint de reportes (puede ser HEAD o GET)
+        await axios.get("http://localhost:8080/api/reportes/estado");
+        setErrorServicio(false);
+      } catch (error) {
+        setErrorServicio(true);
+      }
+    };
+    checkServicio();
+  }, []);
 
   const descargarExcel = async () => {
     if (!startMonth || !endMonth) {
@@ -13,6 +28,7 @@ const VerReportes = () => {
       return;
     }
     setCargando(true);
+    setErrorServicio(false);
     try {
       let url = "";
       let params = {};
@@ -46,7 +62,7 @@ const VerReportes = () => {
       link.click();
       link.remove();
     } catch (error) {
-      alert("Error al descargar el reporte.");
+      setErrorServicio(true);
       console.error(error);
     }
     setCargando(false);
@@ -55,6 +71,11 @@ const VerReportes = () => {
   return (
     <div className="container mt-4">
       <h2>Descargar Reporte de Ingresos</h2>
+      {errorServicio && (
+        <div className="alert alert-danger text-center" style={{ fontSize: "1.1rem" }}>
+          Servicio de reportes temporalmente fuera de servicio, inténtelo más tarde.
+        </div>
+      )}
       <div>
         <button
           onClick={() => setSelectedReport("VUELTAS")}
@@ -68,7 +89,7 @@ const VerReportes = () => {
             borderRadius: "5px",
             fontWeight: "bold"
           }}
-          disabled={cargando}
+          disabled={cargando || errorServicio}
         >
           Reporte por Vueltas
         </button>
@@ -83,7 +104,7 @@ const VerReportes = () => {
             borderRadius: "5px",
             fontWeight: "bold"
           }}
-          disabled={cargando}
+          disabled={cargando || errorServicio}
         >
           Reporte por Personas
         </button>
@@ -95,7 +116,7 @@ const VerReportes = () => {
             type="month"
             value={startMonth}
             onChange={(e) => setStartMonth(e.target.value)}
-            disabled={cargando}
+            disabled={cargando || errorServicio}
           />
         </label>
         &nbsp;&nbsp;
@@ -105,7 +126,7 @@ const VerReportes = () => {
             type="month"
             value={endMonth}
             onChange={(e) => setEndMonth(e.target.value)}
-            disabled={cargando}
+            disabled={cargando || errorServicio}
           />
         </label>
       </div>
@@ -114,7 +135,7 @@ const VerReportes = () => {
           onClick={descargarExcel}
           className="btn btn-success"
           style={{ fontWeight: "bold", fontSize: "16px" }}
-          disabled={cargando}
+          disabled={cargando || errorServicio}
         >
           {cargando ? (
             <>

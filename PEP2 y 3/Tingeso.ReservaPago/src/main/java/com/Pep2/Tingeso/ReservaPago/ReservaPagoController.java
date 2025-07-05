@@ -151,7 +151,7 @@ public class ReservaPagoController {
             ComprobanteEntity comprobanteGuardado = servicioComprobantePago.guardarComprobante(comprobante);
 
             // 🔹 Enviamos el comprobante por correo
-            emailService.enviarComprobantePorCorreo(correosClientes, pdfBytes);
+            emailService.enviarComprobantePorCorreo(correosClientes, pdfBytes,nombreCliente);
 
             return ResponseEntity.ok(comprobanteGuardado);
         } catch (Exception e) {
