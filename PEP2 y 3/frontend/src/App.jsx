@@ -187,7 +187,7 @@ const App = () => {
             zIndex: 9999,
           }}
         >
-          Horario de atención: 06:00 a 23:00 hrs
+          Horario de Reservas: 06:00 a 21:59 hrs
         </footer>
       </div>
     </Router>
