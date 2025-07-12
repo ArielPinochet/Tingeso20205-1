@@ -1,0 +1,3 @@
+Mejoras a realizar:
+el microservicio usa mucho @transactional (porque ocurrían fallos en el código y se soluciono con eso), eso hace que las primeras reservas se registren bien, pero el resto tiene que ir esperando que se liberen las anteriores para seguir registrando, entonces tendría que necesitar mas replicas innecesariamente
+

@@ -1,0 +1,346 @@
+{
+  "id": "fad10198-59d1-4ae6-908a-933301974f9d",
+  "version": "2.0",
+  "name": "Reportes Pruebas",
+  "url": "http://localhost:5173/",
+  "tests": [{
+    "id": "5bbaddb2-16ea-472f-a939-c601882afb5c",
+    "name": "Descargar reporte de ingresos por vueltas",
+    "commands": [{
+      "id": "074ba8af-e1c7-45e3-8120-370aa243d142",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:5173/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "5c2d0b92-08f0-4dc8-af73-2b077488aea3",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1936x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "6820c2d2-27a0-4631-b086-051849b62a7d",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Reportes",
+      "targets": [
+        ["linkText=Reportes", "linkText"],
+        ["css=.nav-item:nth-child(6) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'Reportes')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[6]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/VerReportes')]", "xpath:href"],
+        ["xpath=//li[6]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Reportes')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9c35f53f-3850-4f08-8995-c6bcbeb091be",
+      "comment": "",
+      "command": "click",
+      "target": "css=label:nth-child(1) > input",
+      "targets": [
+        ["css=label:nth-child(1) > input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/label/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "8dc023c6-14e8-459c-ac45-be41f220fee1",
+      "comment": "",
+      "command": "type",
+      "target": "css=label:nth-child(1) > input",
+      "targets": [
+        ["css=label:nth-child(1) > input", "css:finder"],
+        ["xpath=//input[@value='2025-06']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/label/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "2025-06"
+    }, {
+      "id": "f7c6d9b8-74f3-4dcd-bd65-07ad6c0d498f",
+      "comment": "",
+      "command": "click",
+      "target": "css=label:nth-child(2) > input",
+      "targets": [
+        ["css=label:nth-child(2) > input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/label[2]/input", "xpath:idRelative"],
+        ["xpath=//label[2]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "4a054d3e-6eb6-4f0b-9826-8cb302b41190",
+      "comment": "",
+      "command": "type",
+      "target": "css=label:nth-child(2) > input",
+      "targets": [
+        ["css=label:nth-child(2) > input", "css:finder"],
+        ["xpath=//input[@value='2025-07']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/label[2]/input", "xpath:idRelative"],
+        ["xpath=//label[2]/input", "xpath:position"]
+      ],
+      "value": "2025-07"
+    }, {
+      "id": "81dc4597-0fe1-4082-ace3-8801913cea7f",
+      "comment": "",
+      "command": "click",
+      "target": "css=.btn-success",
+      "targets": [
+        ["css=.btn-success", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Descargar Reporte en Excel')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "5c3e415e-fae0-483b-a37d-bd6eb85c4a0f",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.btn-success",
+      "targets": [
+        ["css=.btn-success", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Descargar Reporte en Excel')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "a53f1811-225e-4de5-b6fb-055b50a15c20",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.btn-success",
+      "targets": [
+        ["css=.btn-success", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Descargando...')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "5a1fed3c-e2e3-4a0e-8af2-3b7010c9b65e",
+    "name": "Descargar reporte de ingresos por personas",
+    "commands": [{
+      "id": "d675b0f4-6771-4fa8-b314-146db335575b",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:5173/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "784ba8a9-64b6-4f8f-9a27-f2ac84d9906b",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1936x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c3e11226-9f82-45ee-8f07-d9dcfd10c32b",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Reportes",
+      "targets": [
+        ["linkText=Reportes", "linkText"],
+        ["css=.nav-item:nth-child(6) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'Reportes')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[6]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/VerReportes')]", "xpath:href"],
+        ["xpath=//li[6]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Reportes')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "2d1b3271-b7da-4d60-81e6-4ef86fdf6cdf",
+      "comment": "",
+      "command": "click",
+      "target": "css=div:nth-child(2) > button:nth-child(2)",
+      "targets": [
+        ["css=div:nth-child(2) > button:nth-child(2)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div/button[2]", "xpath:idRelative"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Reporte por Personas')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9c1458ed-89c8-4b25-9fd3-efb62bebae79",
+      "comment": "",
+      "command": "click",
+      "target": "css=label:nth-child(1) > input",
+      "targets": [
+        ["css=label:nth-child(1) > input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/label/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "ca2ef66c-19f1-4cd1-9176-856e4b40991b",
+      "comment": "",
+      "command": "type",
+      "target": "css=label:nth-child(1) > input",
+      "targets": [
+        ["css=label:nth-child(1) > input", "css:finder"],
+        ["xpath=//input[@value='2025-06']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/label/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "2025-06"
+    }, {
+      "id": "2512e365-cb65-4d66-b63c-71986ac22d75",
+      "comment": "",
+      "command": "click",
+      "target": "css=label:nth-child(2) > input",
+      "targets": [
+        ["css=label:nth-child(2) > input", "css:finder"],
+        ["xpath=//input[@value='']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/label[2]/input", "xpath:idRelative"],
+        ["xpath=//label[2]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "9e480445-e55b-4a50-bf84-927934040503",
+      "comment": "",
+      "command": "type",
+      "target": "css=label:nth-child(2) > input",
+      "targets": [
+        ["css=label:nth-child(2) > input", "css:finder"],
+        ["xpath=//input[@value='2025-07']", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/label[2]/input", "xpath:idRelative"],
+        ["xpath=//label[2]/input", "xpath:position"]
+      ],
+      "value": "2025-07"
+    }, {
+      "id": "35411d2e-6136-4579-b053-30aad7459e32",
+      "comment": "",
+      "command": "click",
+      "target": "css=.btn-success",
+      "targets": [
+        ["css=.btn-success", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Descargar Reporte en Excel')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "fd0a24d3-4093-48c9-b45f-c419fb247839",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.btn-success",
+      "targets": [
+        ["css=.btn-success", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Descargar Reporte en Excel')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "82a26cb1-b089-413f-9193-0efe5fe6489e",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.btn-success",
+      "targets": [
+        ["css=.btn-success", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Descargando...')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "b6c5e37f-0eba-4c5a-b4c9-b9607f873851",
+    "name": "Mostrar advertencia si no se selecciona el rango de meses",
+    "commands": [{
+      "id": "9815bbbe-4632-43b5-b27f-774d0dcb4ac3",
+      "comment": "",
+      "command": "open",
+      "target": "http://localhost:5173/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "a28fe945-9d61-4293-974a-fe2971137237",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1936x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "bd3a8f86-172f-4930-8567-a9a9c280dac9",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Reportes",
+      "targets": [
+        ["linkText=Reportes", "linkText"],
+        ["css=.nav-item:nth-child(6) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'Reportes')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[6]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/VerReportes')]", "xpath:href"],
+        ["xpath=//li[6]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Reportes')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "f35061f6-6e54-44fd-808d-c878cd0d9951",
+      "comment": "",
+      "command": "click",
+      "target": "css=.btn-success",
+      "targets": [
+        ["css=.btn-success", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Descargar Reporte en Excel')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "51fdab3d-f8e4-4209-a9a5-eb240f81bef4",
+      "comment": "",
+      "command": "assertAlert",
+      "target": "Por favor, seleccione el mes de inicio y el de fin.",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "16b8a160-eed9-495b-a63f-1e9542114463",
+      "comment": "",
+      "command": "click",
+      "target": "css=div:nth-child(2) > button:nth-child(2)",
+      "targets": [
+        ["css=div:nth-child(2) > button:nth-child(2)", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div/button[2]", "xpath:idRelative"],
+        ["xpath=//button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Reporte por Personas')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "bf0f33ce-78d0-43c9-9519-fb4d5dc7e247",
+      "comment": "",
+      "command": "click",
+      "target": "css=.btn-success",
+      "targets": [
+        ["css=.btn-success", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div[3]/button", "xpath:idRelative"],
+        ["xpath=//div[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Descargar Reporte en Excel')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "da306cab-8644-46a6-a161-bcbcdd9dc49c",
+      "comment": "",
+      "command": "assertAlert",
+      "target": "Por favor, seleccione el mes de inicio y el de fin.",
+      "targets": [],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "d6e693b1-a95a-4784-bd14-11c0a11f0c46",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["5bbaddb2-16ea-472f-a939-c601882afb5c"]
+  }],
+  "urls": ["http://localhost:5173/"],
+  "plugins": []
+}

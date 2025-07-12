@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 body {
   background-color: #f8f9fa;
   font-family: "Arial", sans-serif;
@@ -8,25 +10,9 @@ body {
   text-align: center;
 }
 
-.container {
-  max-width: 900px;
-  margin: auto;
-}
-
-.navbar {
-  border-radius: 5px;
-}
-
-.card {
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
-}
-
-.card:hover {
-  transform: scale(1.02);
-}
-
-.table th {
+/* ...resto de tu CSS... */
+/* Si quieres agregar estilos personalizados, usa un selector válido */
+.my-custom-button {
   background-color: #007bff;
   color: white;
 }

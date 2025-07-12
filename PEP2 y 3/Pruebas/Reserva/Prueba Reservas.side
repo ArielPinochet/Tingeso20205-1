@@ -46,7 +46,7 @@
       "id": "31ae0f5d-ca4f-48b1-898b-ccfbe7607944",
       "comment": "",
       "command": "click",
-      "target": "css=.react-datepicker__day--006",
+      "target": "css=.react-datepicker__day--011",
       "targets": [
         ["css=.react-datepicker__day--005", "css:finder"],
         ["xpath=//div[@id='root']/div/div/div/form/div/div[2]/div[2]/div/div/div/div/div[2]/div/div[7]", "xpath:idRelative"],
@@ -285,7 +285,7 @@
         ["xpath=//div[@id='root']/div/div/div/form/div[2]/input", "xpath:idRelative"],
         ["xpath=//div[2]/input", "xpath:position"]
       ],
-      "value": "19:21"
+      "value": "20:21"
     }, {
       "id": "3f0ba233-399c-47fe-9f7e-94a7dbddd6e7",
       "comment": "",
@@ -422,14 +422,30 @@
       ],
       "value": ""
     }, {
-      "id": "b2cba223-1f50-4b85-84ab-20b5b37e668e",
+      "id": "0477868e-7dd9-467d-aaf3-98992998bb7b",
       "comment": "",
       "command": "click",
-      "target": "css=.col-md-4:nth-child(4) .btn-danger",
+      "target": "linkText=Reservas",
       "targets": [
-        ["css=.col-md-4:nth-child(4) .btn-danger", "css:finder"],
-        ["xpath=//div[@id='root']/div/div/div/div[2]/div[4]/div/div/button[2]", "xpath:idRelative"],
-        ["xpath=//div[4]/div/div/button[2]", "xpath:position"]
+        ["linkText=Reservas", "linkText"],
+        ["css=.nav-item:nth-child(4) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'Reservas')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[4]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/reservas')]", "xpath:href"],
+        ["xpath=//li[4]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Reservas')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "c18d2173-3f94-430c-b3de-aee6cd337fac",
+      "comment": "",
+      "command": "click",
+      "target": "css=.col-md-4:nth-child(1) .btn-danger",
+      "targets": [
+        ["css=.col-md-4:nth-child(1) .btn-danger", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/div/div/button[2]", "xpath:idRelative"],
+        ["xpath=//div[2]/div/div/div/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Eliminar')]", "xpath:innerText"]
       ],
       "value": ""
     }]

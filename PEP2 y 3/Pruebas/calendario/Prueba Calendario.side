@@ -1,0 +1,423 @@
+{
+  "id": "176289f5-6310-4d68-8bcd-d88abbaa875f",
+  "version": "2.0",
+  "name": "Calendario Test",
+  "url": "http://localhost:5173",
+  "tests": [{
+    "id": "c2ce88ce-d9ba-44d4-a3c2-758c316c381e",
+    "name": "Ver detalles de una reserva desde el calendario",
+    "commands": [{
+      "id": "df7d0427-d512-47aa-a915-e822120cda51",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "ebade7d3-c072-4c04-883b-3ad34a89fdfb",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1936x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "fbd20bb2-d387-4e8c-b300-7e99a4be6448",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Calendario",
+      "targets": [
+        ["linkText=Calendario", "linkText"],
+        ["css=.nav-item:nth-child(5) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'Calendario')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[5]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/Calendario')]", "xpath:href"],
+        ["xpath=//li[5]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Calendario')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "06f5c194-9580-4b56-9e28-c999c49f835b",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=AGENDAR RESERVA",
+      "targets": [
+        ["linkText=AGENDAR RESERVA", "linkText"],
+        ["css=.btn", "css:finder"],
+        ["xpath=//a[contains(text(),'AGENDAR RESERVA')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[7]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/crear-reserva')]", "xpath:href"],
+        ["xpath=//li[7]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'AGENDAR RESERVA')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "041d55a7-3c13-4c9e-bc1f-5a50ad079585",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=AGENDAR RESERVA",
+      "targets": [
+        ["linkText=AGENDAR RESERVA", "linkText"],
+        ["css=.btn", "css:finder"],
+        ["xpath=//a[contains(text(),'AGENDAR RESERVA')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[7]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/crear-reserva')]", "xpath:href"],
+        ["xpath=//li[7]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'AGENDAR RESERVA')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "d206fff0-cf7a-421f-a39d-090cb5ee7a56",
+      "comment": "",
+      "command": "click",
+      "target": "css=.rbc-row:nth-child(2) > .rbc-row-segment:nth-child(3) .rbc-event-content",
+      "targets": [
+        ["css=.rbc-row:nth-child(2) > .rbc-row-segment:nth-child(3) .rbc-event-content", "css:finder"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div[2]/div[3]/div[2]/div[2]/div[3]/div/div", "xpath:idRelative"],
+        ["xpath=//div[3]/div[2]/div[2]/div[3]/div/div", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "3d450be5-cff2-46c4-9d0c-dc4d06f188f5",
+      "comment": "",
+      "command": "",
+      "target": "",
+      "targets": [],
+      "value": "5000"
+    }]
+  }, {
+    "id": "4ad0459b-a3bf-48ba-876a-89b10fc7cc4d",
+    "name": "Visualizar el calendario semanal",
+    "commands": [{
+      "id": "15035c32-44c8-49d2-bc31-781adb9c3f4b",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "d8de5486-6a69-49c8-a177-5fb8de742f9a",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1936x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "01136760-42cf-4f09-b6d6-cc8dfedbf528",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Calendario",
+      "targets": [
+        ["linkText=Calendario", "linkText"],
+        ["css=.nav-item:nth-child(5) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'Calendario')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[5]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/Calendario')]", "xpath:href"],
+        ["xpath=//li[5]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Calendario')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "1f80ad7d-f073-4cf8-aba1-9d6a3eb14bb6",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=AGENDAR RESERVA",
+      "targets": [
+        ["linkText=AGENDAR RESERVA", "linkText"],
+        ["css=.btn", "css:finder"],
+        ["xpath=//a[contains(text(),'AGENDAR RESERVA')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[7]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/crear-reserva')]", "xpath:href"],
+        ["xpath=//li[7]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'AGENDAR RESERVA')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "6375ddf8-48bc-470a-b540-7878da82f4e6",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=AGENDAR RESERVA",
+      "targets": [
+        ["linkText=AGENDAR RESERVA", "linkText"],
+        ["css=.btn", "css:finder"],
+        ["xpath=//a[contains(text(),'AGENDAR RESERVA')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[7]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/crear-reserva')]", "xpath:href"],
+        ["xpath=//li[7]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'AGENDAR RESERVA')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "7cf0a3fa-8c12-441c-81f6-b7385793861e",
+      "comment": "",
+      "command": "click",
+      "target": "css=.rbc-btn-group:nth-child(3) > button:nth-child(2)",
+      "targets": [
+        ["css=.rbc-btn-group:nth-child(3) > button:nth-child(2)", "css:finder"],
+        ["xpath=(//button[@type='button'])[6]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button[2]", "xpath:idRelative"],
+        ["xpath=//span[3]/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Semana')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }, {
+    "id": "36d13735-a6d8-4b01-9cf9-cb807af466f0",
+    "name": "Cambiar entre vistas de calendario",
+    "commands": [{
+      "id": "0c39e2b4-10c9-480c-a93a-2c36c0451707",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "7699099a-0022-41dc-bda0-5826568a1ada",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1936x1048",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "5fbce71c-4033-4438-a902-45d22804d3f6",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Calendario",
+      "targets": [
+        ["linkText=Calendario", "linkText"],
+        ["css=.nav-item:nth-child(5) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'Calendario')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[5]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/Calendario')]", "xpath:href"],
+        ["xpath=//li[5]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Calendario')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "732a77de-eac3-4762-9a4e-bef22d378772",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=Calendario",
+      "targets": [
+        ["linkText=Calendario", "linkText"],
+        ["css=.nav-item:nth-child(5) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'Calendario')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[5]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/Calendario')]", "xpath:href"],
+        ["xpath=//li[5]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Calendario')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "fd7ec9f9-bcb2-44f7-8c20-782175993717",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=Calendario",
+      "targets": [
+        ["linkText=Calendario", "linkText"],
+        ["css=.nav-item:nth-child(5) > .nav-link", "css:finder"],
+        ["xpath=//a[contains(text(),'Calendario')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[5]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/Calendario')]", "xpath:href"],
+        ["xpath=//li[5]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Calendario')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "034451d8-006d-429b-a669-827a22d29c16",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "linkText=AGENDAR RESERVA",
+      "targets": [
+        ["linkText=AGENDAR RESERVA", "linkText"],
+        ["css=.btn", "css:finder"],
+        ["xpath=//a[contains(text(),'AGENDAR RESERVA')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[7]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/crear-reserva')]", "xpath:href"],
+        ["xpath=//li[7]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'AGENDAR RESERVA')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "072f2243-096c-42ea-b0a6-18214a53aa23",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "linkText=AGENDAR RESERVA",
+      "targets": [
+        ["linkText=AGENDAR RESERVA", "linkText"],
+        ["css=.btn", "css:finder"],
+        ["xpath=//a[contains(text(),'AGENDAR RESERVA')]", "xpath:link"],
+        ["xpath=//div[@id='navbarNav']/ul/li[7]/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/crear-reserva')]", "xpath:href"],
+        ["xpath=//li[7]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'AGENDAR RESERVA')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "197a64c4-7dd5-44c9-ad57-ce6f9a9ff7a8",
+      "comment": "",
+      "command": "click",
+      "target": "css=.rbc-btn-group:nth-child(3) > button:nth-child(2)",
+      "targets": [
+        ["css=.rbc-btn-group:nth-child(3) > button:nth-child(2)", "css:finder"],
+        ["xpath=(//button[@type='button'])[6]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button[2]", "xpath:idRelative"],
+        ["xpath=//span[3]/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Semana')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "fd59e5ab-08d3-40b1-b940-a3fad4080dce",
+      "comment": "",
+      "command": "click",
+      "target": "css=.rbc-btn-group:nth-child(3) > button:nth-child(3)",
+      "targets": [
+        ["css=.rbc-btn-group:nth-child(3) > button:nth-child(3)", "css:finder"],
+        ["xpath=(//button[@type='button'])[7]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button[3]", "xpath:idRelative"],
+        ["xpath=//span[3]/button[3]", "xpath:position"],
+        ["xpath=//button[contains(.,'Día')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "5e3aa137-6748-49ff-a59a-96b6bbc320d2",
+      "comment": "",
+      "command": "click",
+      "target": "css=.rbc-btn-group:nth-child(3) > button:nth-child(2)",
+      "targets": [
+        ["css=.rbc-btn-group:nth-child(3) > button:nth-child(2)", "css:finder"],
+        ["xpath=(//button[@type='button'])[6]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button[2]", "xpath:idRelative"],
+        ["xpath=//span[3]/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Semana')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "3c3b2a48-7071-481c-98b4-cd848a0eb6a0",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.rbc-btn-group:nth-child(3) > button:nth-child(2)",
+      "targets": [
+        ["css=.rbc-btn-group:nth-child(3) > button:nth-child(2)", "css:finder"],
+        ["xpath=(//button[@type='button'])[6]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button[2]", "xpath:idRelative"],
+        ["xpath=//span[3]/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Semana')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "eb5620ea-e1bf-4aba-a183-50529b9007ba",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.rbc-active",
+      "targets": [
+        ["css=.rbc-active", "css:finder"],
+        ["xpath=(//button[@type='button'])[6]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button[2]", "xpath:idRelative"],
+        ["xpath=//span[3]/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Semana')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "860007a1-935c-4b3f-af7b-ff2d0d807766",
+      "comment": "",
+      "command": "click",
+      "target": "css=.rbc-btn-group:nth-child(3) > button:nth-child(1)",
+      "targets": [
+        ["css=.rbc-btn-group:nth-child(3) > button:nth-child(1)", "css:finder"],
+        ["xpath=(//button[@type='button'])[5]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button", "xpath:idRelative"],
+        ["xpath=//span[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Mes')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "6f1daafd-4e9a-4392-8b1b-82d4fe7b2976",
+      "comment": "",
+      "command": "click",
+      "target": "css=.rbc-btn-group:nth-child(3) > button:nth-child(2)",
+      "targets": [
+        ["css=.rbc-btn-group:nth-child(3) > button:nth-child(2)", "css:finder"],
+        ["xpath=(//button[@type='button'])[6]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button[2]", "xpath:idRelative"],
+        ["xpath=//span[3]/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Semana')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "14c453f6-9509-4985-9af6-9d5a744f799b",
+      "comment": "",
+      "command": "mouseOver",
+      "target": "css=.rbc-btn-group:nth-child(3) > button:nth-child(2)",
+      "targets": [
+        ["css=.rbc-btn-group:nth-child(3) > button:nth-child(2)", "css:finder"],
+        ["xpath=(//button[@type='button'])[6]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button[2]", "xpath:idRelative"],
+        ["xpath=//span[3]/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Semana')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "85c979c4-e579-448f-85cc-05c1e9722617",
+      "comment": "",
+      "command": "mouseOut",
+      "target": "css=.rbc-active",
+      "targets": [
+        ["css=.rbc-active", "css:finder"],
+        ["xpath=(//button[@type='button'])[6]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button[2]", "xpath:idRelative"],
+        ["xpath=//span[3]/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Semana')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "49739fb6-f445-4987-9fed-aa25587df930",
+      "comment": "",
+      "command": "click",
+      "target": "css=.rbc-btn-group:nth-child(3) > button:nth-child(3)",
+      "targets": [
+        ["css=.rbc-btn-group:nth-child(3) > button:nth-child(3)", "css:finder"],
+        ["xpath=(//button[@type='button'])[7]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button[3]", "xpath:idRelative"],
+        ["xpath=//span[3]/button[3]", "xpath:position"],
+        ["xpath=//button[contains(.,'Día')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "a5d825e1-c0c0-4927-a107-2186e6519081",
+      "comment": "",
+      "command": "click",
+      "target": "css=.rbc-btn-group:nth-child(3) > button:nth-child(2)",
+      "targets": [
+        ["css=.rbc-btn-group:nth-child(3) > button:nth-child(2)", "css:finder"],
+        ["xpath=(//button[@type='button'])[6]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button[2]", "xpath:idRelative"],
+        ["xpath=//span[3]/button[2]", "xpath:position"],
+        ["xpath=//button[contains(.,'Semana')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "9058f956-1ee3-48f1-8be7-4b3b05232621",
+      "comment": "",
+      "command": "click",
+      "target": "css=.rbc-btn-group:nth-child(3) > button:nth-child(1)",
+      "targets": [
+        ["css=.rbc-btn-group:nth-child(3) > button:nth-child(1)", "css:finder"],
+        ["xpath=(//button[@type='button'])[5]", "xpath:attributes"],
+        ["xpath=//div[@id='root']/div/div/div/div[2]/div/span[3]/button", "xpath:idRelative"],
+        ["xpath=//span[3]/button", "xpath:position"],
+        ["xpath=//button[contains(.,'Mes')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "9f5845c0-3760-44e3-ada9-576723795c6b",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["c2ce88ce-d9ba-44d4-a3c2-758c316c381e"]
+  }],
+  "urls": ["http://localhost:5173/"],
+  "plugins": []
+}

@@ -23,10 +23,10 @@
 	<properties>
 		<java.version>17</java.version>
 		<spring-cloud.version>2023.0.0</spring-cloud.version> <!-- Manejo de Spring Cloud BOM -->
-		<sonar.projectKey>KartRent</sonar.projectKey>
-		<sonar.projectName>KartRent</sonar.projectName>
+		<sonar.projectKey>KartRentReserva</sonar.projectKey>
+		<sonar.projectName>KartRentReserva</sonar.projectName>
 		<sonar.host.url>http://localhost:9000</sonar.host.url>
-		<sonar.token>sqp_7051cb303df5efcff430a87aa39a376bd325f226</sonar.token>
+		<sonar.token>sqp_e87373fae8e9fe28f7b87ad2b8af55834c9725c9</sonar.token>
 	</properties>
 
 	<!-- Dependencias -->

@@ -161,7 +161,8 @@ const FormularioReserva = () => {
 
   // Actualiza precio total cuando cambia la cantidad de personas
   const handlePersonasChange = (e) => {
-    const cantidad = parseInt(e.target.value);
+    let cantidad = parseInt(e.target.value);
+    if (isNaN(cantidad) || cantidad < 1) cantidad = 1;
     setReserva({
       ...reserva,
       cantidadPersonas: cantidad,
@@ -396,7 +397,7 @@ const FormularioReserva = () => {
             }
             className="form-control"
             dateFormat="yyyy-MM-dd"
-            required
+            required 
           />
         </div>
         <div className="mb-3">
@@ -410,6 +411,8 @@ const FormularioReserva = () => {
               setReserva({ ...reserva, horaInicio: e.target.value })
             }
             required
+            inputMode="numeric" // Sugerir teclado numérico en móviles
+            onFocus={e => e.target.showPicker && e.target.showPicker()} // Forzar barra de selección si el navegador lo soporta
           />
         </div>
         <div className="mb-3">
@@ -433,6 +436,7 @@ const FormularioReserva = () => {
             className="form-control"
             name="cantidadPersonas"
             value={reserva.cantidadPersonas}
+            min={1}
             onChange={handlePersonasChange}
             required
           />
